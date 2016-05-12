@@ -1,0 +1,66 @@
+from __future__ import print_function, division
+from pylab import *
+from astropy.io import fits
+import drms_json as drms
+
+
+# Series name, carrington rotation and data segment
+series = 'hmi.synoptic_mr_720s'
+cr = 2150
+segname = 'synopMr'
+
+# DRMS-Server URL (or shortcut) and data url (if any) for the data segment
+drms_url, data_url = 'jsoc', 'http://jsoc.stanford.edu'
+#drms_url, data_url = 'kis', ''
+
+# DRMS query string
+query = '%s[%s]' % (series, cr)
+
+
+# Create DRMS JSON client, use debug=True to see the query URLs
+c = drms.Client(drms_url)
+
+# Send request to the DRMS server
+print('Querying keyword data...\n -> %s' % query)
+k, s = c.get(query, key=drms.const.all, seg=segname)
+print(' -> %d lines retrieved.' % len(k))
+
+# Use only the first line of the query result
+k = k.iloc[0]
+fname = data_url + s[segname][0]
+
+# Read the data segment
+# Note: HTTP downloads get cached in ~/.astropy/cache/downloads
+print('Reading data from %r...' % fname)
+a = fits.getdata(fname)
+ny, nx = a.shape
+
+# Convert pixel to world coordinates using WCS keywords
+xmin = (1 - k.CRPIX1)*k.CDELT1 + k.CRVAL1
+xmax = (nx - k.CRPIX1)*k.CDELT1 + k.CRVAL1
+ymin = (1 - k.CRPIX2)*k.CDELT2 + k.CRVAL2
+ymax = (ny - k.CRPIX2)*k.CDELT2 + k.CRVAL2
+
+# Convert to Carrington longitude
+xmin = k.LON_LAST - xmin
+xmax = k.LON_LAST - xmax
+
+# Compute the plot extent used with imshow
+extent = (xmin - abs(k.CDELT1)/2, xmax + abs(k.CDELT1)/2,
+          ymin - abs(k.CDELT2)/2, ymax + abs(k.CDELT2)/2)
+
+# Aspect ratio for imshow in respect to the extent computed above
+aspect = abs((xmax - xmin)/nx * ny/(ymax - ymin))
+
+# Create plot
+figure(1, figsize=(13.5, 6)); clf()
+title(query, fontsize='medium')
+title('%s, Time: %s ... %s' % (query, k.T_STOP, k.T_START), fontsize='medium')
+imshow(a, vmin=-300, vmax=300, origin='lower', interpolation='nearest',
+       cmap='gray', extent=extent, aspect=aspect)
+xlabel('Carrington longitude')
+ylabel('Sine latitude')
+tight_layout()
+draw()
+
+show()
