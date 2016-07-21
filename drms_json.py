@@ -275,15 +275,17 @@ class JsonClient(object):
 		    raise RuntimeError('User e-mail address is not registered with jsoc.stanford.edu')
         query = '?' + urlencode({'op': 'exp_request', 'protocol': 'fits', 'format': 'json', 'method': 'url', 'requestor': requestor, 'notify': notify, 'ds': ds})
         req = self._json_request(self._url_jsoc_fetch + query)
-        # obtain requestid through successive attempts
+        # waiting for the request to be ready
         if (int(req.data['status']) == 1 or int(req.data['status']) == 2):
             if 'requestid' in req.data:
                 query = '?' + urlencode({'op': 'exp_status', 'requestid': req.data['requestid']})
                 supath = []
+                print('Waiting for the request to be ready. Please allow at least 20 seconds.')
+                time.sleep(15)
                 while True :  
                     req = self._json_request(self._url_jsoc_fetch + query)
                     if (int(req.data['status']) == 1 or int(req.data['status']) == 2 or int(req.data['status']) == 6):
-                        time.sleep(1)
+                        time.sleep(5)
                     elif (int(req.data['status']) == 0):
                         dir = req.data['dir']
                         for dataobj in (req.data['data']):
@@ -291,11 +293,17 @@ class JsonClient(object):
                         break
                     else:
                         print(type(req.data['status']))
-                        raise RuntimeError('DRMS Query failed, some bizarre status occured, status=%s' % req.data['status'])
+                        if (req.data['status'] == 3):
+                            raise RuntimeError('DRMS Query failed, request size is too large, status=%s' % req.data['status'])
+                        if (req.data['status'] == 4):
+                            raise RuntimeError('DRMS Query failed, request not formed correctly, status=%s' % req.data['status'])
+                        if (req.data['status'] == 5):
+                            raise RuntimeError('DRMS Query failed, export request expired, status=%s' % req.data['status'])
+                            
             else:
                 raise RuntimeError('DRMS Query failed, there is no requestid, status=%s' % req.data['status'])
         else:
-            raise RuntimeError('DRMS Query failed, maybe username and e-mail address is not registered at jsoc.stanford.edu, status=%s' % req.data['status'])
+            raise RuntimeError('DRMS Query failed, series is not a valid series, status=%s' % req.data['status'])
         print("All the data are available at:")
         print(str(urljoin(self.baseurl,req.data['dir'])))
         return supath
