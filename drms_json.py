@@ -256,9 +256,9 @@ class JsonClient(object):
         Parameters
         ----------
         requestor: string
-        	Username of requestor.
+            Username of requestor.
         notify   : string
-        	E-mail address of requestor.
+            E-mail address of requestor.
         ds       : string
             Name of the data series.
 
@@ -266,13 +266,13 @@ class JsonClient(object):
         -------
         supath : list
             List containing paths to all the requested FITS files.
-		"""
-		# test to see if the user's e-mail address is registered with jsoc.stanford.edu
+        """
+        # test to see if the user's e-mail address is registered with jsoc.stanford.edu
         test_email_query = 'http://jsoc.stanford.edu/cgi-bin/ajax/checkAddress.sh?address='+quote_plus(notify)+'&checkonly=1'
         response = urlopen(test_email_query)
         data = json.loads(response.read())
         if (data['status'] == 4):
-		    raise RuntimeError('User e-mail address is not registered with jsoc.stanford.edu')
+            raise RuntimeError('User e-mail address is not registered with jsoc.stanford.edu')
         query = '?' + urlencode({'op': 'exp_request', 'protocol': 'fits', 'format': 'json', 'method': 'url', 'requestor': requestor, 'notify': notify, 'ds': ds})
         req = self._json_request(self._url_jsoc_fetch + query)
         # waiting for the request to be ready
@@ -512,9 +512,9 @@ class Client(object):
         Parameters
         ----------
         requestor: string
-        	Username of requestor.
+            Username of requestor.
         notify   : string
-        	E-mail address of requestor.
+            E-mail address of requestor.
         ds       : string
             Name of the data series.
 
@@ -522,7 +522,7 @@ class Client(object):
         -------
         supath : list
             List containing paths to all the requested FITS files.
-		"""
+        """
         return self._json.export(ds, requestor, notify)
 
     def series(self, ds_filter=None):
