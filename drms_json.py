@@ -37,7 +37,7 @@ __all__ = ['JsonClient', 'Client', 'to_datetime', 'const']
 __author__ = 'Kolja Glogowski'
 __email__ = 'kolja@pixie.de'
 __license__ = 'MIT'
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 
 # Compatibility functions for older pandas versions.
@@ -62,7 +62,7 @@ else:
 # Base URL shortcuts
 _locations = {
     'jsoc': 'http://jsoc.stanford.edu/cgi-bin/ajax/',
-    'kis': 'http://drms.kis.uni-freiburg.de/cgi-bin/'
+    'kis': 'http://drms.leibniz-kis.de/cgi-bin/'
 }
 
 # Set the default base URL
