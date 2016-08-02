@@ -15,7 +15,7 @@ URL = 'https://github.com/kbg/drms_json'
 LICENSE = 'MIT'
 
 # Read version string from drms_json.py without importing the module to
-# prevent an import error in case numpy, scipy or pyfits are not installed yet.
+# prevent an import error in case numpy, pandas or six are not installed yet.
 m = re.search(r"""^\s*__version__\s*=\s*["'](.+)["']\s*$""",
               open('drms_json.py').read(), re.MULTILINE)
 VERSION = m.group(1)
