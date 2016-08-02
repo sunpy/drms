@@ -270,7 +270,7 @@ class JsonClient(object):
         # test to see if the user's e-mail address is registered with jsoc.stanford.edu
         test_email_query = 'http://jsoc.stanford.edu/cgi-bin/ajax/checkAddress.sh?address='+quote_plus(notify)+'&checkonly=1'
         response = urlopen(test_email_query)
-        data = json.loads(response.read())
+        data = json.loads(response.read().decode(self._encoding))
         if (data['status'] == 4):
             raise RuntimeError('User e-mail address is not registered with jsoc.stanford.edu')
         query = '?' + urlencode({'op': 'exp_request', 'protocol': 'fits', 'format': 'json', 'method': 'url', 'requestor': requestor, 'notify': notify, 'ds': ds})
