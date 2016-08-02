@@ -55,9 +55,10 @@ aspect = abs((xmax - xmin)/nx * ny/(ymax - ymin))
 # Create plot
 figure(1, figsize=(13.5, 6)); clf()
 title(query, fontsize='medium')
-title('%s, Time: %s ... %s' % (query, k.T_STOP, k.T_START), fontsize='medium')
+title('%s, Time: %s ... %s' % (query, k.T_START, k.T_STOP), fontsize='medium')
 imshow(a, vmin=-300, vmax=300, origin='lower', interpolation='nearest',
        cmap='gray', extent=extent, aspect=aspect)
+gca().invert_xaxis()
 xlabel('Carrington longitude')
 ylabel('Sine latitude')
 tight_layout()
