@@ -1,7 +1,7 @@
 drms_json
 =========
 
-The `drms_json.py` module provides an easy way to access HMI, MDI and AIA data with Python, using the JSON web interface provided by [JSOC](http://jsoc.stanford.edu/). It has the same functionality as the [JSOC Lookdata](http://jsoc.stanford.edu/ajax/lookdata.html) website, except for the _export data_ feature.
+The `drms_json.py` module provides an easy way to access HMI, MDI and AIA data with Python, using the JSON web interface provided by [JSOC](http://jsoc.stanford.edu/). It has the same functionality as the [JSOC Lookdata](http://jsoc.stanford.edu/ajax/lookdata.html) website.
 
 The module also works well for local [NetDRMS](http://jsoc.stanford.edu/netdrms/) sites, as long as the site runs a web server providing the needed CGI programs `show_series` and `jsoc_info`.
 
@@ -38,7 +38,7 @@ All you need to do is to import the `drms_json` module and create a `Client` ins
     import drms_json as drms
     c = drms.Client()
 
-After this, you can obtain a list of all available data series using the `c.series()` method, get a list of keywords or primekeys of a certain series using `c.keys()` or `c.pkeys()` respectively, or get even more information on a series using the `c.info()` method. Record set queries for retrieving keyword data or locations of data segments can be performed by using the method `c.get()`. TAI time strings can be converted into a (naive) Python representation, by using the utility function `drms.to_datetime()`.
+After this, you can obtain a list of all available data series using the `c.series()` method, get a list of keywords or primekeys of a certain series using `c.keys()` or `c.pkeys()` respectively, or get even more information on a series using the `c.info()` method. Record set queries for retrieving keyword data or locations of data segments can be performed by using the method `c.get()`. TAI time strings can be converted into a (naive) Python representation, by using the utility function `drms.to_datetime()`. Data keywords and segments are bound together, exported as fits files, and served at jsoc.stanford.edu using the `c.export()` method.
 
 For more information, use `help(drms.Client)` inside the Python interpreter and have a look at the provided examples.
 
@@ -47,3 +47,5 @@ Acknowledgements
 ----------------
 
 The author of this project has received funding from the European Research Council under the European Union's Seventh Framework Programme (FP/2007-2013) / ERC Grant Agreement no. 307117.
+
+The `c.export()` method was written by Monica Bobra and Art Amezcua.

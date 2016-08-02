@@ -24,11 +24,13 @@
 from __future__ import absolute_import, division, print_function
 import sys
 import re
+import os
+import time
 import types
 import json
 import six
 from six.moves.urllib.request import urlopen
-from six.moves.urllib.parse import urlencode, urljoin
+from six.moves.urllib.parse import urlencode, urljoin, quote_plus
 import pandas as pd
 import numpy as np
 
@@ -194,9 +196,11 @@ class JsonClient(object):
                 baseurl = value
         url_show_series = urljoin(baseurl, 'show_series')
         url_jsoc_info = urljoin(baseurl, 'jsoc_info')
+        url_jsoc_fetch = urljoin(baseurl, 'jsoc_fetch')
         self._baseurl = baseurl
         self._url_show_series = url_show_series
         self._url_jsoc_info = url_jsoc_info
+        self._url_jsoc_fetch = url_jsoc_fetch
 
     @property
     def debug(self):
@@ -242,6 +246,67 @@ class JsonClient(object):
         query = '?' + urlencode({'op': 'series_struct', 'ds': ds})
         req = self._json_request(self._url_jsoc_info + query)
         return req.data
+        
+    def export(self, ds, requestor, notify):
+        """
+        This function exports data as FITS files. To do this, the function binds metadata (keywords) to images (arrays) to create FITS files and then serves the FITS files at jsoc.stanford.edu.
+        Written by Monica Bobra and Art Amezcua
+        19 July 2016
+
+        Parameters
+        ----------
+        requestor: string
+        	Username of requestor.
+        notify   : string
+        	E-mail address of requestor.
+        ds       : string
+            Name of the data series.
+
+        Returns
+        -------
+        supath : list
+            List containing paths to all the requested FITS files.
+		"""
+		# test to see if the user's e-mail address is registered with jsoc.stanford.edu
+        test_email_query = 'http://jsoc.stanford.edu/cgi-bin/ajax/checkAddress.sh?address='+quote_plus(notify)+'&checkonly=1'
+        response = urlopen(test_email_query)
+        data = json.loads(response.read())
+        if (data['status'] == 4):
+		    raise RuntimeError('User e-mail address is not registered with jsoc.stanford.edu')
+        query = '?' + urlencode({'op': 'exp_request', 'protocol': 'fits', 'format': 'json', 'method': 'url', 'requestor': requestor, 'notify': notify, 'ds': ds})
+        req = self._json_request(self._url_jsoc_fetch + query)
+        # waiting for the request to be ready
+        if (int(req.data['status']) == 1 or int(req.data['status']) == 2):
+            if 'requestid' in req.data:
+                query = '?' + urlencode({'op': 'exp_status', 'requestid': req.data['requestid']})
+                supath = []
+                print('Waiting for the request to be ready. Please allow at least 20 seconds.')
+                time.sleep(15)
+                while True :  
+                    req = self._json_request(self._url_jsoc_fetch + query)
+                    if (int(req.data['status']) == 1 or int(req.data['status']) == 2 or int(req.data['status']) == 6):
+                        time.sleep(5)
+                    elif (int(req.data['status']) == 0):
+                        dir = req.data['dir']
+                        for dataobj in (req.data['data']):
+                            supath.append(urljoin(self.baseurl,os.path.join(req.data['dir'],dataobj['filename'])))
+                        break
+                    else:
+                        print(type(req.data['status']))
+                        if (req.data['status'] == 3):
+                            raise RuntimeError('DRMS Query failed, request size is too large, status=%s' % req.data['status'])
+                        if (req.data['status'] == 4):
+                            raise RuntimeError('DRMS Query failed, request not formed correctly, status=%s' % req.data['status'])
+                        if (req.data['status'] == 5):
+                            raise RuntimeError('DRMS Query failed, export request expired, status=%s' % req.data['status'])
+                            
+            else:
+                raise RuntimeError('DRMS Query failed, there is no requestid, status=%s' % req.data['status'])
+        else:
+            raise RuntimeError('DRMS Query failed, series is not a valid series, status=%s' % req.data['status'])
+        print("All the data are available at:")
+        print(str(urljoin(self.baseurl,req.data['dir'])))
+        return supath
 
     def rs_summary(self, ds):
         """
@@ -437,6 +502,28 @@ class Client(object):
     @debug.setter
     def debug(self, value):
         self._json.debug = value
+    
+    def export(self,ds,requestor,notify):
+        """
+        This function exports data as FITS files. To do this, the function binds metadata (keywords) to images (arrays) to create FITS files and then serves the FITS files at jsoc.stanford.edu.
+        Written by Monica Bobra and Art Amezcua
+        19 July 2016
+
+        Parameters
+        ----------
+        requestor: string
+        	Username of requestor.
+        notify   : string
+        	E-mail address of requestor.
+        ds       : string
+            Name of the data series.
+
+        Returns
+        -------
+        supath : list
+            List containing paths to all the requested FITS files.
+		"""
+        return self._json.export(ds, requestor, notify)
 
     def series(self, ds_filter=None):
         """
