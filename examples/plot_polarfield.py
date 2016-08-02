@@ -59,10 +59,12 @@ draw()
 
 figure(2, figsize=(15, 7)); clf()
 title(query, fontsize='medium')
-plt.fill_between(t, mn-sn, mn+sn,
-    edgecolor='none', facecolor='b', alpha=0.3, interpolate=True)
-plt.fill_between(t, ms-ss, ms+ss,
-    edgecolor='none', facecolor='g', alpha=0.3, interpolate=True)
+plt.fill_between(
+    t, mn-sn, mn+sn, edgecolor='none', facecolor='b', alpha=0.3,
+    interpolate=True)
+plt.fill_between(
+    t, ms-ss, ms+ss, edgecolor='none', facecolor='g', alpha=0.3,
+    interpolate=True)
 plot(t, mn, 'b', label='North pole')
 plot(t, ms, 'g', label='South pole')
 xlabel('Time')

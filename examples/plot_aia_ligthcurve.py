@@ -49,7 +49,7 @@ res = c.get(query, key=keys)
 print(' -> %d lines retrieved.' % len(res))
 
 # Only use entries with QUALITY==0
-res = res[res.QUALITY==0]
+res = res[res.QUALITY == 0]
 print(' -> %d lines after QUALITY selection.' % len(res))
 
 # Convert T_REC strings to datetime and use it as index for the series

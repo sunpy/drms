@@ -31,8 +31,9 @@ std = res.DATARMS/1e3
 # Create plot
 figure(1, figsize=(15, 7)); clf()
 title(query, fontsize='medium')
-fill_between(t, avg+std, avg-std,
-    edgecolor='none', facecolor='b', alpha=0.3, interpolate=True)
+fill_between(
+    t, avg+std, avg-std, edgecolor='none', facecolor='b', alpha=0.3,
+    interpolate=True)
 plot(t, avg, color='b')
 xlabel('Time')
 ylabel('Disk-averaged continuum intensity [kDN/s]')

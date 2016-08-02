@@ -34,9 +34,9 @@ print('Reading data from %r...' % fname)
 a = genfromtxt(fname)
 
 # For column names, see appendix of Larson & Schou (2015SoPh..290.3221L)
-l = a[:,0].astype(int)
-n = a[:,1].astype(int)
-nu = a[:,2]/1e3
+l = a[:, 0].astype(int)
+n = a[:, 1].astype(int)
+nu = a[:, 2]/1e3
 if a.shape[1] in [24, 48, 84]:
     # tan(gamma) present
     sig_offs = 5
