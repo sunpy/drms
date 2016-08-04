@@ -1,4 +1,5 @@
-# Copyright (c) 2014, 2015 Kolja Glogowski
+# Copyright (c) 2014-2016 Kolja Glogowski
+# Copyright (c) 2016 Monica Bobra and Arthur Amezcua
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -36,7 +37,8 @@ import numpy as np
 
 
 __all__ = ['JsonClient', 'Client', 'to_datetime', 'const']
-__author__ = 'Kolja Glogowski'
+__author__ = 'Kolja Glogowski, Monica Bobra, Arthur Amezcua'
+__maintainer__ = 'Kolja Glogowski'
 __email__ = 'kolja@pixie.de'
 __license__ = 'MIT'
 __version__ = '0.2.2'
