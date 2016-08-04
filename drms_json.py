@@ -196,13 +196,11 @@ class JsonClient(object):
             baseurl = _locations.get(value.lower(), None)
             if baseurl is None:
                 baseurl = value
-        url_show_series = urljoin(baseurl, 'show_series')
-        url_jsoc_info = urljoin(baseurl, 'jsoc_info')
-        url_jsoc_fetch = urljoin(baseurl, 'jsoc_fetch')
+        self._url_show_series = urljoin(baseurl, 'show_series')
+        self._url_jsoc_info = urljoin(baseurl, 'jsoc_info')
+        self._url_jsoc_fetch = urljoin(baseurl, 'jsoc_fetch')
+        self._url_check_address = urljoin(baseurl, 'checkAddress.sh')
         self._baseurl = baseurl
-        self._url_show_series = url_show_series
-        self._url_jsoc_info = url_jsoc_info
-        self._url_jsoc_fetch = url_jsoc_fetch
 
     @property
     def debug(self):
@@ -385,6 +383,28 @@ class JsonClient(object):
             d['userhandle'] = uid
         query = '?' + urlencode(d)
         req = self._json_request(self._url_jsoc_info + query)
+        return req.data
+
+    def check_address(self, email):
+        """
+        Check if an email address is registered for export data requests.
+
+        Parameters
+        ----------
+        email : string
+            Email address to be verified.
+
+        Returns
+        -------
+        result : dict
+            Dictionary containing 'status' and 'msg'. Some status codes are:
+                2: Email address is valid and registered
+                4: Email address has neither been validated nor registered
+               -2: Not a valid email address
+        """
+        query = '?' + urlencode({
+            'address': quote_plus(email), 'checkonly': '1'})
+        req = self._json_request(self._url_check_address + query)
         return req.data
 
 
