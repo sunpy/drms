@@ -407,6 +407,96 @@ class JsonClient(object):
         req = self._json_request(self._url_check_address + query)
         return req.data
 
+    def exp_request(self, ds, notify, method='url_quick', protocol='as-is',
+                    protocol_args=None, filenamefmt=None, requestor=None):
+        """
+        Request data export.
+
+        Parameters
+        ----------
+        ds : string
+        notify : string
+        method : string
+        protocol : string
+        protocol_args : dict or None
+        filenamefmt : string or None
+        requestor : string or None
+
+        Returns
+        -------
+        result : dict
+        """
+        method = method.lower()
+        method_list = ['url_quick', 'url', 'url-tar', 'ftp', 'ftp-tar']
+        if method not in method_list:
+            raise ValueError(
+                "Method '%s' is not supported, valid methods are: %s" %
+                (method, ', '.join("'%s'" % s for s in method_list)))
+
+        protocol = protocol.lower()
+        img_protocol_list = ['jpg', 'mpg', 'mp4']
+        protocol_list = ['as-is', 'fits'] + img_protocol_list
+        if protocol not in protocol_list:
+            raise ValueError(
+                "Protocol '%s' is not supported, valid protocols are: %s" %
+                (protocol, ', '.join("'%s'" % s for s in protocol_list)))
+
+        # method "url_quick" is meant to be used with "as-is", change method
+        # to "url" if protocol is not "as-is"
+        if method == 'url_quick' and protocol != 'as-is':
+            method = 'url'
+
+        if protocol in img_protocol_list:
+            d = {'ct': 'grey.sao', 'scaling': 'minmax', 'size': 1}
+            if protocol_args is not None:
+                for k, v in protocol_args.items():
+                    if k.lower() == 'ct':
+                        d['ct'] = v
+                    elif k == 'scaling':
+                        d[k] = v
+                    elif k == 'size':
+                        d[k] = int(v)
+                    elif k in ['min', 'max']:
+                        d[k] = float(v)
+                    else:
+                        raise ValueError("Unknown protocol argument: '%s'" % k)
+            protocol += ',CT={ct},scaling={scaling},size={size}'.format(**d)
+            if 'min' in d:
+                protocol += ',min=%g' % d['min']
+            if 'max' in d:
+                protocol += ',max=%g' % d['max']
+        else:
+            if protocol_args is not None:
+                raise ValueError(
+                    "protocol_args not supported for protocol '%s'" % protocol)
+
+        d = {'op': 'exp_request', 'format': 'json', 'ds': ds,
+             'notify': notify, 'method': method, 'protocol': protocol}
+        if filenamefmt is not None:
+            d['filenamefmt'] = filenamefmt
+        if requestor is not None:
+            d['requestor'] = requestor
+        query = '?' + urlencode(d)
+        req = self._json_request(self._url_jsoc_fetch + query)
+        return req.data
+
+    def exp_status(self, requestid):
+        """
+        Query data export status.
+
+        Parameters
+        ----------
+        requestid : string
+            Request identifier returned by exp_request.
+
+        Returns
+        -------
+        result : dict
+        """
+        query = '?' + urlencode({'op': 'exp_status', 'requestid': requestid})
+        req = self._json_request(self._url_jsoc_fetch + query)
+        return req.data
+
 
 class SeriesInfo(object):
     def __init__(self, d, name=None):
