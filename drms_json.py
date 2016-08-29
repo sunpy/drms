@@ -129,6 +129,16 @@ def to_datetime(tstr, force=False):
     return res.iloc[0] if isinstance(tstr, six.string_types) else res
 
 
+class DrmsError(RuntimeError):
+    pass
+
+class DrmsQueryError(DrmsError):
+    pass
+
+class DrmsExportError(DrmsError):
+    pass
+
+
 class JsonRequest(object):
     def __init__(self, url, encoding):
         self._encoding = encoding
