@@ -27,6 +27,7 @@ import sys
 import re
 import os
 import time
+import warnings
 import json
 import six
 from six.moves.urllib.request import urlopen, urlretrieve
@@ -1443,6 +1444,18 @@ class Client(object):
 
     def get(self, ds, key=None, seg=None, link=None, convert_numeric=True,
             skip_conversion=None):
+        """
+        This method is deprecated. Use Client.query() instead.
+        """
+        warnings.warn(
+            'Client.get() is deprecated, use Client.query() instead',
+            DeprecationWarning)
+        return self.query(
+            ds, key=key, seg=seg, link=link, convert_numeric=convert_numeric,
+            skip_conversion=skip_conversion)
+
+    def query(self, ds, key=None, seg=None, link=None, convert_numeric=True,
+              skip_conversion=None):
         """
         Query keywords, segments and/or links of a record set. At least one
         of out of the key, seg or link parameters must be specified.
