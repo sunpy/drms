@@ -27,7 +27,6 @@ import sys
 import re
 import os
 import time
-import types
 import json
 import six
 from six.moves.urllib.request import urlopen
