@@ -9,15 +9,15 @@ series = 'hmi.ic_720s'
 tsel = '2010.05.01_TAI-2016.04.01_TAI@6h'
 
 # DRMS query string
-query = '%s[%s]' % (series, tsel)
+qstr = '%s[%s]' % (series, tsel)
 
 
 # Create DRMS JSON client, use debug=True to see the query URLs
 c = drms.Client()
 
 # Send request to the DRMS server
-print('Querying keyword data...\n -> %s' % query)
-res = c.get(query, key=['T_REC', 'DATAMEAN', 'DATARMS'])
+print('Querying keyword data...\n -> %s' % qstr)
+res = c.query(qstr, key=['T_REC', 'DATAMEAN', 'DATARMS'])
 print(' -> %d lines retrieved.' % len(res))
 
 # Convert T_REC strings to datetime and use it as index for the series
@@ -30,7 +30,7 @@ std = res.DATARMS/1e3
 
 # Create plot
 figure(1, figsize=(15, 7)); clf()
-title(query, fontsize='medium')
+title(qstr, fontsize='medium')
 fill_between(
     t, avg+std, avg-std, edgecolor='none', facecolor='b', alpha=0.3,
     interpolate=True)

@@ -9,15 +9,15 @@ series = 'hmi.meanpf_720s'
 tsel = '2010.05.01_TAI-2016.04.01_TAI@12h'
 
 # DRMS query string
-query = '%s[%s]' % (series, tsel)
+qstr = '%s[%s]' % (series, tsel)
 
 
 # Create DRMS JSON client, use debug=True to see the query URLs
 c = drms.Client()
 
 # Send request to the DRMS server
-print('Querying keyword data...\n -> %s' % query)
-res = c.get(query, key=['T_REC', 'CAPN2', 'CAPS2'])
+print('Querying keyword data...\n -> %s' % qstr)
+res = c.query(qstr, key=['T_REC', 'CAPN2', 'CAPS2'])
 print(' -> %d lines retrieved.' % len(res))
 
 # Convert T_REC strings to datetime and use it as index for the series
@@ -46,7 +46,7 @@ n, mn, sn = a.CAPN2, a_avg.CAPN2, a_std.CAPN2
 s, ms, ss = a.CAPS2, a_avg.CAPS2, a_std.CAPS2
 
 figure(1, figsize=(15, 7)); clf()
-title(query, fontsize='medium')
+title(qstr, fontsize='medium')
 plot(t, n, 'b', alpha=0.5, label='North pole')
 plot(t, s, 'g', alpha=0.5, label='South pole')
 plot(t, mn, 'r', label='Moving average')
@@ -58,7 +58,7 @@ tight_layout()
 draw()
 
 figure(2, figsize=(15, 7)); clf()
-title(query, fontsize='medium')
+title(qstr, fontsize='medium')
 plt.fill_between(
     t, mn-sn, mn+sn, edgecolor='none', facecolor='b', alpha=0.3,
     interpolate=True)

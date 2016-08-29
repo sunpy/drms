@@ -13,16 +13,16 @@ drms_url, data_url = 'jsoc', 'http://jsoc.stanford.edu'
 #drms_url, data_url = 'kis', ''
 
 # DRMS query string
-query = '%s[%s]' % (series, tstart)
+qstr = '%s[%s]' % (series, tstart)
 
 
 # Create DRMS JSON client, use debug=True to see the query URLs
 c = drms.Client(drms_url)
 
 # Send request to the DRMS server
-print('Querying keyword data...\n -> %s' % query)
-k, s = c.get(
-    query, key=['T_START', 'T_STOP', 'LMIN', 'LMAX', 'NDT'], seg=segname)
+print('Querying keyword data...\n -> %s' % qstr)
+k, s = c.query(
+    qstr, key=['T_START', 'T_STOP', 'LMIN', 'LMAX', 'NDT'], seg=segname)
 print(' -> %d lines retrieved.' % len(k))
 
 # Use only the first line of the query result

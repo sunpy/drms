@@ -16,7 +16,7 @@ wavelen = 335
 tsel = '2014-01-01T00:00:01Z/365d@1d'
 
 # DRMS query string
-query = '%s[%s][%d]' % (series, tsel, wavelen)
+qstr = '%s[%s][%d]' % (series, tsel, wavelen)
 
 # Some keywords we are interested in; you can use c.keys(series) to get a
 # list of all available keywords of a series.
@@ -44,8 +44,8 @@ for k in keys:
     print('%10s : %s' % (k, note_str))
 
 # Get keyword values for the selected timespan and wavelength
-print('Querying keyword data...\n -> %s' % query)
-res = c.get(query, key=keys)
+print('Querying keyword data...\n -> %s' % qstr)
+res = c.query(qstr, key=keys)
 print(' -> %d lines retrieved.' % len(res))
 
 # Only use entries with QUALITY==0
