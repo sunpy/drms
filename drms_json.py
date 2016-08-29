@@ -247,7 +247,7 @@ class JsonClient(object):
         req = self._json_request(self._url_jsoc_info + query)
         return req.data
 
-    def export(self, ds, requestor, notify):
+    def export_old(self, ds, requestor, notify):
         """
         This function exports data as FITS files. To do this, the function
         binds metadata (keywords) to images (arrays) to create FITS files and
@@ -637,7 +637,7 @@ class Client(object):
     def debug(self, value):
         self._json.debug = value
 
-    def export(self, ds, requestor, notify):
+    def export_old(self, ds, requestor, notify):
         """
         This function exports data as FITS files. To do this, the function
         binds metadata (keywords) to images (arrays) to create FITS files and
@@ -659,7 +659,7 @@ class Client(object):
         supath : list
             List containing paths to all the requested FITS files.
         """
-        return self._json.export(ds, requestor, notify)
+        return self._json.export_old(ds, requestor, notify)
 
     def series(self, ds_filter=None):
         """

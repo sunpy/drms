@@ -23,7 +23,7 @@ c = drms.Client(drms_url)
 # Send request to the DRMS server
 
 print('Querying keyword data...\n -> %s' % query)
-paths = c.export(query,requestor, notify)
+paths = c.export_old(query,requestor, notify)
 
 # The following lines will not work if your username and e-mail address are not registered with jsoc.stanford.edu. The lines below will not work with this example code as-is (with requestor = 'jschmoe' and notify = 'jschmoe@stanford.edu'). 
 
@@ -51,7 +51,7 @@ c = drms.Client(drms_url)
 
 # Send request to the DRMS server
 print('Querying keyword data...\n -> %s' % query)
-paths = c.export(query,requestor, notify)
+paths = c.export_old(query,requestor, notify)
 
 # The following lines will not work if your username and e-mail address are not registered with jsoc.stanford.edu. The lines below will not work with this example code as-is (with requestor = 'jschmoe' and notify = 'jschmoe@stanford.edu'). 
 
