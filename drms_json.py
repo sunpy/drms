@@ -582,6 +582,271 @@ class SeriesInfo(object):
             return '<SeriesInfo "%s">' % self.name
 
 
+class ExportRequest(object):
+    """
+    Class for handling data export requests. Use Client.export() or
+    Client.export_from_id() to create an ExportRequest instance.
+    """
+    _status_code_ok = 0
+    _status_code_notfound = 6
+    _status_codes_pending = [1, 2, _status_code_notfound]
+    _status_codes_ok_or_pending = [_status_code_ok] + _status_codes_pending
+
+    def __init__(self, d, client, verbose=False):
+        self._client = client
+        self._verbose = verbose
+        self._requestid = None
+        self._status = None
+        self._update_status(d)
+
+    @classmethod
+    def _create_from_id(cls, requestid, client, verbose=False):
+        d = client._json.exp_status(requestid)
+        return ExportRequest(d, client, verbose)
+
+    def __repr__(self):
+        idstr = str(None) if self._requestid is None else (
+            '"%s"' % self._requestid)
+        return '<ExportRequest id=%s, status=%d>' % (idstr, self._status)
+
+    @classmethod
+    def _parse_data(cls, d):
+        keys = ['record', 'filename']
+        res = None if d is None else [
+            (di.get(keys[0]), di.get(keys[1])) for di in d]
+        if not res:
+            res = None  # workaround for older pandas versions
+        res = pd.DataFrame(res, columns=keys)
+        return res
+
+    def _update_status(self, d=None):
+        if d is None and self._requestid is not None:
+            d = self._client._json.exp_status(self._requestid)
+        self._d = d
+        self._d_time = time.time()
+        self._status = int(self._d.get('status', self._status))
+        self._requestid = self._d.get('requestid', self._requestid)
+        if self._requestid is None:
+            # Apparently 'reqid' is used instead of 'requestid' for certain
+            # protocols like 'mpg'
+            self._requestid = self._d.get('reqid')
+        if self._requestid == '':
+            # Use None if the requestid is empty (url_quick + as-is)
+            self._requestid = None
+
+    def _raise_on_error(self, notfound_ok=True):
+        if self._status in self._status_codes_ok_or_pending:
+            if self._status != self._status_code_notfound or notfound_ok:
+                return  # request has not failed (yet)
+        msg = self._d.get('error')
+        if msg is None:
+            msg = 'DRMS export request failed.'
+        msg += ' [status=%d]' % self._status
+        raise DrmsExportError(msg)
+
+    @property
+    def verbose(self):
+        return self._verbose
+
+    @verbose.setter
+    def verbose(self, value):
+        self._verbose = bool(value)
+
+    @property
+    def id(self):
+        return self._requestid
+
+    @property
+    def status(self):
+        return self._status
+
+    @property
+    def method(self):
+        return self._d.get('method')
+
+    @property
+    def protocol(self):
+        return self._d.get('protocol')
+
+    @property
+    def dir(self):
+        if self.has_finished(skip_update=True):
+            self._raise_on_error()
+        else:
+            self.wait()
+        return self._d.get('dir')
+
+    @property
+    def data(self):
+        if self.has_finished(skip_update=True):
+            self._raise_on_error()
+        else:
+            self.wait()
+        return self._parse_data(self._d.get('data'))
+
+    @property
+    def tarfile(self):
+        if self.has_finished(skip_update=True):
+            self._raise_on_error()
+        else:
+            self.wait()
+        return self._d.get('tarfile')
+
+    @property
+    def keywords(self):
+        if self.has_finished(skip_update=True):
+            self._raise_on_error()
+        else:
+            self.wait()
+        return self._d.get('keywords')
+
+    def has_finished(self, skip_update=False):
+        """
+        Check if the export request has finished.
+
+        Parameters
+        ----------
+        skip_update : bool
+            If set to True, the export status will not be updated from the
+            server, even if it was in pending state after the last status
+            update.
+
+        Returns
+        -------
+        True if the export request has finished or False if the request is
+        still pending.
+        """
+        pending = self._status in self._status_codes_pending
+        if not pending:
+            return True
+        if not skip_update:
+            self._update_status()
+            pending = self._status in self._status_codes_pending
+        return not pending
+
+    def has_succeeded(self, skip_update=False):
+        """
+        Check if the export request has finished successfully.
+
+        Parameters
+        ----------
+        skip_update : bool
+            If set to True, the export status will not be updated from the
+            server, even if it was in pending state after the last status
+            update.
+
+        Returns
+        -------
+        True if the export request has finished successfully or False if the
+        request failed or is still pending.
+        """
+        if not self.has_finished(skip_update):
+            return False
+        return self._status == self._status_code_ok
+
+    def has_failed(self, skip_update=False):
+        """
+        Check if the export request has finished unsuccessfully.
+
+        Parameters
+        ----------
+        skip_update : bool
+            If set to True, the export status will not be updated from the
+            server, even if it was in pending state after the last status
+            update.
+
+        Returns
+        -------
+        True if the export request has finished unsuccessfully or False if the
+        request has succeeded or is still pending.
+        """
+        if not self.has_finished(skip_update):
+            return False
+        return self._status not in self._status_codes_ok_or_pending
+
+    def wait(self, timeout=None, sleep=3, retries_notfound=5, verbose=None):
+        """
+        Wait for the server to process the export request. This method
+        continously updates the request status until the server signals
+        that export request has succeeded or failed.
+
+        Parameters
+        ----------
+        timeout : number or None
+            Maximum number of seconds until this method times out. If set to
+            None (the default), the status will be updated indefinitely until
+            the request succeeded or failed.
+        sleep : number or None
+            Time in seconds between status updates (defaults to 3 seconds).
+            If set to None, a server supplied value is used.
+        retries_notfound : integer
+            Number of retries in case the request was not found on the server.
+            Note that it usually takes a short time until a new request is
+            registered on the server, so a value too low might cause an
+            exception to be raised, even if the request is valid and will
+            eventually show up on the server.
+        verbose : bool or None
+            Set to True if status messages should be printed to stdout. If set
+            to None, the verbose flag of the current ExportRequest instance is
+            used instead.
+
+        Returns
+        -------
+        True if the request succeeded or False if a timeout occured. In case
+        of an error a DrmsExportError exception is raised.
+        """
+        if timeout is not None:
+            t_start = time.time()
+            timeout = float(timeout)
+        if sleep is not None:
+            sleep = float(sleep)
+        retries_notfound = int(retries_notfound)
+        if verbose is None:
+            verbose = self._verbose
+
+        # We are done, if the request has already finished.
+        if self.has_finished(skip_update=True):
+            self._raise_on_error()
+            return True
+
+        while True:
+            if verbose:
+                idstr = str(None) if self._requestid is None else (
+                    '"%s"' % self._requestid)
+                print('Export request pending. [id=%s, status=%d]' % (
+                    idstr, self._status))
+
+            # Use the user-provided sleep value or the server's wait value.
+            # In case neither is available, wait for 5 seconds.
+            wait_secs = self._d.get('wait', 5) if sleep is None else sleep
+
+            # Consider the time that passed since the last status update.
+            wait_secs -= (time.time() - self._d_time)
+            if wait_secs < 0:
+                wait_secs = 0
+
+            if timeout is not None:
+                # Return, if we would time out while sleeping.
+                if t_start + timeout + wait_secs - time.time() < 0:
+                    return False
+
+            if verbose:
+                print('Waiting for %d seconds...' % round(wait_secs))
+            time.sleep(wait_secs)
+
+            if self.has_finished():
+                self._raise_on_error()
+                return True
+            elif self._status == self._status_code_notfound:
+                # Raise exception, if no retries are left.
+                if retries_notfound <= 0:
+                    self._raise_on_error(notfound_ok=False)
+                if verbose:
+                    print('Request not found on server, %d retries left.' %
+                          retries_notfound)
+                retries_notfound -= 1
+
+
 class Client(object):
     def __init__(self, baseurl=None, encoding='latin1', debug=False):
         """
@@ -669,6 +934,45 @@ class Client(object):
             List containing paths to all the requested FITS files.
         """
         return self._json.export_old(ds, requestor, notify)
+
+    def export(self, ds, email, method='url_quick', protocol='as-is',
+               protocol_args=None, requestor=None, verbose=False):
+        """
+        Submit a data export request.
+
+        Parameters
+        ----------
+        ds : string
+        email : string
+        method : string
+        protocol : string
+        protocol_args : dict
+        requestor : string
+        verbose : bool
+
+        Returns
+        -------
+        result : ExportRequest
+        """
+        d = self._json.exp_request(
+            ds, email, method=method, protocol=protocol,
+            protocol_args=protocol_args, requestor=requestor)
+        return ExportRequest(d, client=self, verbose=verbose)
+
+    def export_from_id(self, requestid, verbose=False):
+        """
+        Create an ExportRequest instance from an already existing requestid.
+
+        Parameters
+        ----------
+        requestid : string
+
+        Returns
+        -------
+        result : ExportRequest
+        """
+        return ExportRequest._create_from_id(
+            requestid, client=self, verbose=verbose)
 
     def series(self, ds_filter=None):
         """
