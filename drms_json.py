@@ -62,14 +62,59 @@ else:
         return pd.to_numeric(arg, errors='coerce')
 
 
-# Base URL shortcuts
-_locations = {
-    'jsoc': 'http://jsoc.stanford.edu/cgi-bin/ajax/',
-    'kis': 'http://drms.leibniz-kis.de/cgi-bin/'
-}
+class Location(object):
+    def __init__(self, name, cgi_baseurl,
+                 cgi_show_series='show_series',
+                 cgi_jsoc_info='jsoc_info',
+                 cgi_jsoc_fetch=None,
+                 cgi_check_address=None,
+                 http_download_baseurl=None,
+                 ftp_download_baseurl=None):
+        self.name = name
+        self.cgi_baseurl = cgi_baseurl
+        self.cgi_show_series = cgi_show_series
+        if cgi_show_series is not None:
+            self.url_show_series = urljoin(cgi_baseurl, cgi_show_series)
+        self.cgi_jsoc_info = cgi_jsoc_info
+        if cgi_jsoc_info is not None:
+            self.url_jsoc_info = urljoin(cgi_baseurl, cgi_jsoc_info)
+        self.cgi_jsoc_fetch = cgi_jsoc_fetch
+        if cgi_jsoc_fetch is not None:
+            self.url_jsoc_fetch = urljoin(cgi_baseurl, cgi_jsoc_fetch)
+        self.cgi_check_address = cgi_check_address
+        if cgi_check_address is not None:
+            self.url_check_address = urljoin(cgi_baseurl, cgi_check_address)
+        self.http_download_baseurl = http_download_baseurl
+        self.ftp_download_baseurl = ftp_download_baseurl
 
-# Set the default base URL
-_locations[None] = _locations['jsoc']
+    def __repr__(self):
+        return '<Location "%s">' % self.name
+
+
+def register_location(loc):
+    global _locations
+    name = loc.name.lower()
+    if name in _locations:
+        raise RuntimeError('Location "%s" already registered' % name)
+    _locations[loc.name.lower()] = loc
+
+
+# Register known locations
+_locations = {}
+register_location(Location(
+    name='jsoc',
+    cgi_baseurl='http://jsoc.stanford.edu/cgi-bin/ajax/',
+    cgi_show_series='show_series',
+    cgi_jsoc_info='jsoc_info',
+    cgi_jsoc_fetch='jsoc_fetch',
+    cgi_check_address='checkAddress.sh',
+    http_download_baseurl='http://jsoc.stanford.edu/',
+    ftp_download_baseurl='ftp://pail.stanford.edu/export/'))
+register_location(Location(
+    name='kis',
+    cgi_baseurl='http://drms.leibniz-kis.de/cgi-bin/',
+    cgi_show_series='show_series',
+    cgi_jsoc_info='jsoc_info'))
 
 
 # Constants for jsoc_info calls
@@ -170,23 +215,27 @@ class JsonRequest(object):
 
 
 class JsonClient(object):
-    def __init__(self, baseurl=None, encoding='latin1', debug=False):
+    def __init__(self, location='jsoc', encoding='latin1', debug=False):
         """
         Parameters
         ----------
-        baseurl : string or None
-            Base URL of the DRMS CGIs. Defaults to JSOC.
+        location : string or Location
+            Registered server location ID or Location instance.
+            Defaults to JSOC.
         encoding : string
-            Character encoding. Defaults to 'latin1'
+            Character encoding (default is 'latin1').
         debug : boolean
-            Enable or disable debug mode. Default is disabled.
+            Enable or disable debug mode (default is disabled).
         """
         self._encoding = encoding
-        self.baseurl = baseurl
+        if isinstance(location, Location):
+            self._loc = location
+        else:
+            self._loc = _locations[location.lower()]
         self.debug = debug
 
     def __repr__(self):
-        return '<JsonClient "%s">' % self.baseurl
+        return '<JsonClient "%s">' % self._loc.cgi_baseurl
 
     def _json_request(self, url):
         if self.debug:
@@ -194,22 +243,8 @@ class JsonClient(object):
         return JsonRequest(url, self._encoding)
 
     @property
-    def baseurl(self):
-        return self._baseurl
-
-    @baseurl.setter
-    def baseurl(self, value):
-        if value is None:
-            baseurl = _locations[None]
-        else:
-            baseurl = _locations.get(value.lower(), None)
-            if baseurl is None:
-                baseurl = value
-        self._url_show_series = urljoin(baseurl, 'show_series')
-        self._url_jsoc_info = urljoin(baseurl, 'jsoc_info')
-        self._url_jsoc_fetch = urljoin(baseurl, 'jsoc_fetch')
-        self._url_check_address = urljoin(baseurl, 'checkAddress.sh')
-        self._baseurl = baseurl
+    def location(self):
+        return self._loc
 
     @property
     def debug(self):
@@ -235,7 +270,7 @@ class JsonClient(object):
         query = '?' if ds_filter is not None else ''
         if ds_filter is not None:
             query += urlencode({'filter': ds_filter})
-        req = self._json_request(self._url_show_series + query)
+        req = self._json_request(self._loc.url_show_series + query)
         return req.data
 
     def series_struct(self, ds):
@@ -253,7 +288,7 @@ class JsonClient(object):
             Dictionary containing information about the data series.
         """
         query = '?' + urlencode({'op': 'series_struct', 'ds': ds})
-        req = self._json_request(self._url_jsoc_info + query)
+        req = self._json_request(self._loc.url_jsoc_info + query)
         return req.data
 
     def export_old(self, ds, requestor, notify):
@@ -292,7 +327,7 @@ class JsonClient(object):
             'op': 'exp_request', 'protocol': 'fits', 'format': 'json',
             'method': 'url', 'requestor': requestor, 'notify': notify,
             'ds': ds})
-        req = self._json_request(self._url_jsoc_fetch + query)
+        req = self._json_request(self._loc.url_jsoc_fetch + query)
 
         # waiting for the request to be ready
         if (int(req.data['status']) == 1 or int(req.data['status']) == 2):
@@ -304,14 +339,16 @@ class JsonClient(object):
                       'at least 20 seconds.')
                 time.sleep(15)
                 while True:
-                    req = self._json_request(self._url_jsoc_fetch + query)
+                    req = self._json_request(self._loc.url_jsoc_fetch + query)
                     if int(req.data['status']) in [1, 2, 6]:
                         time.sleep(5)
                     elif int(req.data['status']) == 0:
                         dir = req.data['dir']
                         for dataobj in req.data['data']:
-                            supath.append(urljoin(self.baseurl, os.path.join(
-                                req.data['dir'], dataobj['filename'])))
+                            supath.append(urljoin(
+                                self._loc.http_download_baseurl,
+                                os.path.join(
+                                    req.data['dir'], dataobj['filename'])))
                         break
                     else:
                         print(type(req.data['status']))
@@ -336,7 +373,7 @@ class JsonClient(object):
                 'DRMS Query failed, series is not a valid series, status=%s' %
                 req.data['status'])
         print("All the data are available at:")
-        print(str(urljoin(self.baseurl, req.data['dir'])))
+        print(str(urljoin(self._loc.http_download_baseurl, req.data['dir'])))
         return supath
 
     def rs_summary(self, ds):
@@ -354,7 +391,7 @@ class JsonClient(object):
             Dictionary containg 'count', 'status' and 'runtime'.
         """
         query = '?' + urlencode({'op': 'rs_summary', 'ds': ds})
-        req = self._json_request(self._url_jsoc_info + query)
+        req = self._json_request(self._loc.url_jsoc_info + query)
         return req.data
 
     def rs_list(self, ds, key=None, seg=None, link=None, uid=None):
@@ -391,7 +428,7 @@ class JsonClient(object):
         if uid is not None:
             d['userhandle'] = uid
         query = '?' + urlencode(d)
-        req = self._json_request(self._url_jsoc_info + query)
+        req = self._json_request(self._loc.url_jsoc_info + query)
         return req.data
 
     def check_address(self, email):
@@ -413,7 +450,7 @@ class JsonClient(object):
         """
         query = '?' + urlencode({
             'address': quote_plus(email), 'checkonly': '1'})
-        req = self._json_request(self._url_check_address + query)
+        req = self._json_request(self._loc.url_check_address + query)
         return req.data
 
     def exp_request(self, ds, notify, method='url_quick', protocol='as-is',
@@ -486,7 +523,7 @@ class JsonClient(object):
         if requestor is not None:
             d['requestor'] = requestor
         query = '?' + urlencode(d)
-        req = self._json_request(self._url_jsoc_fetch + query)
+        req = self._json_request(self._loc.url_jsoc_fetch + query)
         return req.data
 
     def exp_status(self, requestid):
@@ -503,7 +540,7 @@ class JsonClient(object):
         result : dict
         """
         query = '?' + urlencode({'op': 'exp_status', 'requestid': requestid})
-        req = self._json_request(self._url_jsoc_fetch + query)
+        req = self._json_request(self._loc.url_jsoc_fetch + query)
         return req.data
 
 
@@ -848,23 +885,24 @@ class ExportRequest(object):
 
 
 class Client(object):
-    def __init__(self, baseurl=None, encoding='latin1', debug=False):
+    def __init__(self, location='jsoc', encoding='latin1', debug=False):
         """
         Parameters
         ----------
-        baseurl : string or None
-            Base URL of the DRMS CGIs. Defaults to JSOC.
+        location : string or Location
+            Registered server location ID or Location instance.
+            Defaults to JSOC.
         encoding : string
-            Character encoding. Defaults to 'latin1'
+            Character encoding (default is 'latin1').
         debug : boolean
-            Enable or disable debug mode. Default is disabled.
+            Enable or disable debug mode (default is disabled).
         """
         self._json = JsonClient(
-            baseurl=baseurl, encoding=encoding, debug=debug)
+            location=location, encoding=encoding, debug=debug)
         self._info_cache = {}
 
     def __repr__(self):
-        return '<Client "%s">' % self.baseurl
+        return '<Client "%s">' % self.location.cgi_baseurl
 
     def _convert_numeric_keywords(self, ds, kdf, skip_conversion=None):
         si = self.info(ds)
@@ -895,13 +933,8 @@ class Client(object):
         return self._json
 
     @property
-    def baseurl(self):
-        return self._json.baseurl
-
-    @baseurl.setter
-    def baseurl(self, value):
-        self._json.baseurl = value
-        self._info_cache = {}
+    def location(self):
+        return self._json.location
 
     @property
     def debug(self):
