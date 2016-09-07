@@ -968,6 +968,26 @@ class Client(object):
         """
         return self._json.export_old(ds, requestor, notify)
 
+    def check_email(self, email):
+        """
+        Check if the email address is registered for data export. You can
+        register your email for data export from JSOC at:
+
+            http://jsoc.stanford.edu/ajax/register_email.html
+
+        Parameters
+        ----------
+        email : string
+            Email address to be checked.
+
+        Returns
+        -------
+        True if the email address is valid and registered, False otherwise.
+        """
+        res = self._json.check_address(email)
+        status = res.get('status')
+        return status is not None and int(status) == 2
+
     def export(self, ds, email, method='url_quick', protocol='as-is',
                protocol_args=None, requestor=None, verbose=False):
         """
