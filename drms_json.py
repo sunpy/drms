@@ -136,6 +136,12 @@ def _split_arg(arg):
     return arg
 
 
+def _extract_series_name(ds):
+    """Extract series name from record set."""
+    m = re.match(r'^\s*([\w\.]+).*$', ds)
+    return m.group(1) if m is not None else None
+
+
 def to_datetime(tstr, force=False):
     """
     Tries to parse JSOC time strings. In general, this is quite complicated
@@ -465,7 +471,7 @@ class JsonClient(object):
         method : string
         protocol : string
         protocol_args : dict or None
-        filenamefmt : string or None
+        filenamefmt : string, None
         requestor : string or None
 
         Returns
@@ -518,6 +524,7 @@ class JsonClient(object):
 
         d = {'op': 'exp_request', 'format': 'json', 'ds': ds,
              'notify': notify, 'method': method, 'protocol': protocol}
+
         if filenamefmt is not None:
             d['filenamefmt'] = filenamefmt
         if requestor is not None:
@@ -928,6 +935,26 @@ class Client(object):
             if k in num_keys:
                 kdf[k] = _pd_to_numeric_coerce(kdf.pop(k))
 
+    def _generate_filenamefmt(self, sname):
+        """Generate filename format string for export requests."""
+        try:
+            si = self.info(sname)
+        except:
+            # Cannot generate filename format for unknown series.
+            return None
+
+        pkfmt_list = []
+        for k in si.primekeys:
+            if si.keywords.loc[k].is_time:
+                pkfmt_list.append('{%s:A}' % k)
+            else:
+                pkfmt_list.append('{%s}' % k)
+
+        if pkfmt_list:
+            return '%s.%s.{segment}' % (si.name, '.'.join(pkfmt_list))
+        else:
+            return si.name + '.{recnum:%lld}.{segment}'
+
     @property
     def json(self):
         return self._json
@@ -989,7 +1016,8 @@ class Client(object):
         return status is not None and int(status) == 2
 
     def export(self, ds, email, method='url_quick', protocol='as-is',
-               protocol_args=None, requestor=None, verbose=False):
+               protocol_args=None, filenamefmt=None, requestor=None,
+               verbose=False):
         """
         Submit a data export request.
 
@@ -1000,16 +1028,23 @@ class Client(object):
         method : string
         protocol : string
         protocol_args : dict
-        requestor : string
+        filenamefmt : string, None or False
+        requestor : string or None
         verbose : bool
 
         Returns
         -------
         result : ExportRequest
         """
+        if filenamefmt is None:
+            sname = _extract_series_name(ds)
+            filenamefmt = self._generate_filenamefmt(sname)
+        elif filenamefmt is False:
+            filenamefmt = None
         d = self._json.exp_request(
             ds, email, method=method, protocol=protocol,
-            protocol_args=protocol_args, requestor=requestor)
+            protocol_args=protocol_args, filenamefmt=filenamefmt,
+            requestor=requestor)
         return ExportRequest(d, client=self, verbose=verbose)
 
     def export_from_id(self, requestid, verbose=False):
