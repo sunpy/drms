@@ -1308,11 +1308,12 @@ class Client(object):
         result : SeriesInfo
             SeriesInfo instance containing information about the data series.
         """
-        m = re.match(r'\s*([\w\.]*)\s*\[*.*\]*', ds)
-        name = m.group(1) if m else None
+        name = _extract_series_name(ds)
+        if name is not None:
+            name = name.lower()
         if name in self._info_cache:
             return self._info_cache[name]
-        d = self._json.series_struct(ds)
+        d = self._json.series_struct(name)
         status = d.get('status')
         if status != 0:
             self._raise_query_error(d)
