@@ -476,7 +476,7 @@ class JsonClient(object):
         protocol : string
         protocol_args : dict or None
         filenamefmt : string, None
-        requestor : string or None
+        requestor : string, None or False
 
         Returns
         -------
@@ -531,8 +531,12 @@ class JsonClient(object):
 
         if filenamefmt is not None:
             d['filenamefmt'] = filenamefmt
-        if requestor is not None:
+
+        if requestor is None:
+            d['requestor'] = notify.split('@')[0]
+        elif requestor is not False:
             d['requestor'] = requestor
+
         query = '?' + urlencode(d)
         req = self._json_request(self._loc.url_jsoc_fetch + query)
         return req.data
@@ -1033,7 +1037,7 @@ class Client(object):
         protocol : string
         protocol_args : dict
         filenamefmt : string, None or False
-        requestor : string or None
+        requestor : string, None or False
         verbose : bool
 
         Returns
