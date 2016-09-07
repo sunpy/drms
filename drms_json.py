@@ -808,7 +808,7 @@ class ExportRequest(object):
             return False
         return self._status not in self._status_codes_ok_or_pending
 
-    def wait(self, timeout=None, sleep=3, retries_notfound=5, verbose=None):
+    def wait(self, timeout=None, sleep=5, retries_notfound=5, verbose=None):
         """
         Wait for the server to process the export request. This method
         continously updates the request status until the server signals
@@ -821,7 +821,7 @@ class ExportRequest(object):
             None (the default), the status will be updated indefinitely until
             the request succeeded or failed.
         sleep : number or None
-            Time in seconds between status updates (defaults to 3 seconds).
+            Time in seconds between status updates (defaults to 5 seconds).
             If set to None, a server supplied value is used.
         retries_notfound : integer
             Number of retries in case the request was not found on the server.
