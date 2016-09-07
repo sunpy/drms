@@ -705,31 +705,48 @@ class ExportRequest(object):
         self._verbose = bool(value)
 
     @property
+    def json(self):
+        """Dictionary containing the latest export request JSON reply"""
+        return self._d
+
+    @property
     def id(self):
+        """Request ID"""
         return self._requestid
 
     @property
     def status(self):
+        """Export request status"""
         return self._status
 
     @property
     def method(self):
+        """Export method"""
         return self._d.get('method')
 
     @property
     def protocol(self):
+        """Export protocol"""
         return self._d.get('protocol')
 
     @property
     def dir(self):
+        """Common directory of the requested files on the server"""
         if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
             self.wait()
-        return self._d.get('dir')
+        data_dir = self._d.get('dir')
+        return data_dir if data_dir else None
 
     @property
     def data(self):
+        """
+        Records and filenames of the export request.
+
+        Returns a DataFrame containing the records and filenames of the
+        export request (DataFrame columns: 'record', 'filename').
+        """
         if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
@@ -738,19 +755,34 @@ class ExportRequest(object):
 
     @property
     def tarfile(self):
+        """Filename, if a TAR file was requested"""
         if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
             self.wait()
-        return self._d.get('tarfile')
+        data_tarfile = self._d.get('tarfile')
+        return data_tarfile if data_tarfile else None
 
     @property
     def keywords(self):
+        """Filename of textfile containing record keywords"""
         if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
             self.wait()
-        return self._d.get('keywords')
+        data_keywords = self._d.get('keywords')
+        return data_keywords if data_keywords else None
+
+    @property
+    def request_url(self):
+        """URL of the export request"""
+        data_dir = self.dir
+        http_baseurl = self._client.location.http_download_baseurl
+        if data_dir is None or http_baseurl is None:
+            return None
+        if data_dir.startswith('/'):
+            data_dir = data_dir[1:]
+        return urljoin(http_baseurl, data_dir)
 
     def has_finished(self, skip_update=False):
         """
