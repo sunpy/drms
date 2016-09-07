@@ -1254,97 +1254,6 @@ class Client(object):
     def debug(self, value):
         self._json.debug = value
 
-    def export_old(self, ds, requestor, notify):
-        """
-        This function exports data as FITS files. To do this, the function
-        binds metadata (keywords) to images (arrays) to create FITS files and
-        then serves the FITS files at jsoc.stanford.edu.
-        Written by Monica Bobra and Art Amezcua
-        19 July 2016
-
-        Parameters
-        ----------
-        requestor : string
-            Username of requestor.
-        notify : string
-            E-mail address of requestor.
-        ds : string
-            Name of the data series.
-
-        Returns
-        -------
-        supath : list
-            List containing paths to all the requested FITS files.
-        """
-        return self._json.export_old(ds, requestor, notify)
-
-    def check_email(self, email):
-        """
-        Check if the email address is registered for data export. You can
-        register your email for data export from JSOC at:
-
-            http://jsoc.stanford.edu/ajax/register_email.html
-
-        Parameters
-        ----------
-        email : string
-            Email address to be checked.
-
-        Returns
-        -------
-        True if the email address is valid and registered, False otherwise.
-        """
-        res = self._json.check_address(email)
-        status = res.get('status')
-        return status is not None and int(status) == 2
-
-    def export(self, ds, email, method='url_quick', protocol='as-is',
-               protocol_args=None, filenamefmt=None, requestor=None,
-               verbose=False):
-        """
-        Submit a data export request.
-
-        Parameters
-        ----------
-        ds : string
-        email : string
-        method : string
-        protocol : string
-        protocol_args : dict
-        filenamefmt : string, None or False
-        requestor : string, None or False
-        verbose : bool
-
-        Returns
-        -------
-        result : ExportRequest
-        """
-        if filenamefmt is None:
-            sname = _extract_series_name(ds)
-            filenamefmt = self._generate_filenamefmt(sname)
-        elif filenamefmt is False:
-            filenamefmt = None
-        d = self._json.exp_request(
-            ds, email, method=method, protocol=protocol,
-            protocol_args=protocol_args, filenamefmt=filenamefmt,
-            requestor=requestor)
-        return ExportRequest(d, client=self, verbose=verbose)
-
-    def export_from_id(self, requestid, verbose=False):
-        """
-        Create an ExportRequest instance from an already existing requestid.
-
-        Parameters
-        ----------
-        requestid : string
-
-        Returns
-        -------
-        result : ExportRequest
-        """
-        return ExportRequest._create_from_id(
-            requestid, client=self, verbose=verbose)
-
     def series(self, ds_filter=None):
         """
         List available data series.
@@ -1516,6 +1425,97 @@ class Client(object):
             return res[0]
         else:
             return tuple(res)
+
+    def export_old(self, ds, requestor, notify):
+        """
+        This function exports data as FITS files. To do this, the function
+        binds metadata (keywords) to images (arrays) to create FITS files and
+        then serves the FITS files at jsoc.stanford.edu.
+        Written by Monica Bobra and Art Amezcua
+        19 July 2016
+
+        Parameters
+        ----------
+        requestor : string
+            Username of requestor.
+        notify : string
+            E-mail address of requestor.
+        ds : string
+            Name of the data series.
+
+        Returns
+        -------
+        supath : list
+            List containing paths to all the requested FITS files.
+        """
+        return self._json.export_old(ds, requestor, notify)
+
+    def check_email(self, email):
+        """
+        Check if the email address is registered for data export. You can
+        register your email for data export from JSOC at:
+
+            http://jsoc.stanford.edu/ajax/register_email.html
+
+        Parameters
+        ----------
+        email : string
+            Email address to be checked.
+
+        Returns
+        -------
+        True if the email address is valid and registered, False otherwise.
+        """
+        res = self._json.check_address(email)
+        status = res.get('status')
+        return status is not None and int(status) == 2
+
+    def export(self, ds, email, method='url_quick', protocol='as-is',
+               protocol_args=None, filenamefmt=None, requestor=None,
+               verbose=False):
+        """
+        Submit a data export request.
+
+        Parameters
+        ----------
+        ds : string
+        email : string
+        method : string
+        protocol : string
+        protocol_args : dict
+        filenamefmt : string, None or False
+        requestor : string, None or False
+        verbose : bool
+
+        Returns
+        -------
+        result : ExportRequest
+        """
+        if filenamefmt is None:
+            sname = _extract_series_name(ds)
+            filenamefmt = self._generate_filenamefmt(sname)
+        elif filenamefmt is False:
+            filenamefmt = None
+        d = self._json.exp_request(
+            ds, email, method=method, protocol=protocol,
+            protocol_args=protocol_args, filenamefmt=filenamefmt,
+            requestor=requestor)
+        return ExportRequest(d, client=self, verbose=verbose)
+
+    def export_from_id(self, requestid, verbose=False):
+        """
+        Create an ExportRequest instance from an already existing requestid.
+
+        Parameters
+        ----------
+        requestid : string
+
+        Returns
+        -------
+        result : ExportRequest
+        """
+        return ExportRequest._create_from_id(
+            requestid, client=self, verbose=verbose)
 
 
 if __name__ == '__main__':
