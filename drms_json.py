@@ -189,8 +189,10 @@ def to_datetime(tstr, force=False):
 class DrmsError(RuntimeError):
     pass
 
+
 class DrmsQueryError(DrmsError):
     pass
+
 
 class DrmsExportError(DrmsError):
     pass
@@ -1153,6 +1155,17 @@ class Client(object):
             if k in num_keys:
                 kdf[k] = _pd_to_numeric_coerce(kdf.pop(k))
 
+    @staticmethod
+    def _raise_query_error(d, status=None):
+        """Raises a DrmsQueryError, using the json error message from d"""
+        if status is None:
+            status = d.get('status')
+        msg = d.get('error')
+        if msg is None:
+            msg = 'DRMS Query failed.'
+        msg += ' [status=%s]' % status
+        raise DrmsQueryError(msg)
+
     def _generate_filenamefmt(self, sname):
         """Generate filename format string for export requests."""
         try:
@@ -1271,9 +1284,9 @@ class Client(object):
             series.
         """
         d = self._json.show_series(ds_filter)
-        if d['status'] != 0:
-            raise RuntimeError(
-                'DRMS Query failed, status=%d' % d['status'])
+        status = d.get('status')
+        if status != 0:
+            self._raise_query_error(d)
         keys = ('name', 'primekeys', 'note')
         if not d['names']:
             return pd.DataFrame(columns=keys)
@@ -1300,9 +1313,9 @@ class Client(object):
         if name in self._info_cache:
             return self._info_cache[name]
         d = self._json.series_struct(ds)
-        if d['status'] != 0:
-            raise RuntimeError(
-                'DRMS Query failed, status=%d' % d['status'])
+        status = d.get('status')
+        if status != 0:
+            self._raise_query_error(d)
         si = SeriesInfo(d, name=name)
         if name is not None:
             self._info_cache[name] = si
@@ -1389,9 +1402,9 @@ class Client(object):
             Queried links
         """
         lres = self._json.rs_list(ds, key, seg, link)
-        if lres['status'] != 0:
-            raise RuntimeError(
-                'DRMS Query failed, status=%d' % lres['status'])
+        status = lres.get('status')
+        if status != 0:
+            self._raise_query_error(lres)
         res = []
         if key is not None:
             if 'keywords' in lres:
