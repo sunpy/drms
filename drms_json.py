@@ -29,7 +29,8 @@ import os
 import time
 import json
 import six
-from six.moves.urllib.request import urlopen
+from six.moves.urllib.request import urlopen, urlretrieve
+from six.moves.urllib.error import HTTPError, URLError
 from six.moves.urllib.parse import urlencode, urljoin, quote_plus
 import pandas as pd
 import numpy as np
@@ -747,6 +748,16 @@ class ExportRequest(object):
         del res['fpath']
         return res
 
+    @staticmethod
+    def _next_available_filename(fname):
+        """Find next available filename, append a number if neccessary."""
+        i = 1
+        new_fname = fname
+        while os.path.exists(new_fname):
+            new_fname = '%s.%d' % (fname, i)
+            i += 1
+        return new_fname
+
     @property
     def verbose(self):
         return self._verbose
@@ -993,6 +1004,112 @@ class ExportRequest(object):
                           retries_notfound)
                 retries_notfound -= 1
 
+    def download(self, directory, index=None, fname_from_rec=None,
+                 verbose=None):
+        """
+        Download data files. By default, filenames are generated from the
+        corresponding record names (see parameter fname_from_rec). In case a
+        file with the same name already exists in the download directory, an
+        ascending number is appended to the filename.
+
+        Note: Downloading data segments that are directories, e.g. data
+        segments from series like "hmi.rdVflows_fd15_frame", is currently
+        not supported. In order to download data from series like this,
+        you need to use the export methods 'url-tar' or 'ftp-tar' when
+        submitting the data export request.
+
+        Parameters
+        ----------
+        directory : string
+            Download directory (must already exist).
+        index : integer, list of integers or None
+            Index (or indices) of the file(s) to be downloaded. If set to
+            None (the default), all files of the export request are
+            downloaded. Note that this parameter is ignored for export methods
+            'url-tar' and 'ftp-tar', where only a single tar file is available
+            for download.
+        fname_from_rec : bool or None
+            If True, local filenames are generated from record names. If set to
+            False, the original filenames are used. If set to None (the
+            default), local filenames are generated only for export method
+            'url_quick'. Exceptions: For exports with methods 'url-tar' and
+            'ftp-tar', no filename will be generated. This also applies to
+            movie files from exports with protocols 'mpg' or 'mp4', where the
+            original filename is used locally.
+        verbose : bool or None
+            Set to True if status messages should be printed to stdout. If set
+            to None, the verbose flag of the current ExportRequest instance is
+            used instead.
+
+        Returns
+        -------
+        result : pandas.DataFrame
+            DataFrame containing the record string, download URL and local
+            location of each downloaded file (DataFrame columns: 'record',
+            'url' and 'download').
+        """
+        out_dir = os.path.abspath(directory)
+        if not os.path.isdir(out_dir):
+            raise IOError('Download directory "%s" does not exist' % out_dir)
+
+        if np.isscalar(index):
+            index = [int(index)]
+        elif index is not None:
+            index = list(index)
+
+        if verbose is None:
+            verbose = self.verbose
+
+        # Wait until the export request has finished.
+        self.wait(verbose=verbose)
+
+        if fname_from_rec is None:
+            # For 'url_quick', generate local filenames from record strings.
+            if self.method == 'url_quick':
+                fname_from_rec = True
+
+        # self.urls contains the same records as self.data, except for the tar
+        # methods, where self.urls only contains one entry, the TAR file.
+        data = self.urls
+        if index is not None and self.tarfile is None:
+            data = data.iloc[index].copy()
+        ndata = len(data)
+
+        downloads = []
+        for i in range(ndata):
+            di = data.iloc[i]
+            if fname_from_rec:
+                filename = self._client._filename_from_export_record(
+                    di.record, old_fname=di.filename)
+                if filename is None:
+                    filename = di.filename
+            else:
+                filename = di.filename
+
+            fpath = os.path.join(out_dir, filename)
+            fpath_new = self._next_available_filename(fpath)
+            fpath_tmp = self._next_available_filename(fpath_new + '.part')
+            if verbose:
+                print('Downloading file %d of %d...' % (i + 1, ndata))
+                print('    record: %s' % di.record)
+                print('  filename: %s' % di.filename)
+            try:
+                urlretrieve(di.url, fpath_tmp)
+            except (HTTPError, URLError):
+                fpath_new = None
+                if verbose:
+                    print('  -> Error: Could not download file')
+            else:
+                fpath_new = self._next_available_filename(fpath)
+                os.rename(fpath_tmp, fpath_new)
+                if verbose:
+                    print('  -> "%s"' % os.path.relpath(fpath_new))
+            downloads.append(fpath_new)
+
+        res = data[['record', 'url']].copy()
+        res['download'] = downloads
+        return res
+
 
 class Client(object):
     def __init__(self, location='jsoc', encoding='latin1', debug=False):
@@ -1057,6 +1174,75 @@ class Client(object):
             return '%s.%s.{segment}' % (si.name, '.'.join(pkfmt_list))
         else:
             return si.name + '.{recnum:%lld}.{segment}'
+
+    # Some regular expressions used to parse export request queries.
+    _re_export_recset = re.compile(
+        r'^\s*([\w\.]+)\s*(\[.*\])?\s*(?:\{([\w\s\.,]*)\})?\s*$')
+    _re_export_recset_pkeys = re.compile(r'\[([^\[^\]]*)\]')
+    _re_export_recset_slist = re.compile(r'[\s,]+')
+
+    @staticmethod
+    def _parse_export_recset(rs):
+        """Parse export request record set."""
+        if rs is None:
+            return None, None, None
+        m = Client._re_export_recset.match(rs)
+        if not m:
+            return None, None, None
+        sname, pkeys, segs = m.groups()
+        if pkeys is not None:
+            pkeys = Client._re_export_recset_pkeys.findall(pkeys)
+        if segs is not None:
+            segs = Client._re_export_recset_slist.split(segs)
+        return sname, pkeys, segs
+
+    def _filename_from_export_record(self, rs, old_fname=None):
+        """Generate a filename from an export request record."""
+        sname, pkeys, segs = self._parse_export_recset(rs)
+        if sname is None:
+            return None
+
+        # We need to identify time primekeys and change the time strings to
+        # make them suitable for filenames.
+        try:
+            si = self.info(sname)
+        except:
+            # Cannot generate filename for unknown series.
+            return None
+
+        if pkeys is not None:
+            n = len(pkeys)
+            if n != len(si.primekeys):
+                # Number of parsed pkeys differs from series definition.
+                return None
+            for i in range(n):
+                # Cleanup time strings.
+                if si.keywords.loc[si.primekeys[i]].is_time:
+                    v = pkeys[i]
+                    v = v.replace('.', '').replace(':', '').replace('-', '')
+                    pkeys[i] = v
+
+        # Generate filename.
+        fname = si.name
+        if pkeys is not None:
+            pkeys = [k for k in pkeys if k.strip()]
+            pkeys_str = '.'.join(pkeys)
+            if pkeys_str:
+                fname += '.' + pkeys_str
+        if segs is not None:
+            segs = [s for s in segs if s.strip()]
+            segs_str = '.'.join(segs)
+            if segs_str:
+                fname += '.' + segs_str
+
+        if old_fname is not None:
+            # Try to use the file extension of the original filename.
+            known_fname_extensions = [
+                '.fits', '.txt', '.jpg', '.mpg', '.mp4', '.tar']
+            for ext in known_fname_extensions:
+                if old_fname.endswith(ext):
+                    return fname + ext
+        return fname
 
     @property
     def json(self):
