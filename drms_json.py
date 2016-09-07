@@ -1371,7 +1371,7 @@ class Client(object):
             skip_conversion=skip_conversion)
 
     def query(self, ds, key=None, seg=None, link=None, convert_numeric=True,
-              skip_conversion=None):
+              skip_conversion=None, pkeys=False):
         """
         Query keywords, segments and/or links of a record set. At least one
         of out of the key, seg or link parameters must be specified.
@@ -1381,31 +1381,43 @@ class Client(object):
         ds : string
             Record set query.
         key : string, list of strings or None
-            List of requested keywords, optional.
+            List of requested keywords, optional. If set to None (default),
+            no keyword results will be returned, except when pkeys is True.
         seg : string, list of strings or None
-            List of requested segments, optional.
+            List of requested segments, optional. If set to None (default),
+            no segment results will be returned.
         link : string, list of strings or None
-            List of requested Links, optional.
+            List of requested Links, optional. If set to None (default), no
+            link results will be returned.
         convert_numeric : boolean
             Convert keywords with numeric types from string to numbers. This
             may result in NaNs for invalid/missing values. Default is True.
         skip_conversion : list of strings or None
             List of keywords names to be skipped when performing a numeric
-            conversion.
+            conversion. Default is None.
+        pkeys : boolean
+            If True, all primekeys of the series are added to the key list.
 
         Returns
         -------
-        res_key : pandas.DataFrame (if key is not None)
+        res_key : pandas.DataFrame (if key is not None or pkeys is True)
             Queried keywords
         res_seg : pandas.DataFrame (if seg is not None)
             Queried segments
         res_link : pandas.DataFrame (if link is not None)
             Queried links
         """
+        if pkeys:
+            pk = self.pkeys(ds)
+            key = _split_arg(key) if key is not None else []
+            key = [k for k in key if k not in pk]
+            key = pk + key
+
         lres = self._json.rs_list(ds, key, seg, link)
         status = lres.get('status')
         if status != 0:
             self._raise_query_error(lres)
+
         res = []
         if key is not None:
             if 'keywords' in lres:
@@ -1417,6 +1429,7 @@ class Client(object):
             if convert_numeric:
                 self._convert_numeric_keywords(ds, res_key, skip_conversion)
             res.append(res_key)
+
         if seg is not None:
             if 'segments' in lres:
                 names = [it['name'] for it in lres['segments']]
@@ -1425,6 +1438,7 @@ class Client(object):
             else:
                 res_seg = pd.DataFrame()
             res.append(res_seg)
+
         if link is not None:
             if 'links' in lres:
                 names = [it['name'] for it in lres['links']]
@@ -1433,6 +1447,7 @@ class Client(object):
             else:
                 res_link = pd.DataFrame()
             res.append(res_link)
+
         if len(res) == 0:
             return None
         elif len(res) == 1:
