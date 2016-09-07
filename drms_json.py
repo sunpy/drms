@@ -35,7 +35,11 @@ import pandas as pd
 import numpy as np
 
 
-__all__ = ['JsonClient', 'Client', 'to_datetime', 'const']
+__all__ = [
+    'Location', 'register_location', 'const', 'to_datetime', 'DrmsError',
+    'DrmsQueryError', 'DrmsExportError', 'SeriesInfo', 'ExportRequest',
+    'Client']
+
 __author__ = 'Kolja Glogowski, Monica Bobra, Arthur Amezcua'
 __maintainer__ = 'Kolja Glogowski'
 __email__ = 'kolja@pixie.de'
