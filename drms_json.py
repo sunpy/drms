@@ -576,8 +576,8 @@ class SeriesInfo(object):
         self.links = self._parse_links(d['links'])
         self.segments = self._parse_segments(d['segments'])
 
-    @classmethod
-    def _parse_keywords(cls, d):
+    @staticmethod
+    def _parse_keywords(d):
         keys = [
             'name', 'type', 'recscope', 'defval', 'units', 'note', 'linkinfo']
         res = []
@@ -599,8 +599,8 @@ class SeriesInfo(object):
         res['is_numeric'] = (res.is_integer | res.is_real)
         return res
 
-    @classmethod
-    def _parse_links(cls, d):
+    @staticmethod
+    def _parse_links(d):
         keys = ['name', 'target', 'kind', 'note']
         res = []
         for di in d:
@@ -614,8 +614,8 @@ class SeriesInfo(object):
         res.index = res.pop('name')
         return res
 
-    @classmethod
-    def _parse_segments(cls, d):
+    @staticmethod
+    def _parse_segments(d):
         keys = ['name', 'type', 'units', 'protocol', 'dims', 'note']
         res = []
         for di in d:
@@ -657,15 +657,15 @@ class ExportRequest(object):
     @classmethod
     def _create_from_id(cls, requestid, client, verbose=False):
         d = client._json.exp_status(requestid)
-        return ExportRequest(d, client, verbose)
+        return cls(d, client, verbose)
 
     def __repr__(self):
         idstr = str(None) if self._requestid is None else (
             '"%s"' % self._requestid)
         return '<ExportRequest id=%s, status=%d>' % (idstr, self._status)
 
-    @classmethod
-    def _parse_data(cls, d):
+    @staticmethod
+    def _parse_data(d):
         keys = ['record', 'filename']
         res = None if d is None else [
             (di.get(keys[0]), di.get(keys[1])) for di in d]
