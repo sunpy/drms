@@ -203,9 +203,6 @@ class JsonRequest(object):
         self._data_str = None
         self._data = None
 
-    def _parse_json(self, data):
-        return json.loads(data.decode(self._encoding))
-
     def __repr__(self):
         return '<JsonRequest "%s">' % self.url
 
