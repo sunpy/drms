@@ -649,6 +649,7 @@ class ExportRequest(object):
         self._verbose = verbose
         self._requestid = None
         self._status = None
+        self._download_urls_cache = None
         self._update_status(d)
 
     @classmethod
@@ -695,6 +696,56 @@ class ExportRequest(object):
             msg = 'DRMS export request failed.'
         msg += ' [status=%d]' % self._status
         raise DrmsExportError(msg)
+
+    def _generate_download_urls(self):
+        """Generate download URLs for the current request."""
+        res = self.data.copy()
+        data_dir = self.dir
+
+        # Clear first record name for movies, as it is not a DRMS record.
+        if self.protocol in ['mpg', 'mp4']:
+            if res.record[0].startswith('movie'):
+                res.record[0] = None
+
+        # tar exports provide only a single TAR file with full path
+        if self.tarfile is not None:
+            data_dir = None
+            res = pd.DataFrame(
+                [(None, self.tarfile)], columns=['record', 'filename'])
+
+        # If data_dir is None, the filename column should contain the full
+        # path of the file and we need to extract the basename part. If
+        # data_dir contains a directory, the filename column should contain
+        # only the basename and we need to join it with the directory.
+        if data_dir is None:
+            res.rename(columns={'filename': 'fpath'}, inplace=True)
+            split_fpath = res.fpath.str.split('/')
+            res['filename'] = [sfp[-1] for sfp in split_fpath]
+        else:
+            res['fpath'] = data_dir + '/' + res.filename
+
+        if self.method.startswith('url'):
+            baseurl = self._client.location.http_download_baseurl
+        elif self.method.startswith('ftp'):
+            baseurl = self._client.location.ftp_download_baseurl
+        else:
+            raise RuntimeError(
+                'Download is not supported for export method "%s"' %
+                self.method)
+
+        # Generate download URLs.
+        urls = []
+        for fp in res.fpath:
+            while fp.startswith('/'):
+                fp = fp[1:]
+            urls.append(urljoin(baseurl, fp))
+        res['url'] = urls
+
+        # Remove rows with missing files.
+        res = res[res.filename != 'NoDataFile']
+
+        del res['fpath']
+        return res
 
     @property
     def verbose(self):
@@ -783,6 +834,18 @@ class ExportRequest(object):
         if data_dir.startswith('/'):
             data_dir = data_dir[1:]
         return urljoin(http_baseurl, data_dir)
+
+    @property
+    def urls(self):
+        """
+        URLs for all downloadable files of the export request.
+
+        Returns a DataFrame containing the records, filenames and URLs of the
+        export request (DataFrame columns: 'record', 'filename' and 'url').
+        """
+        if self._download_urls_cache is None:
+            self._download_urls_cache = self._generate_download_urls()
+        return self._download_urls_cache
 
     def has_finished(self, skip_update=False):
         """
