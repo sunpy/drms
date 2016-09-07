@@ -1243,10 +1243,6 @@ class Client(object):
         return fname
 
     @property
-    def json(self):
-        return self._json
-
-    @property
     def location(self):
         return self._json.location
 
