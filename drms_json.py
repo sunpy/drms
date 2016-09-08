@@ -199,6 +199,7 @@ class DrmsExportError(DrmsError):
 
 
 class JsonRequest(object):
+    """Class for handling HTTP/JSON requests."""
     def __init__(self, url, encoding):
         self._encoding = encoding
         self._http = urlopen(url)
@@ -228,6 +229,8 @@ class JsonRequest(object):
 class JsonClient(object):
     def __init__(self, location='jsoc', encoding='latin1', debug=False):
         """
+        HTTP/JSON communication with the DRMS server CGIs.
+
         Parameters
         ----------
         location : string or Location
@@ -472,16 +475,30 @@ class JsonClient(object):
         Parameters
         ----------
         ds : string
+            Data export record set query.
         notify : string
+            Registered email address.
         method : string
+            Export method. Supported methods are: 'url_quick', 'url',
+            'url-tar', 'ftp' and 'ftp-tar'. Default is 'url_quick'.
         protocol : string
+            Export protocol. Supported protocols are: 'as-is', 'fits', 'jpg',
+            'mpg' and 'mp4'. Default is 'as-is'.
         protocol_args : dict or None
+            Extra protocol arguments for protocols 'jpg', 'mpg' and 'mp4'.
+            Valid arguments are: 'ct', 'scaling', 'min', 'max' and 'size'.
         filenamefmt : string, None
+            Custom filename format string for exported files. This is ignored
+            for 'url_quick'/'as-is' data exports.
         requestor : string, None or False
+            Export user ID. Default is None, in which case the user name is
+            determined from the email address. If set to False, the requestor
+            argument will be omitted in the export request.
 
         Returns
         -------
         result : dict
+            Dictionary containing the server response to the export request.
         """
         method = method.lower()
         method_list = ['url_quick', 'url', 'url-tar', 'ftp', 'ftp-tar']
@@ -554,6 +571,7 @@ class JsonClient(object):
         Returns
         -------
         result : dict
+            Dictionary containing the export request status.
         """
         query = '?' + urlencode({'op': 'exp_status', 'requestid': requestid})
         req = self._json_request(self._loc.url_jsoc_fetch + query)
@@ -561,6 +579,7 @@ class JsonClient(object):
 
 
 class SeriesInfo(object):
+    """DRMS series details. Use Client.info() to create an instance."""
     def __init__(self, d, name=None):
         self.json = d
         self.name = name
@@ -768,7 +787,7 @@ class ExportRequest(object):
 
     @property
     def json(self):
-        """Dictionary containing the latest export request JSON reply"""
+        """Dictionary with the full JSON reply of the last status update"""
         return self._d
 
     @property
@@ -926,7 +945,7 @@ class ExportRequest(object):
         """
         Wait for the server to process the export request. This method
         continously updates the request status until the server signals
-        that export request has succeeded or failed.
+        that the export request has succeeded or failed.
 
         Parameters
         ----------
@@ -951,7 +970,7 @@ class ExportRequest(object):
         Returns
         -------
         True if the request succeeded or False if a timeout occured. In case
-        of an error a DrmsExportError exception is raised.
+        of an error an exception is raised.
         """
         if timeout is not None:
             t_start = time.time()
@@ -1007,8 +1026,11 @@ class ExportRequest(object):
     def download(self, directory, index=None, fname_from_rec=None,
                  verbose=None):
         """
-        Download data files. By default, filenames are generated from the
-        corresponding record names (see parameter fname_from_rec). In case a
+        Download data files.
+
+        By default, the server-side filenames are used as local filenames,
+        except for export method 'url_quick', where the local filenames are
+        generated from record names (see parameter fname_from_rec). In case a
         file with the same name already exists in the download directory, an
         ascending number is appended to the filename.
 
@@ -1030,12 +1052,12 @@ class ExportRequest(object):
             for download.
         fname_from_rec : bool or None
             If True, local filenames are generated from record names. If set to
-            False, the original filenames are used. If set to None (the
-            default), local filenames are generated only for export method
-            'url_quick'. Exceptions: For exports with methods 'url-tar' and
-            'ftp-tar', no filename will be generated. This also applies to
-            movie files from exports with protocols 'mpg' or 'mp4', where the
-            original filename is used locally.
+            False, the original filenames are used. If set to None (default),
+            local filenames are generated only for export method 'url_quick'.
+            Exceptions: For exports with methods 'url-tar' and 'ftp-tar', no
+            filename will be generated. This also applies to movie files from
+            exports with protocols 'mpg' or 'mp4', where the original filename
+            is used locally.
         verbose : bool or None
             Set to True if status messages should be printed to stdout. If set
             to None, the verbose flag of the current ExportRequest instance is
@@ -1114,6 +1136,8 @@ class ExportRequest(object):
 class Client(object):
     def __init__(self, location='jsoc', encoding='latin1', debug=False):
         """
+        Client for remote DRMS server access.
+
         Parameters
         ----------
         location : string or Location
@@ -1374,7 +1398,7 @@ class Client(object):
               skip_conversion=None, pkeys=False):
         """
         Query keywords, segments and/or links of a record set. At least one
-        of out of the key, seg or link parameters must be specified.
+        of the arguments key, seg, link or pkeys needs to be specified.
 
         Parameters
         ----------
@@ -1396,7 +1420,7 @@ class Client(object):
             List of keywords names to be skipped when performing a numeric
             conversion. Default is None.
         pkeys : boolean
-            If True, all primekeys of the series are added to the key list.
+            If True, all primekeys of the series are added to argument key.
 
         Returns
         -------
@@ -1482,7 +1506,7 @@ class Client(object):
     def check_email(self, email):
         """
         Check if the email address is registered for data export. You can
-        register your email for data export from JSOC at:
+        register your email for data exports from JSOC at
 
             http://jsoc.stanford.edu/ajax/register_email.html
 
@@ -1505,16 +1529,46 @@ class Client(object):
         """
         Submit a data export request.
 
+        A registered email address is required for data exports. You can
+        register your email address for data exports from JSOC at
+
+            http://jsoc.stanford.edu/ajax/register_email.html
+
+        An interactive webinterface and additional information is available
+        on the JSOC data export webpage:
+
+            http://jsoc.stanford.edu/ajax/exportdata.html
+
+        Note that export requests that were submitted using the webinterface
+        can be accessed using the export_from_id() method.
+
         Parameters
         ----------
         ds : string
+            Data export record set query.
         email : string
+            Registered email address.
         method : string
+            Export method. Supported methods are: 'url_quick', 'url',
+            'url-tar', 'ftp' and 'ftp-tar'. Default is 'url_quick'.
         protocol : string
+            Export protocol. Supported protocols are: 'as-is', 'fits', 'jpg',
+            'mpg' and 'mp4'. Default is 'as-is'.
         protocol_args : dict
+            Extra protocol arguments for protocols 'jpg', 'mpg' and 'mp4'.
+            Valid arguments are: 'ct', 'scaling', 'min', 'max' and 'size'.
         filenamefmt : string, None or False
+            Custom filename format string for exported files. This is ignored
+            for 'url_quick'/'as-is' data exports. If set to None (default),
+            the format string will be generated using the primekeys of the
+            data series. If set to False, the filename format string will be
+            omitted in the export request.
         requestor : string, None or False
+            Export user ID. Default is None, in which case the user name is
+            determined from the email address. If set to False, the requestor
+            argument will be omitted in the export request.
         verbose : bool
+            Print export status messages to stdout.
 
         Returns
         -------
@@ -1538,6 +1592,9 @@ class Client(object):
         Parameters
         ----------
         requestid : string
+            Export request ID.
+        verbose : bool
+            Print export status messages to stdout.
 
         Returns
         -------
