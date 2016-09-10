@@ -1180,7 +1180,7 @@ class Client(object):
                     kdf.loc[idx, k] = kdf.loc[idx, k].map(
                         lambda x: int(x, base=16))
             if k in num_keys:
-                kdf[k] = _pd_to_numeric_coerce(kdf.pop(k))
+                kdf[k] = _pd_to_numeric_coerce(kdf[k])
 
     @staticmethod
     def _raise_query_error(d, status=None):
