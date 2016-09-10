@@ -127,12 +127,15 @@ register_location(Location(
 class _JsocInfoConstants:
     all = '**ALL**'
     none = '**NONE**'
+    recdir = '*recdir*'
+    dirmtime = '*dirmtime*'
+    logdir = '*logdir*'
     recnum = '*recnum*'
     sunum = '*sunum*'
     size = '*size*'
     online = '*online*'
     retain = '*retain*'
-    logdir = '*logdir*'
+    archive = '*archive*'
 const = _JsocInfoConstants()
 
 
