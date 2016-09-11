@@ -411,7 +411,8 @@ class JsonClient(object):
         req = self._json_request(self._loc.url_jsoc_info + query)
         return req.data
 
-    def rs_list(self, ds, key=None, seg=None, link=None, uid=None):
+    def rs_list(self, ds, key=None, seg=None, link=None, recinfo=False,
+                n=None, uid=None):
         """
         Get detailed information about a record set.
 
@@ -425,9 +426,14 @@ class JsonClient(object):
             List of requested segments, optional.
         link : string or None
             List of requested Links, optional.
+        recinfo : boolean
+            Request record info for each record in the record set.
+        n : integer or None
+            Record set limit. For positive values, the first n records of the
+            record set are returned, for negative values the last |n| records.
+            If set to None (default), no limit is applied.
         uid : string or None
             Session ID used when calling rs_list CGI, optional.
-
         Returns
         -------
         result : dict
@@ -442,6 +448,10 @@ class JsonClient(object):
             d['seg'] = ','.join(_split_arg(seg))
         if link is not None:
             d['link'] = ','.join(_split_arg(link))
+        if recinfo:
+            d['R'] = '1'
+        if n is not None:
+            d['n'] = '%d' % int(n)
         if uid is not None:
             d['userhandle'] = uid
         query = '?' + urlencode(d)
@@ -1398,7 +1408,7 @@ class Client(object):
             skip_conversion=skip_conversion)
 
     def query(self, ds, key=None, seg=None, link=None, convert_numeric=True,
-              skip_conversion=None, pkeys=False):
+              skip_conversion=None, pkeys=False, rec_index=False, n=None):
         """
         Query keywords, segments and/or links of a record set. At least one
         of the arguments key, seg, link or pkeys needs to be specified.
@@ -1424,6 +1434,14 @@ class Client(object):
             conversion. Default is None.
         pkeys : boolean
             If True, all primekeys of the series are added to argument key.
+        rec_index : boolean
+            If True, record names are used as index for the resulting
+            DataFrames.
+        n : integer or None
+            Limits the number of records returned by the query. For positive
+            values, the first n records of the record set are returned, for
+            negative values the last |n| records. If set to None (default),
+            no limit is applied.
 
         Returns
         -------
@@ -1440,7 +1458,8 @@ class Client(object):
             key = [k for k in key if k not in pk]
             key = pk + key
 
-        lres = self._json.rs_list(ds, key, seg, link)
+        lres = self._json.rs_list(
+            ds, key, seg, link, recinfo=rec_index, n=n)
         status = lres.get('status')
         if status != 0:
             self._raise_query_error(lres)
@@ -1474,6 +1493,11 @@ class Client(object):
             else:
                 res_link = pd.DataFrame()
             res.append(res_link)
+
+        if rec_index:
+            index = [it['name'] for it in lres['recinfo']]
+            for r in res:
+                r.index = index
 
         if len(res) == 0:
             return None
