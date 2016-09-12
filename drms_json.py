@@ -1164,6 +1164,7 @@ class Client(object):
         self._json = JsonClient(
             location=location, encoding=encoding, debug=debug)
         self._info_cache = {}
+        self._email = None
 
     def __repr__(self):
         return '<Client "%s">' % self.location.cgi_baseurl
@@ -1303,6 +1304,17 @@ class Client(object):
     @debug.setter
     def debug(self, value):
         self._json.debug = value
+
+    @property
+    def email(self):
+        """Default email address used for data export requests."""
+        return self._email
+
+    @email.setter
+    def email(self, value):
+        if value is not None and not self.check_email(value):
+            raise ValueError('Email address is invalid or not registered')
+        self._email = value
 
     def series(self, ds_filter=None):
         """
@@ -1550,7 +1562,7 @@ class Client(object):
         status = res.get('status')
         return status is not None and int(status) == 2
 
-    def export(self, ds, email, method='url_quick', protocol='as-is',
+    def export(self, ds, email=None, method='url_quick', protocol='as-is',
                protocol_args=None, filenamefmt=None, requestor=None,
                verbose=False):
         """
@@ -1573,8 +1585,10 @@ class Client(object):
         ----------
         ds : string
             Data export record set query.
-        email : string
-            Registered email address.
+        email : string or None
+            Registered email address. If email is None (default), the current
+            default email address is used, which in this case has to be set
+            before calling export() by using the Client.email property .
         method : string
             Export method. Supported methods are: 'url_quick', 'url',
             'url-tar', 'ftp' and 'ftp-tar'. Default is 'url_quick'.
@@ -1601,6 +1615,12 @@ class Client(object):
         -------
         result : ExportRequest
         """
+        if email is None:
+            if self._email is None:
+                raise ValueError(
+                    'The email argument is required, when no default email '
+                    'address was set')
+            email = self._email
         if filenamefmt is None:
             sname = _extract_series_name(ds)
             filenamefmt = self._generate_filenamefmt(sname)
