@@ -283,7 +283,7 @@ class DrmsExportError(DrmsError):
     pass
 
 
-class JsonRequest(object):
+class HttpJsonRequest(object):
     """Class for handling HTTP/JSON requests."""
     def __init__(self, url, encoding):
         self._encoding = encoding
@@ -292,7 +292,7 @@ class JsonRequest(object):
         self._data = None
 
     def __repr__(self):
-        return '<JsonRequest "%s">' % self.url
+        return '<HttpJsonRequest "%s">' % self.url
 
     @property
     def url(self):
@@ -311,7 +311,7 @@ class JsonRequest(object):
         return self._data
 
 
-class JsonClient(object):
+class HttpJsonClient(object):
     def __init__(self, server='jsoc', debug=False):
         """
         HTTP/JSON communication with the DRMS server CGIs.
@@ -331,12 +331,12 @@ class JsonClient(object):
         self.debug = debug
 
     def __repr__(self):
-        return '<JsonClient "%s">' % self._server.name
+        return '<HttpJsonClient "%s">' % self._server.name
 
     def _json_request(self, url):
         if self.debug:
             print(url)
-        return JsonRequest(url, self._server.encoding)
+        return HttpJsonRequest(url, self._server.encoding)
 
     @property
     def server(self):
@@ -1182,7 +1182,7 @@ class Client(object):
         debug : boolean
             Enable or disable debug mode (default is disabled).
         """
-        self._json = JsonClient(server=server, debug=debug)
+        self._json = HttpJsonClient(server=server, debug=debug)
         self._info_cache = {}
         self._email = None
 
