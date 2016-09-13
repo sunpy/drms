@@ -68,34 +68,105 @@ else:
 
 
 class ServerConfig(object):
-    def __init__(self, name, cgi_baseurl,
-                 cgi_show_series='show_series',
-                 cgi_jsoc_info='jsoc_info',
-                 cgi_jsoc_fetch=None,
-                 cgi_check_address=None,
-                 encoding='latin1',
-                 http_download_baseurl=None,
-                 ftp_download_baseurl=None):
-        self.name = name
-        self.cgi_baseurl = cgi_baseurl
-        self.cgi_show_series = cgi_show_series
-        if cgi_show_series is not None:
-            self.url_show_series = urljoin(cgi_baseurl, cgi_show_series)
-        self.cgi_jsoc_info = cgi_jsoc_info
-        if cgi_jsoc_info is not None:
-            self.url_jsoc_info = urljoin(cgi_baseurl, cgi_jsoc_info)
-        self.cgi_jsoc_fetch = cgi_jsoc_fetch
-        if cgi_jsoc_fetch is not None:
-            self.url_jsoc_fetch = urljoin(cgi_baseurl, cgi_jsoc_fetch)
-        self.cgi_check_address = cgi_check_address
-        if cgi_check_address is not None:
-            self.url_check_address = urljoin(cgi_baseurl, cgi_check_address)
-        self.encoding = encoding
-        self.http_download_baseurl = http_download_baseurl
-        self.ftp_download_baseurl = ftp_download_baseurl
+    _valid_keys = [
+        'name',
+        'cgi_baseurl',
+        'cgi_show_series',
+        'cgi_jsoc_info',
+        'cgi_jsoc_fetch',
+        'cgi_check_address',
+        'url_show_series',
+        'url_jsoc_info',
+        'url_jsoc_fetch',
+        'url_check_address',
+        'encoding',
+        'http_download_baseurl',
+        'ftp_download_baseurl'
+    ]
+    # print(('\n' + 12*' ').join(ServerConfig._valid_keys))
+
+    def __init__(self, config=None, **kwargs):
+        """
+        Server configuration.
+
+        Parameters
+        ----------
+        name : string
+            Server configuration name.
+        config : dict
+            Dictionary containing configuration entries (see below for a list
+            of available entries).
+
+        Additional keyword arguments can be used to add additional entries
+        to config. In case a keyword argument already exists in the config
+        dictionary, the config entry will be replaced by the kwargs value.
+
+        Available config keys are:
+            name
+            cgi_baseurl
+            cgi_show_series
+            cgi_jsoc_info
+            cgi_jsoc_fetch
+            cgi_check_address
+            url_show_series
+            url_jsoc_info
+            url_jsoc_fetch
+            url_check_address
+            encoding
+            http_download_baseurl
+            ftp_download_baseurl
+        """
+        self._d = d = config.copy() if config is not None else {}
+        d.update(kwargs)
+
+        for k in d:
+            if k not in self._valid_keys:
+                raise ValueError('Invalid server config key: "%s"' % k)
+
+        if 'name' not in d:
+            raise ValueError('Server config entry "name" is missing')
+
+        # encoding defaults to latin1
+        if 'encoding' not in d:
+            d['encoding'] = 'latin1'
+
+        # Generate URL entries from CGI entries, if cgi_baseurl exists and
+        # the specific URL entry is not already set.
+        if 'cgi_baseurl' in d:
+            cgi_baseurl = d['cgi_baseurl']
+            cgi_keys = [k for k in self._valid_keys
+                        if k.startswith('cgi') and k != 'cgi_baseurl']
+            for k in cgi_keys:
+                url_key = 'url' + k[3:]
+                cgi_value = d.get(k)
+                if d.get(url_key) is None and cgi_value is not None:
+                    d[url_key] = urljoin(cgi_baseurl, cgi_value)
 
     def __repr__(self):
-        return '<ServerConfig "%s">' % self.name
+        return '<ServerConfig "%s">' % self._d.get('name')
+
+    def __dir__(self):
+        return dir(type(self)) + list(self.__dict__.keys()) + self._valid_keys
+
+    def __getattr__(self, name):
+        if name in self._valid_keys:
+            return self._d.get(name)
+        else:
+            return object.__getattribute__(self, name)
+
+    def __setattr__(self, name, value):
+        if name in self._valid_keys:
+            if not isinstance(value, six.string_types):
+                raise ValueError('"%s" config value must be a string' % name)
+            self._d[name] = value
+        else:
+            object.__setattr__(self, name, value)
+
+    def copy(self):
+        return ServerConfig(self._d)
+
+    def to_dict(self):
+        return self._d
 
 
 def register_server(config):
