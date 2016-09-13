@@ -75,10 +75,13 @@ class ServerConfig(object):
         'cgi_jsoc_info',
         'cgi_jsoc_fetch',
         'cgi_check_address',
+        'cgi_show_series_wrapper',
+        'show_series_wrapper_dbhost',
         'url_show_series',
         'url_jsoc_info',
         'url_jsoc_fetch',
         'url_check_address',
+        'url_show_series_wrapper',
         'encoding',
         'http_download_baseurl',
         'ftp_download_baseurl'
@@ -108,10 +111,13 @@ class ServerConfig(object):
             cgi_jsoc_info
             cgi_jsoc_fetch
             cgi_check_address
+            cgi_show_series_wrapper
+            show_series_wrapper_dbhost
             url_show_series
             url_jsoc_info
             url_jsoc_fetch
             url_check_address
+            url_show_series_wrapper
             encoding
             http_download_baseurl
             ftp_download_baseurl
@@ -187,6 +193,8 @@ register_server(ServerConfig(
     cgi_jsoc_info='jsoc_info',
     cgi_jsoc_fetch='jsoc_fetch',
     cgi_check_address='checkAddress.sh',
+    cgi_show_series_wrapper='showextseries',
+    show_series_wrapper_dbhost='hmidb2',
     http_download_baseurl='http://jsoc.stanford.edu/',
     ftp_download_baseurl='ftp://pail.stanford.edu/export/'))
 
@@ -359,6 +367,35 @@ class JsonClient(object):
         if ds_filter is not None:
             query += urlencode({'filter': ds_filter})
         req = self._json_request(self._server.url_show_series + query)
+        return req.data
+
+    def show_series_wrapper(self, ds_filter=None, info=False):
+        """
+        List available data series.
+
+        This is an alternative to show_series, which needs to be used to get
+        a list of all available series provided by JSOC. There is currently
+        no support for retrieving primekeys using this CGI.
+
+        Parameters
+        ----------
+        ds_filter : string
+            Name filter regexp.
+        info : boolean
+            If False (default), the result only contains series names. If set
+            to True, the result includes a description for each series.
+
+        Returns
+        -------
+        result : dict
+        """
+        query_args = {'dbhost': self._server.show_series_wrapper_dbhost}
+        if ds_filter is not None:
+            query_args['filter'] = ds_filter
+        if info:
+            query_args['info'] = '1'
+        query = '?' + urlencode(query_args)
+        req = self._json_request(self._server.url_show_series_wrapper + query)
         return req.data
 
     def series_struct(self, ds):
@@ -1299,7 +1336,7 @@ class Client(object):
             raise ValueError('Email address is invalid or not registered')
         self._email = value
 
-    def series(self, ds_filter=None):
+    def series(self, ds_filter=None, full=False):
         """
         List available data series.
 
@@ -1308,23 +1345,49 @@ class Client(object):
         ds_filter : string or None
             Regular expression to select a subset of the available series.
             If set to None, a list of all available series is returned.
+        full : boolean
+            If True, return a DataFrame containing additional series
+            information, like description and primekeys. If False (default),
+            the result is a list containing only the series names.
 
         Returns
         -------
-        result : pandas.DataFrame
-            DataFrame containing names, primekeys and notes of the selected
-            series.
+        result : list or pandas.DataFrame
+            List of series names or DataFrame containing name, primekeys
+            and a description of the selected series (see full parameter).
         """
-        d = self._json.show_series(ds_filter)
-        status = d.get('status')
-        if status != 0:
-            self._raise_query_error(d)
-        keys = ('name', 'primekeys', 'note')
-        if not d['names']:
-            return pd.DataFrame(columns=keys)
-        recs = [(it['name'], _split_arg(it['primekeys']), it['note'])
-                for it in d['names']]
-        return pd.DataFrame(recs, columns=keys)
+        if self.server.url_show_series_wrapper is None:
+            # No wrapper CGI available, use the regular version.
+            d = self._json.show_series(ds_filter)
+            status = d.get('status')
+            if status != 0:
+                self._raise_query_error(d)
+            if full:
+                keys = ('name', 'primekeys', 'note')
+                if not d['names']:
+                    return pd.DataFrame(columns=keys)
+                recs = [(it['name'], _split_arg(it['primekeys']), it['note'])
+                        for it in d['names']]
+                return pd.DataFrame(recs, columns=keys)
+            else:
+                if not d['names']:
+                    return []
+                return [it['name'] for it in d['names']]
+        else:
+            # Use show_series_wrapper instead of the regular version.
+            d = self._json.show_series_wrapper(ds_filter, info=full)
+            if full:
+                keys = ('name', 'note')
+                if not d['seriesList']:
+                    return pd.DataFrame(columns=keys)
+                recs = []
+                for it in d['seriesList']:
+                    name, info = tuple(it.items())[0]
+                    note = info.get('description', '')
+                    recs.append((name, note))
+                return pd.DataFrame(recs, columns=keys)
+            else:
+                return d['seriesList']
 
     def info(self, ds):
         """
@@ -1612,7 +1675,7 @@ class Client(object):
 
 if __name__ == '__main__':
     def _test_info(c, ds):
-        sname = c.series(ds).name
+        sname = c.series(ds)
         res = []
         skiplist = [r'jsoc.*']
         for sni in sname:
