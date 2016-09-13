@@ -45,7 +45,7 @@ __author__ = 'Kolja Glogowski, Monica Bobra, Arthur Amezcua'
 __maintainer__ = 'Kolja Glogowski'
 __email__ = 'kolja@pixie.de'
 __license__ = 'MIT'
-__version__ = '0.3.0'
+__version__ = '0.4.0'
 
 
 # Compatibility functions for older pandas versions.
