@@ -253,7 +253,7 @@ class JsonClient(object):
         self.debug = debug
 
     def __repr__(self):
-        return '<JsonClient "%s">' % self._server.cgi_baseurl
+        return '<JsonClient "%s">' % self._server.name
 
     def _json_request(self, url):
         if self.debug:
@@ -1167,7 +1167,7 @@ class Client(object):
         self._email = None
 
     def __repr__(self):
-        return '<Client "%s">' % self.server.cgi_baseurl
+        return '<Client "%s">' % self.server.name
 
     def _convert_numeric_keywords(self, ds, kdf, skip_conversion=None):
         si = self.info(ds)
