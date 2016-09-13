@@ -23,7 +23,6 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import absolute_import, division, print_function
-import sys
 import re
 import os
 import time
@@ -308,93 +307,6 @@ class JsonClient(object):
         query = '?' + urlencode({'op': 'series_struct', 'ds': ds})
         req = self._json_request(self._server.url_jsoc_info + query)
         return req.data
-
-    def export_old(self, ds, requestor, notify):
-        """
-        This function exports data as FITS files. To do this, the function
-        binds metadata (keywords) to images (arrays) to create FITS files and
-        then serves the FITS files at jsoc.stanford.edu.
-        Written by Monica Bobra and Art Amezcua
-        19 July 2016
-
-        Parameters
-        ----------
-        requestor : string
-            Username of requestor.
-        notify : string
-            E-mail address of requestor.
-        ds : string
-            Name of the data series.
-
-        Returns
-        -------
-        supath : list
-            List containing paths to all the requested FITS files.
-        """
-        # test to see if the user's e-mail address is registered with
-        # jsoc.stanford.edu
-        test_email_query = 'http://jsoc.stanford.edu/cgi-bin/ajax/' \
-            + 'checkAddress.sh?address=' + quote_plus(notify) + '&checkonly=1'
-        response = urlopen(test_email_query)
-        data = json.loads(response.read().decode(self._server.encoding))
-        if (data['status'] == 4):
-            raise RuntimeError(
-                'User e-mail address is not registered with jsoc.stanford.edu')
-
-        query = '?' + urlencode({
-            'op': 'exp_request', 'protocol': 'fits', 'format': 'json',
-            'method': 'url', 'requestor': requestor, 'notify': notify,
-            'ds': ds})
-        req = self._json_request(self._server.url_jsoc_fetch + query)
-
-        # waiting for the request to be ready
-        if (int(req.data['status']) == 1 or int(req.data['status']) == 2):
-            if 'requestid' in req.data:
-                query = '?' + urlencode({
-                    'op': 'exp_status', 'requestid': req.data['requestid']})
-                supath = []
-                print('Waiting for the request to be ready. Please allow '
-                      'at least 20 seconds.')
-                time.sleep(15)
-                while True:
-                    req = self._json_request(
-                        self._server.url_jsoc_fetch + query)
-                    if int(req.data['status']) in [1, 2, 6]:
-                        time.sleep(5)
-                    elif int(req.data['status']) == 0:
-                        dir = req.data['dir']
-                        for dataobj in req.data['data']:
-                            supath.append(urljoin(
-                                self._server.http_download_baseurl,
-                                os.path.join(
-                                    req.data['dir'], dataobj['filename'])))
-                        break
-                    else:
-                        print(type(req.data['status']))
-                        if (req.data['status'] == 3):
-                            raise RuntimeError(
-                                'DRMS Query failed, request size is too '
-                                'large, status=%s' % req.data['status'])
-                        if (req.data['status'] == 4):
-                            raise RuntimeError(
-                                'DRMS Query failed, request not formed '
-                                'correctly, status=%s' % req.data['status'])
-                        if (req.data['status'] == 5):
-                            raise RuntimeError(
-                                'DRMS Query failed, export request expired, '
-                                'status=%s' % req.data['status'])
-            else:
-                raise RuntimeError(
-                    'DRMS Query failed, there is no requestid, status=%s' %
-                    req.data['status'])
-        else:
-            raise RuntimeError(
-                'DRMS Query failed, series is not a valid series, status=%s' %
-                req.data['status'])
-        print("All the data are available at:")
-        print(str(urljoin(
-            self._server.http_download_baseurl, req.data['dir'])))
-        return supath
 
     def rs_summary(self, ds):
         """
@@ -1517,30 +1429,6 @@ class Client(object):
             return res[0]
         else:
             return tuple(res)
-
-    def export_old(self, ds, requestor, notify):
-        """
-        This function exports data as FITS files. To do this, the function
-        binds metadata (keywords) to images (arrays) to create FITS files and
-        then serves the FITS files at jsoc.stanford.edu.
-        Written by Monica Bobra and Art Amezcua
-        19 July 2016
-
-        Parameters
-        ----------
-        requestor : string
-            Username of requestor.
-        notify : string
-            E-mail address of requestor.
-        ds : string
-            Name of the data series.
-
-        Returns
-        -------
-        supath : list
-            List containing paths to all the requested FITS files.
-        """
-        return self._json.export_old(ds, requestor, notify)
 
     def check_email(self, email):
         """
