@@ -74,6 +74,7 @@ class ServerConfig(object):
                  cgi_jsoc_info='jsoc_info',
                  cgi_jsoc_fetch=None,
                  cgi_check_address=None,
+                 encoding='latin1',
                  http_download_baseurl=None,
                  ftp_download_baseurl=None):
         self.name = name
@@ -90,6 +91,7 @@ class ServerConfig(object):
         self.cgi_check_address = cgi_check_address
         if cgi_check_address is not None:
             self.url_check_address = urljoin(cgi_baseurl, cgi_check_address)
+        self.encoding = encoding
         self.http_download_baseurl = http_download_baseurl
         self.ftp_download_baseurl = ftp_download_baseurl
 
@@ -232,7 +234,7 @@ class JsonRequest(object):
 
 
 class JsonClient(object):
-    def __init__(self, server='jsoc', encoding='latin1', debug=False):
+    def __init__(self, server='jsoc', debug=False):
         """
         HTTP/JSON communication with the DRMS server CGIs.
 
@@ -241,12 +243,9 @@ class JsonClient(object):
         server : string or ServerConfig
             Registered server ID or ServerConfig instance.
             Defaults to JSOC.
-        encoding : string
-            Character encoding (default is 'latin1').
         debug : boolean
             Enable or disable debug mode (default is disabled).
         """
-        self._encoding = encoding
         if isinstance(server, ServerConfig):
             self._server_config = server
         else:
@@ -259,7 +258,7 @@ class JsonClient(object):
     def _json_request(self, url):
         if self.debug:
             print(url)
-        return JsonRequest(url, self._encoding)
+        return JsonRequest(url, self._server.encoding)
 
     @property
     def server(self):
@@ -337,7 +336,7 @@ class JsonClient(object):
         test_email_query = 'http://jsoc.stanford.edu/cgi-bin/ajax/' \
             + 'checkAddress.sh?address=' + quote_plus(notify) + '&checkonly=1'
         response = urlopen(test_email_query)
-        data = json.loads(response.read().decode(self._encoding))
+        data = json.loads(response.read().decode(self._server.encoding))
         if (data['status'] == 4):
             raise RuntimeError(
                 'User e-mail address is not registered with jsoc.stanford.edu')
@@ -1151,7 +1150,7 @@ class ExportRequest(object):
 
 
 class Client(object):
-    def __init__(self, server='jsoc', encoding='latin1', debug=False):
+    def __init__(self, server='jsoc', debug=False):
         """
         Client for remote DRMS server access.
 
@@ -1160,13 +1159,10 @@ class Client(object):
         server : string or ServerConfig
             Registered server ID or ServerConfig instance.
             Defaults to JSOC.
-        encoding : string
-            Character encoding (default is 'latin1').
         debug : boolean
             Enable or disable debug mode (default is disabled).
         """
-        self._json = JsonClient(
-            server=server, encoding=encoding, debug=debug)
+        self._json = JsonClient(server=server, debug=debug)
         self._info_cache = {}
         self._email = None
 
