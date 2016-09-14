@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from . import config, error, json, client, utils
+from . import _version, config, error, json, client, utils
 from .config import ServerConfig, register_server
 from .error import DrmsError, DrmsQueryError, DrmsExportError
 from .json import const
@@ -37,11 +37,11 @@ __all__ = [
     'SeriesInfo', 'ExportRequest', 'Client',
     'const', 'to_datetime']
 
-__version__ = '0.4.0'
-
+__version__ = _version.get_versions()['version']
 
 # We imported all public classes and functions from submodules. The submodule
 # symbols themselves are now removed to keep the package namespace cleaner.
+del _version
 del config
 del error
 del json

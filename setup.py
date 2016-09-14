@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-import re
 from setuptools import setup
+import versioneer
+
 
 NAME = 'drms'
 DESCRIPTION = 'HMI, AIA and MDI data access using the JSOC DRMS'
@@ -8,13 +9,6 @@ AUTHOR = 'Kolja Glogowski'
 AUTHOR_EMAIL = '"Kolja Glogowski" <kolja@pixie.de>'
 URL = 'https://github.com/kbg/drms'
 LICENSE = 'MIT'
-
-
-# Read version string from __init__.py without importing the drms package, to
-# prevent an import error in case numpy, pandas or six are not installed yet.
-m = re.search(r"""^\s*__version__\s*=\s*["'](.+)["']\s*$""",
-              open('drms/__init__.py').read(), re.MULTILINE)
-VERSION = m.group(1)
 
 
 # The readme file uses Markdown, which does not seem to be supported by PyPI.
@@ -30,7 +24,8 @@ except:
 
 
 setup(name=NAME,
-      version=VERSION,
+      version=versioneer.get_version(),
+      cmdclass=versioneer.get_cmdclass(),
       description=DESCRIPTION,
       long_description=LONG_DESCRIPTION,
       author=AUTHOR,

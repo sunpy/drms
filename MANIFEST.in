@@ -1,2 +1,4 @@
 include *.txt *.md
 recursive-include examples *.py
+include versioneer.py
+include drms/_version.py
