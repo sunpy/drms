@@ -6,18 +6,18 @@ except ImportError:
     from distutils.core import setup
 
 
-NAME = 'drms_json'
-DESCRIPTION = 'Access to HMI, MDI and AIA data products from the JSOC database.'
+NAME = 'drms'
+DESCRIPTION = 'HMI, AIA and MDI data access using the JSOC DRMS.'
 LONG_DESCRIPTION = open('README.md').read()
 AUTHOR = 'Kolja Glogowski'
 AUTHOR_EMAIL = '"Kolja Glogowski" <kolja@pixie.de>'
-URL = 'https://github.com/kbg/drms_json'
+URL = 'https://github.com/kbg/drms'
 LICENSE = 'MIT'
 
-# Read version string from drms_json.py without importing the module to
+# Read version string from __init__.py without importing the drms package, to
 # prevent an import error in case numpy, pandas or six are not installed yet.
 m = re.search(r"""^\s*__version__\s*=\s*["'](.+)["']\s*$""",
-              open('drms_json.py').read(), re.MULTILINE)
+              open('drms/__init__.py').read(), re.MULTILINE)
 VERSION = m.group(1)
 
 # For distutils builds: Make sure the MANIFEST file ist generated from
@@ -33,7 +33,7 @@ setup(name=NAME,
       author_email=AUTHOR_EMAIL,
       url=URL,
       license=LICENSE,
-      py_modules=['drms_json'],
+      packages=['drms'],
       install_requires=['numpy>=1.9.0', 'pandas>=0.14.1', 'six>=1.8.0'],
       classifiers=[
           'Development Status :: 5 - Production/Stable',

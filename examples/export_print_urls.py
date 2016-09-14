@@ -5,9 +5,9 @@ export request. Note that there is no "Request URL" for method 'url_quick'.
 from __future__ import absolute_import, division, print_function
 import example_helpers
 
-# The next line ensures that drms_json.py from the parent directory is used.
+# The next line ensures that drms package from the parent directory is used.
 example_helpers.python_path_prepend('..')
-import drms_json as drms
+import drms
 
 # Print the doc string of this example.
 print(__doc__)

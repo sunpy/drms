@@ -2,11 +2,11 @@ from __future__ import absolute_import, division, print_function
 from pylab import *
 import pandas as pd
 
-# Use the drms_json.py file from the parent directory
+# Use the drms package from the parent directory
 import example_helpers
 example_helpers.python_path_prepend('..')
 
-import drms_json as drms
+import drms
 
 
 # Series name, time range and time steps
