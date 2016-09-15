@@ -25,14 +25,12 @@
 from __future__ import absolute_import, division, print_function
 
 from . import _version, config, error, json, client, utils
-from .config import ServerConfig, register_server
 from .error import DrmsError, DrmsQueryError, DrmsExportError
 from .json import const
 from .client import SeriesInfo, ExportRequest, Client
 from .utils import to_datetime
 
 __all__ = [
-    'ServerConfig', 'register_server',
     'DrmsError', 'DrmsQueryError', 'DrmsExportError',
     'SeriesInfo', 'ExportRequest', 'Client',
     'const', 'to_datetime']
