@@ -8,9 +8,6 @@ FITS header are really needed.
 from __future__ import absolute_import, division, print_function
 import os
 import example_helpers
-
-# The next line ensures that drms package from the parent directory is used.
-example_helpers.python_path_prepend('..')
 import drms
 
 # Print the doc string of this example.

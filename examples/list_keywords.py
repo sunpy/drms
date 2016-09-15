@@ -1,9 +1,5 @@
 from __future__ import absolute_import, division, print_function
-
-# Use the drms package from the parent directory
 import example_helpers
-example_helpers.python_path_prepend('..')
-
 import drms
 
 

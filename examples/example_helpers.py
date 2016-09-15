@@ -1,13 +1,8 @@
 from __future__ import absolute_import, division, print_function
 import os
+import os.path as op
 import sys
 import six
-
-
-def python_path_prepend(reldir):
-    """Prepend relative path to PYTHON_PATH."""
-    absdir = os.path.abspath(os.path.join(os.path.dirname(__file__), reldir))
-    sys.path.insert(0, absdir)
 
 
 def ask_for_export_email():
@@ -22,3 +17,38 @@ def ask_for_export_email():
         email = ''
     print()
     return email
+
+
+def python_path_prepend(reldir):
+    """Prepend relative path to the Python import path list."""
+    absdir = op.abspath(op.join(op.dirname(__file__), reldir))
+    sys.path.insert(0, absdir)
+
+
+def is_drms_package_directory(path):
+    """Check if the given path is a directory containing the drms package."""
+    if not op.isdir(path):
+        return False
+
+    init_fpath = op.join(path, '__init__.py')
+    if not op.isfile(init_fpath):
+        return False
+
+    try:
+        init_code = open(init_fpath).read()
+    except IOError:
+        return False
+
+    for s in ['Kolja', 'DrmsQueryError', 'Client', '__version__']:
+        if s not in init_code:
+            return False
+
+    return True
+
+
+# If the parent directory contains the drms package, then we assume that we
+# are in the drms source directory and add the parent directory to the top
+# of the Python import path to make sure that this version of the drms package
+# is imported instead of any other installed version.
+if is_drms_package_directory(op.join(op.dirname(__file__), '..', 'drms')):
+    python_path_prepend('..')

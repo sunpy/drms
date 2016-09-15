@@ -26,8 +26,6 @@ print('  pandas:', pandas.__version__)
 if args.verbose:
     print('      ->', pandas.__file__)
 
-# Use the drms package from the parent directory
-example_helpers.python_path_prepend('..')
 import drms
 print('    drms:', drms.__version__)
 if args.verbose:
