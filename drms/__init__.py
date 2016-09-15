@@ -24,22 +24,25 @@
 
 from __future__ import absolute_import, division, print_function
 
-from . import _version, config, error, json, client, utils
+from . import config, error, json, client, utils
 from .error import DrmsError, DrmsQueryError, DrmsExportError
 from .json import const
 from .client import SeriesInfo, ExportRequest, Client
 from .utils import to_datetime
+
+# Keep the following three lines like this, so that versioneer does not add
+# them again when running "python versioneer.py setup".
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
 
 __all__ = [
     'DrmsError', 'DrmsQueryError', 'DrmsExportError',
     'SeriesInfo', 'ExportRequest', 'Client',
     'const', 'to_datetime']
 
-__version__ = _version.get_versions()['version']
-
 # We imported all public classes and functions from submodules. The submodule
 # symbols themselves are now removed to keep the package namespace cleaner.
-del _version
 del config
 del error
 del json

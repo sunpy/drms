@@ -10,6 +10,7 @@
 
 """Git implementation of _version.py."""
 
+from __future__ import absolute_import
 import errno
 import os
 import re
