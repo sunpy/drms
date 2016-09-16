@@ -6,4 +6,5 @@ __pycache__
 /*.egg-info/
 /examples/jsoc.stanford.edu/
 /examples/downloads/
-/nogit
+/nogit/
+/.tox/
