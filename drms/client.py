@@ -991,8 +991,8 @@ class Client(object):
         return status is not None and int(status) == 2
 
     def export(self, ds, method='url_quick', protocol='as-is',
-               protocol_args=None, filenamefmt=None, email=None, requestor=None,
-               verbose=False):
+               protocol_args=None, filenamefmt=None, n=None, email=None,
+               requestor=None, verbose=False):
         """
         Submit a data export request.
 
@@ -1028,6 +1028,11 @@ class Client(object):
             the format string will be generated using the primekeys of the
             data series. If set to False, the filename format string will be
             omitted in the export request.
+        n : int or None
+            Limits the number of records requested. For positive values, the
+            first n records of the record set are returned, for negative
+            values the last abs(n) records. If set to None (default), no limit
+            is applied.
         email : string or None
             Registered email address. If email is None (default), the current
             default email address is used, which in this case has to be set
@@ -1057,7 +1062,7 @@ class Client(object):
         d = self._json.exp_request(
             ds, email, method=method, protocol=protocol,
             protocol_args=protocol_args, filenamefmt=filenamefmt,
-            requestor=requestor)
+            n=n, requestor=requestor)
         return ExportRequest(d, client=self, verbose=verbose)
 
     def export_from_id(self, requestid, verbose=False):

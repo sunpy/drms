@@ -247,7 +247,8 @@ class HttpJsonClient(object):
         return req.data
 
     def exp_request(self, ds, notify, method='url_quick', protocol='as-is',
-                    protocol_args=None, filenamefmt=None, requestor=None):
+                    protocol_args=None, filenamefmt=None, n=None,
+                    requestor=None):
         """
         Request data export.
 
@@ -269,6 +270,11 @@ class HttpJsonClient(object):
         filenamefmt : string, None
             Custom filename format string for exported files. This is ignored
             for 'url_quick'/'as-is' data exports.
+        n : int or None
+            Limits the number of records requested. For positive values, the
+            first n records of the record set are returned, for negative
+            values the last abs(n) records. If set to None (default), no limit
+            is applied.
         requestor : string, None or False
             Export user ID. Default is None, in which case the user name is
             determined from the email address. If set to False, the requestor
@@ -328,6 +334,10 @@ class HttpJsonClient(object):
 
         if filenamefmt is not None:
             d['filenamefmt'] = filenamefmt
+
+        if n is not None:
+            n = int(n)
+            d['process=n'] = '%d' % n
 
         if requestor is None:
             d['requestor'] = notify.split('@')[0]
