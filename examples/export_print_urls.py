@@ -32,7 +32,7 @@ if not email or not c.check_email(email):
 # Submit export request, defaults to method='url_quick' and protocol='as-is'
 print('Data export query:\n  %s\n' % qstr)
 print('Submitting export request...')
-r = c.export(qstr, email, verbose=True)
+r = c.export(qstr, email=email, verbose=True)
 print('%d file(s) available for download.\n' % len(r.urls))
 
 # Print download URLs.

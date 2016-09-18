@@ -58,7 +58,8 @@ print('Data export query:\n  %s\n' % qstr)
 
 # Submit export request using the 'jpg' protocol with custom protocol_args
 print('Submitting export request...')
-r = c.export(qstr, email, protocol='jpg', protocol_args=jpg_args, verbose=True)
+r = c.export(qstr, protocol='jpg', protocol_args=jpg_args, email=email,
+             verbose=True)
 
 # Print request URL.
 print('\nRequest URL: %s' % r.request_url)

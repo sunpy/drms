@@ -53,7 +53,8 @@ print('Data export query:\n  %s\n' % qstr)
 
 # Submit export request using the 'fits' protocol
 print('Submitting export request...')
-r = c.export(qstr, email, method='url', protocol=export_protocol, verbose=True)
+r = c.export(qstr, method='url', protocol=export_protocol, email=email,
+             verbose=True)
 
 # Print request URL.
 print('\nRequest URL: %s' % r.request_url)

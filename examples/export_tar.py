@@ -51,7 +51,7 @@ print('Data export query:\n  %s\n' % qstr)
 
 # Submit export request using the 'url-tar' method, protocol default: 'as-is'
 print('Submitting export request...')
-r = c.export(qstr, email, method='url-tar', verbose=True)
+r = c.export(qstr, method='url-tar', email=email, verbose=True)
 
 # Print request URL.
 print('\nRequest URL: %s' % r.request_url)

@@ -574,7 +574,7 @@ class ExportRequest(object):
 
 
 class Client(object):
-    def __init__(self, server='jsoc', debug=False):
+    def __init__(self, server='jsoc', email=None, debug=False):
         """
         Client for remote DRMS server access.
 
@@ -583,12 +583,14 @@ class Client(object):
         server : string or ServerConfig
             Registered server ID or ServerConfig instance.
             Defaults to JSOC.
+        email : string or None
+            Default email address used data export requests.
         debug : boolean
             Enable or disable debug mode (default is disabled).
         """
         self._json = HttpJsonClient(server=server, debug=debug)
         self._info_cache = {}
-        self._email = None
+        self.email = email  # use property, for email validation
 
     def __repr__(self):
         return '<Client "%s">' % self.server.name
@@ -988,8 +990,8 @@ class Client(object):
         status = res.get('status')
         return status is not None and int(status) == 2
 
-    def export(self, ds, email=None, method='url_quick', protocol='as-is',
-               protocol_args=None, filenamefmt=None, requestor=None,
+    def export(self, ds, method='url_quick', protocol='as-is',
+               protocol_args=None, filenamefmt=None, email=None, requestor=None,
                verbose=False):
         """
         Submit a data export request.
@@ -1011,10 +1013,6 @@ class Client(object):
         ----------
         ds : string
             Data export record set query.
-        email : string or None
-            Registered email address. If email is None (default), the current
-            default email address is used, which in this case has to be set
-            before calling export() by using the Client.email property .
         method : string
             Export method. Supported methods are: 'url_quick', 'url',
             'url-tar', 'ftp' and 'ftp-tar'. Default is 'url_quick'.
@@ -1030,6 +1028,10 @@ class Client(object):
             the format string will be generated using the primekeys of the
             data series. If set to False, the filename format string will be
             omitted in the export request.
+        email : string or None
+            Registered email address. If email is None (default), the current
+            default email address is used, which in this case has to be set
+            before calling export() by using the Client.email property.
         requestor : string, None or False
             Export user ID. Default is None, in which case the user name is
             determined from the email address. If set to False, the requestor

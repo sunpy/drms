@@ -57,7 +57,8 @@ print('Data export query:\n  %s\n' % qstr)
 
 # Submit export request using the 'mp4' protocol with custom protocol_args
 print('Submitting export request...')
-r = c.export(qstr, email, protocol='mp4', protocol_args=mp4_args, verbose=True)
+r = c.export(qstr, protocol='mp4', protocol_args=mp4_args, email=email,
+             verbose=True)
 r.wait(sleep=10)
 
 # Print request URL.
