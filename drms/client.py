@@ -742,15 +742,15 @@ class Client(object):
             raise ValueError('Email address is invalid or not registered')
         self._email = value
 
-    def series(self, ds_filter=None, full=False):
+    def series(self, regex=None, full=False):
         """
         List available data series.
 
         Parameters
         ----------
-        ds_filter : string or None
-            Regular expression to select a subset of the available series.
-            If set to None, a list of all available series is returned.
+        regex : string or None
+            Regular expression, used to select a subset of the available
+            series. If set to None, a list of all available series is returned.
         full : boolean
             If True, return a DataFrame containing additional series
             information, like description and primekeys. If False (default),
@@ -764,7 +764,7 @@ class Client(object):
         """
         if self.server.url_show_series_wrapper is None:
             # No wrapper CGI available, use the regular version.
-            d = self._json.show_series(ds_filter)
+            d = self._json.show_series(regex)
             status = d.get('status')
             if status != 0:
                 self._raise_query_error(d)
@@ -781,7 +781,7 @@ class Client(object):
                 return [it['name'] for it in d['names']]
         else:
             # Use show_series_wrapper instead of the regular version.
-            d = self._json.show_series_wrapper(ds_filter, info=full)
+            d = self._json.show_series_wrapper(regex, info=full)
             if full:
                 keys = ('name', 'note')
                 if not d['seriesList']:
