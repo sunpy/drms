@@ -36,7 +36,7 @@ if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
 # Create DRMS client, use debug=True to see the query URLs.
-c = drms.Client()
+c = drms.Client(verbose=True)
 
 # Check if the email address was set at the top of this script. If not, ask for
 # a registered email address.
@@ -51,7 +51,7 @@ print('Data export query:\n  %s\n' % qstr)
 
 # Submit export request using the 'url-tar' method, protocol default: 'as-is'
 print('Submitting export request...')
-r = c.export(qstr, method='url-tar', email=email, verbose=True)
+r = c.export(qstr, method='url-tar', email=email)
 
 # Print request URL.
 print('\nRequest URL: %s' % r.request_url)

@@ -152,26 +152,23 @@ class ExportRequest(object):
         Filename, if a TAR file was requested.
     keywords : string
         Filename of textfile containing record keywords.
-    verbose : bool
-        Enable/disable verbose output.
     """
     _status_code_ok = 0
     _status_code_notfound = 6
     _status_codes_pending = [1, 2, _status_code_notfound]
     _status_codes_ok_or_pending = [_status_code_ok] + _status_codes_pending
 
-    def __init__(self, d, client, verbose=False):
+    def __init__(self, d, client):
         self._client = client
-        self._verbose = verbose
         self._requestid = None
         self._status = None
         self._download_urls_cache = None
         self._update_status(d)
 
     @classmethod
-    def _create_from_id(cls, requestid, client, verbose=False):
+    def _create_from_id(cls, requestid, client):
         d = client._json.exp_status(requestid)
-        return cls(d, client, verbose)
+        return cls(d, client)
 
     def __repr__(self):
         idstr = str(None) if self._requestid is None else (
@@ -272,15 +269,6 @@ class ExportRequest(object):
             new_fname = '%s.%d' % (fname, i)
             i += 1
         return new_fname
-
-    @property
-    def verbose(self):
-        """(bool) Enable/disable verbose output."""
-        return self._verbose
-
-    @verbose.setter
-    def verbose(self, value):
-        self._verbose = bool(value)
 
     @property
     def id(self):
@@ -460,8 +448,8 @@ class ExportRequest(object):
             is valid and will eventually show up on the server.
         verbose : bool or None
             Set to True if status messages should be printed to stdout.
-            If set to None, the :attr:`verbose` flag of the current
-            instance is used instead.
+            If set to None (default), the :attr:`Client.verbose` flag
+            of the associated client instance is used instead.
 
         Returns
         -------
@@ -476,7 +464,7 @@ class ExportRequest(object):
             sleep = float(sleep)
         retries_notfound = int(retries_notfound)
         if verbose is None:
-            verbose = self._verbose
+            verbose = self._client.verbose
 
         # We are done, if the request has already finished.
         if self.has_finished(skip_update=True):
@@ -559,8 +547,8 @@ class ExportRequest(object):
             is used locally.
         verbose : bool or None
             Set to True if status messages should be printed to stdout.
-            If set to None, the verbose flag of the current
-            ExportRequest instance is used instead.
+            If set to None (default), the :attr:`Client.verbose` flag
+            of the associated client instance is used instead.
 
         Returns
         -------
@@ -579,7 +567,7 @@ class ExportRequest(object):
             index = list(index)
 
         if verbose is None:
-            verbose = self.verbose
+            verbose = self._client.verbose
 
         # Wait until the export request has finished.
         self.wait(verbose=verbose)
@@ -643,6 +631,8 @@ class Client(object):
         Defaults to JSOC.
     email : string or None
         Default email address used data export requests.
+    verbose : bool
+        Print export status messages to stdout (disabled by default).
     debug : bool
         Print debug output (disabled by default).
 
@@ -650,13 +640,16 @@ class Client(object):
     ----------
     email : string
         Default email address used for data export requests.
+    verbose : bool
+        Enable/disable export status output.
     debug : bool
         Enable/disable debug output.
     """
-    def __init__(self, server='jsoc', email=None, debug=False):
+    def __init__(self, server='jsoc', email=None, verbose=False, debug=False):
         self._json = HttpJsonClient(server=server, debug=debug)
         self._info_cache = {}
-        self.email = email  # use property, for email validation
+        self.verbose = verbose  # use property for convertion to bool
+        self.email = email      # use property for email validation
 
     def __repr__(self):
         return '<Client "%s">' % self._server.name
@@ -809,6 +802,15 @@ class Client(object):
         if value is not None and not self.check_email(value):
             raise ValueError('Email address is invalid or not registered')
         self._email = value
+
+    @property
+    def verbose(self):
+        """(bool) Enable/disable export status output."""
+        return self._verbose
+
+    @verbose.setter
+    def verbose(self, value):
+        self._verbose = bool(value)
 
     def series(self, regex=None, full=False):
         """
@@ -1075,7 +1077,7 @@ class Client(object):
 
     def export(self, ds, method='url_quick', protocol='as-is',
                protocol_args=None, filenamefmt=None, n=None, email=None,
-               requestor=None, verbose=False):
+               requestor=None):
         """
         Submit a data export request.
 
@@ -1129,8 +1131,6 @@ class Client(object):
             name is determined from the email address. If set to False,
             the requestor argument will be omitted in the export
             request.
-        verbose : bool
-            Print export status messages to stdout.
 
         Returns
         -------
@@ -1151,9 +1151,9 @@ class Client(object):
             ds, email, method=method, protocol=protocol,
             protocol_args=protocol_args, filenamefmt=filenamefmt,
             n=n, requestor=requestor)
-        return ExportRequest(d, client=self, verbose=verbose)
+        return ExportRequest(d, client=self)
 
-    def export_from_id(self, requestid, verbose=False):
+    def export_from_id(self, requestid):
         """
         Create an :class:`ExportRequest` instance from an existing
         requestid.
@@ -1162,15 +1162,12 @@ class Client(object):
         ----------
         requestid : string
             Export request ID.
-        verbose : bool
-            Print export status messages to stdout.
 
         Returns
         -------
         result : :class:`ExportRequest`
         """
-        return ExportRequest._create_from_id(
-            requestid, client=self, verbose=verbose)
+        return ExportRequest._create_from_id(requestid, client=self)
 
 
 def _test_info(c, ds):

@@ -34,7 +34,7 @@ if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
 # Create DRMS client, use debug=True to see the query URLs.
-c = drms.Client()
+c = drms.Client(verbose=True)
 
 # Check if the email address was set at the top of this script. If not, ask for
 # a registered email address.
@@ -49,7 +49,7 @@ print('Data export query:\n  %s\n' % qstr)
 
 # Submit export request, defaults to method='url_quick' and protocol='as-is'
 print('Submitting export request...')
-r = c.export(qstr, email=email, verbose=True)
+r = c.export(qstr, email=email)
 print('%d file(s) available for download.\n' % len(r.urls))
 
 # Download selected files.

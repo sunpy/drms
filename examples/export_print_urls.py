@@ -20,7 +20,7 @@ email = ''
 qstr = 'hmi.ic_720s[2015.01.01_00:00:00_TAI/10d@1d]{continuum}'
 
 # Create DRMS client, use debug=True to see the query URLs.
-c = drms.Client()
+c = drms.Client(verbose=True)
 
 # Check if the email address was set at the top of this script. If not, ask for
 # a registered email address.
@@ -32,7 +32,7 @@ if not email or not c.check_email(email):
 # Submit export request, defaults to method='url_quick' and protocol='as-is'
 print('Data export query:\n  %s\n' % qstr)
 print('Submitting export request...')
-r = c.export(qstr, email=email, verbose=True)
+r = c.export(qstr, email=email)
 print('%d file(s) available for download.\n' % len(r.urls))
 
 # Print download URLs.

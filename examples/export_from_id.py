@@ -18,7 +18,7 @@ print(__doc__)
 request_id = ''
 
 # Create DRMS client, use debug=True to see the query URLs.
-c = drms.Client()
+c = drms.Client(verbose=True)
 
 # Ask for a RequestID, if it is not set yet.
 if not request_id:
@@ -27,7 +27,7 @@ if not request_id:
 
 # Querying the server using the entered RequestID.
 print('Looking up export request "%s"...' % request_id)
-r = c.export_from_id(request_id, verbose=True)
+r = c.export_from_id(request_id)
 
 # Print request URL and number of available files.
 print('\nRequest URL: %s' % r.request_url)
