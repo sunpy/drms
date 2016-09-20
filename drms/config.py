@@ -7,6 +7,39 @@ __all__ = ['ServerConfig', 'register_server']
 
 
 class ServerConfig(object):
+    """
+    DRMS Server configuration.
+
+    Parameters
+    ----------
+    name : string
+        Server configuration name.
+    config : dict
+        Dictionary containing configuration entries (see below for a
+        list of available entries).
+
+    Additional keyword arguments can be used to add additional entries
+    to config. In case a keyword argument already exists in the config
+    dictionary, the config entry will be replaced by the kwargs value.
+
+    Available config keys are:
+        name
+        cgi_baseurl
+        cgi_show_series
+        cgi_jsoc_info
+        cgi_jsoc_fetch
+        cgi_check_address
+        cgi_show_series_wrapper
+        show_series_wrapper_dbhost
+        url_show_series
+        url_jsoc_info
+        url_jsoc_fetch
+        url_check_address
+        url_show_series_wrapper
+        encoding
+        http_download_baseurl
+        ftp_download_baseurl
+    """
     _valid_keys = [
         'name',
         'cgi_baseurl',
@@ -28,39 +61,6 @@ class ServerConfig(object):
     # print(('\n' + 12*' ').join(ServerConfig._valid_keys))
 
     def __init__(self, config=None, **kwargs):
-        """
-        Server configuration.
-
-        Parameters
-        ----------
-        name : string
-            Server configuration name.
-        config : dict
-            Dictionary containing configuration entries (see below for a list
-            of available entries).
-
-        Additional keyword arguments can be used to add additional entries
-        to config. In case a keyword argument already exists in the config
-        dictionary, the config entry will be replaced by the kwargs value.
-
-        Available config keys are:
-            name
-            cgi_baseurl
-            cgi_show_series
-            cgi_jsoc_info
-            cgi_jsoc_fetch
-            cgi_check_address
-            cgi_show_series_wrapper
-            show_series_wrapper_dbhost
-            url_show_series
-            url_jsoc_info
-            url_jsoc_fetch
-            url_check_address
-            url_show_series_wrapper
-            encoding
-            http_download_baseurl
-            ftp_download_baseurl
-        """
         self._d = d = config.copy() if config is not None else {}
         d.update(kwargs)
 
@@ -115,6 +115,7 @@ class ServerConfig(object):
 
 
 def register_server(config):
+    """Register a server configuration."""
     global _server_configs
     name = config.name.lower()
     if name in _server_configs:
@@ -122,9 +123,10 @@ def register_server(config):
     _server_configs[config.name.lower()] = config
 
 
-# Register known servers
+# Registered servers
 _server_configs = {}
 
+# Register public JSOC DRMS server.
 register_server(ServerConfig(
     name='JSOC',
     cgi_baseurl='http://jsoc.stanford.edu/cgi-bin/ajax/',
@@ -137,6 +139,7 @@ register_server(ServerConfig(
     http_download_baseurl='http://jsoc.stanford.edu/',
     ftp_download_baseurl='ftp://pail.stanford.edu/export/'))
 
+# Register KIS DRMS server.
 register_server(ServerConfig(
     name='KIS',
     cgi_baseurl='http://drms.leibniz-kis.de/cgi-bin/',

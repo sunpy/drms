@@ -12,6 +12,34 @@ __all__ = ['const', 'HttpJsonRequest', 'HttpJsonClient']
 
 # Constants for jsoc_info calls
 class JsocInfoConstants:
+    """
+    Constants for DRMS queries.
+
+    Attributes
+    ----------
+    all
+        = ``'**ALL**'``
+    none
+        = ``'**NONE**'``
+    recdir
+        = ``'*recdir*'``
+    dirmtime
+        = ``'*dirmtime*'``
+    logdir
+        = ``'*logdir*'``
+    recnum
+        = ``'*recnum*'``
+    sunum
+        = ``'*sunum*'``
+    size
+        = ``'*size*'``
+    online
+        = ``'*online*'``
+    retain
+        = ``'*retain*'``
+    archive
+        = ``'*archive*'``
+    """
     all = '**ALL**'
     none = '**NONE**'
     recdir = '*recdir*'
@@ -27,7 +55,11 @@ const = JsocInfoConstants()
 
 
 class HttpJsonRequest(object):
-    """Class for handling HTTP/JSON requests."""
+    """
+    Class for handling HTTP/JSON requests.
+
+    Use :class:`HttpJsonClient` to create an instance.
+    """
     def __init__(self, url, encoding):
         self._encoding = encoding
         self._http = urlopen(url)
@@ -55,18 +87,25 @@ class HttpJsonRequest(object):
 
 
 class HttpJsonClient(object):
-    def __init__(self, server='jsoc', debug=False):
-        """
-        HTTP/JSON communication with the DRMS server CGIs.
+    """
+    HTTP/JSON communication with the DRMS server CGIs.
 
-        Parameters
-        ----------
-        server : string or ServerConfig
-            Registered server ID or ServerConfig instance.
-            Defaults to JSOC.
-        debug : boolean
-            Enable or disable debug mode (default is disabled).
-        """
+    Parameters
+    ----------
+    server : string or drms.config.ServerConfig
+        Registered server ID or ServerConfig instance.
+        Defaults to JSOC.
+    debug : bool
+        Enable or disable debug mode (default is disabled).
+
+    Attributes
+    ----------
+    server : drms.config.ServerConfig
+        Remote server configuration.
+    debug : bool
+        Enable/disable debug output.
+    """
+    def __init__(self, server='jsoc', debug=False):
         if isinstance(server, ServerConfig):
             self._server_config = server
         else:
@@ -116,17 +155,19 @@ class HttpJsonClient(object):
         """
         List available data series.
 
-        This is an alternative to show_series, which needs to be used to get
-        a list of all available series provided by JSOC. There is currently
-        no support for retrieving primekeys using this CGI.
+        This is an alternative to show_series, which needs to be used
+        to get a list of all available series provided by JSOC. There
+        is currently no support for retrieving primekeys using this
+        CGI.
 
         Parameters
         ----------
         ds_filter : string
             Name filter regexp.
-        info : boolean
-            If False (default), the result only contains series names. If set
-            to True, the result includes a description for each series.
+        info : bool
+            If False (default), the result only contains series names.
+            If set to True, the result includes a description for each
+            series.
 
         Returns
         -------
@@ -192,14 +233,16 @@ class HttpJsonClient(object):
             List of requested segments, optional.
         link : string or None
             List of requested Links, optional.
-        recinfo : boolean
+        recinfo : bool
             Request record info for each record in the record set.
-        n : integer or None
-            Record set limit. For positive values, the first n records of the
-            record set are returned, for negative values the last |n| records.
-            If set to None (default), no limit is applied.
+        n : int or None
+            Record set limit. For positive values, the first n records
+            of the record set are returned, for negative values the
+            last abs(n) records. If set to None (default), no limit is
+            applied.
         uid : string or None
             Session ID used when calling rs_list CGI, optional.
+
         Returns
         -------
         result : dict
@@ -226,7 +269,8 @@ class HttpJsonClient(object):
 
     def check_address(self, email):
         """
-        Check if an email address is registered for export data requests.
+        Check if an email address is registered for export data
+        requests.
 
         Parameters
         ----------
@@ -236,9 +280,11 @@ class HttpJsonClient(object):
         Returns
         -------
         result : dict
-            Dictionary containing 'status' and 'msg'. Some status codes are:
+            Dictionary containing 'status' and 'msg'. Some status
+            codes are:
                 2: Email address is valid and registered
-                4: Email address has neither been validated nor registered
+                4: Email address has neither been validated nor
+                   registered
                -2: Not a valid email address
         """
         query = '?' + urlencode({
@@ -262,28 +308,31 @@ class HttpJsonClient(object):
             Export method. Supported methods are: 'url_quick', 'url',
             'url-tar', 'ftp' and 'ftp-tar'. Default is 'url_quick'.
         protocol : string
-            Export protocol. Supported protocols are: 'as-is', 'fits', 'jpg',
-            'mpg' and 'mp4'. Default is 'as-is'.
+            Export protocol. Supported protocols are: 'as-is', 'fits',
+            'jpg', 'mpg' and 'mp4'. Default is 'as-is'.
         protocol_args : dict or None
-            Extra protocol arguments for protocols 'jpg', 'mpg' and 'mp4'.
-            Valid arguments are: 'ct', 'scaling', 'min', 'max' and 'size'.
+            Extra protocol arguments for protocols 'jpg', 'mpg' and
+            'mp4'. Valid arguments are: 'ct', 'scaling', 'min', 'max'
+            and 'size'.
         filenamefmt : string, None
-            Custom filename format string for exported files. This is ignored
-            for 'url_quick'/'as-is' data exports.
+            Custom filename format string for exported files. This is
+            ignored for 'url_quick'/'as-is' data exports.
         n : int or None
-            Limits the number of records requested. For positive values, the
-            first n records of the record set are returned, for negative
-            values the last abs(n) records. If set to None (default), no limit
-            is applied.
+            Limits the number of records requested. For positive
+            values, the first n records of the record set are returned,
+            for negative values the last abs(n) records. If set to None
+            (default), no limit is applied.
         requestor : string, None or False
-            Export user ID. Default is None, in which case the user name is
-            determined from the email address. If set to False, the requestor
-            argument will be omitted in the export request.
+            Export user ID. Default is None, in which case the user
+            name is determined from the email address. If set to False,
+            the requestor argument will be omitted in the export
+            request.
 
         Returns
         -------
         result : dict
-            Dictionary containing the server response to the export request.
+            Dictionary containing the server response to the export
+            request.
         """
         method = method.lower()
         method_list = ['url_quick', 'url', 'url-tar', 'ftp', 'ftp-tar']

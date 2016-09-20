@@ -22,6 +22,12 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
+"""
+Access HMI, AIA and MDI data with Python
+
+The latest release is avaiable at https://github.com/kbg/drms .
+"""
+
 from __future__ import absolute_import, division, print_function
 
 from . import config, error, json, client, utils

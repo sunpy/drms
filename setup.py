@@ -4,7 +4,7 @@ import versioneer
 
 
 NAME = 'drms'
-DESCRIPTION = 'HMI, AIA and MDI data access using the JSOC DRMS'
+DESCRIPTION = 'Access HMI, AIA and MDI data with Python'
 AUTHOR = 'Kolja Glogowski'
 AUTHOR_EMAIL = '"Kolja Glogowski" <kolja@pixie.de>'
 URL = 'https://github.com/kbg/drms'

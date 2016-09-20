@@ -19,7 +19,36 @@ __all__ = ['SeriesInfo', 'ExportRequest', 'Client']
 
 
 class SeriesInfo(object):
-    """DRMS series details. Use Client.info() to create an instance."""
+    """
+    DRMS series details.
+
+    Use :func:`Client.info` to create an instance.
+
+    Attributes
+    ----------
+    name : string
+        Series name.
+    primekeys : list of strings
+        Series primekeys.
+    keywords : pandas.DataFrame
+        Details about series keywords.
+    links : pandas.DataFrame
+        Details about series links.
+    segments : pandas.DataFrame
+        Details about series segments.
+    note : string
+        Series description.
+    dbindex : list of strings
+        Series database index.
+    retention : int
+        Default retention time.
+    unitsize : int
+        Storage unit size.
+    archive : int
+        Series archive flag.
+    tapegroup : int
+        Tape group.
+    """
     def __init__(self, d, name=None):
         self._d = d
         self.name = name
@@ -96,8 +125,35 @@ class SeriesInfo(object):
 
 class ExportRequest(object):
     """
-    Class for handling data export requests. Use Client.export() or
-    Client.export_from_id() to create an ExportRequest instance.
+    Class for handling data export requests.
+
+    Use :func:`Client.export` or :func:`Client.export_from_id` to
+    create an instance.
+
+    Attributes
+    ----------
+    id : string
+        Request ID.
+    status : int
+        Export request status.
+    urls : pandas.DataFrame
+        URLs of all downloadable files.
+    request_url : string
+        URL of the export request.
+    method : string
+        Data export method.
+    protocol : string
+        Data export protocol.
+    data : pandas.DataFrame
+        Records and filenames of the export request.
+    dir : string
+        Common directory of the requested files on the server.
+    tarfile : string
+        Filename, if a TAR file was requested.
+    keywords : string
+        Filename of textfile containing record keywords.
+    verbose : bool
+        Enable/disable verbose output.
     """
     _status_code_ok = 0
     _status_code_notfound = 6
@@ -219,6 +275,7 @@ class ExportRequest(object):
 
     @property
     def verbose(self):
+        """(bool) Enable/disable verbose output."""
         return self._verbose
 
     @verbose.setter
@@ -227,27 +284,27 @@ class ExportRequest(object):
 
     @property
     def id(self):
-        """Request ID"""
+        """(string) Request ID."""
         return self._requestid
 
     @property
     def status(self):
-        """Export request status"""
+        """(int) Export request status."""
         return self._status
 
     @property
     def method(self):
-        """Export method"""
+        """(string) Export method."""
         return self._d.get('method')
 
     @property
     def protocol(self):
-        """Export protocol"""
+        """(string) Export protocol."""
         return self._d.get('protocol')
 
     @property
     def dir(self):
-        """Common directory of the requested files on the server"""
+        """(string) Common directory of the requested files on the server."""
         if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
@@ -258,10 +315,10 @@ class ExportRequest(object):
     @property
     def data(self):
         """
-        Records and filenames of the export request.
+        (pandas.DataFrame) Records and filenames of the export request.
 
-        Returns a DataFrame containing the records and filenames of the
-        export request (DataFrame columns: 'record', 'filename').
+        Returns a pandas.DataFrame containing the records and filenames
+        of the export request (DataFrame columns: 'record', 'filename').
         """
         if self.has_finished(skip_update=True):
             self._raise_on_error()
@@ -271,7 +328,7 @@ class ExportRequest(object):
 
     @property
     def tarfile(self):
-        """Filename, if a TAR file was requested"""
+        """(string) Filename, if a TAR file was requested."""
         if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
@@ -281,7 +338,7 @@ class ExportRequest(object):
 
     @property
     def keywords(self):
-        """Filename of textfile containing record keywords"""
+        """(string) Filename of textfile containing record keywords."""
         if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
@@ -291,7 +348,7 @@ class ExportRequest(object):
 
     @property
     def request_url(self):
-        """URL of the export request"""
+        """(string) URL of the export request."""
         data_dir = self.dir
         http_baseurl = self._client._server.http_download_baseurl
         if data_dir is None or http_baseurl is None:
@@ -303,10 +360,11 @@ class ExportRequest(object):
     @property
     def urls(self):
         """
-        URLs for all downloadable files of the export request.
+        (pandas.DataFrame) URLs of all downloadable files.
 
-        Returns a DataFrame containing the records, filenames and URLs of the
-        export request (DataFrame columns: 'record', 'filename' and 'url').
+        Returns a pandas.DataFrame containing the records, filenames
+        and URLs of the export request (DataFrame columns: 'record',
+        'filename' and 'url').
         """
         if self._download_urls_cache is None:
             self._download_urls_cache = self._generate_download_urls()
@@ -319,14 +377,15 @@ class ExportRequest(object):
         Parameters
         ----------
         skip_update : bool
-            If set to True, the export status will not be updated from the
-            server, even if it was in pending state after the last status
-            update.
+            If set to True, the export status will not be updated from
+            the server, even if it was in pending state after the last
+            status update.
 
         Returns
         -------
-        True if the export request has finished or False if the request is
-        still pending.
+        result : bool
+            True if the export request has finished or False if the
+            request is still pending.
         """
         pending = self._status in self._status_codes_pending
         if not pending:
@@ -343,14 +402,15 @@ class ExportRequest(object):
         Parameters
         ----------
         skip_update : bool
-            If set to True, the export status will not be updated from the
-            server, even if it was in pending state after the last status
-            update.
+            If set to True, the export status will not be updated from
+            the server, even if it was in pending state after the last
+            status update.
 
         Returns
         -------
-        True if the export request has finished successfully or False if the
-        request failed or is still pending.
+        result : bool
+            True if the export request has finished successfully or
+            False if the request failed or is still pending.
         """
         if not self.has_finished(skip_update):
             return False
@@ -363,14 +423,15 @@ class ExportRequest(object):
         Parameters
         ----------
         skip_update : bool
-            If set to True, the export status will not be updated from the
-            server, even if it was in pending state after the last status
-            update.
+            If set to True, the export status will not be updated from
+            the server, even if it was in pending state after the last
+            status update.
 
         Returns
         -------
-        True if the export request has finished unsuccessfully or False if the
-        request has succeeded or is still pending.
+        result : bool
+            True if the export request has finished unsuccessfully or
+            False if the request has succeeded or is still pending.
         """
         if not self.has_finished(skip_update):
             return False
@@ -385,27 +446,28 @@ class ExportRequest(object):
         Parameters
         ----------
         timeout : number or None
-            Maximum number of seconds until this method times out. If set to
-            None (the default), the status will be updated indefinitely until
-            the request succeeded or failed.
+            Maximum number of seconds until this method times out. If
+            set to None (the default), the status will be updated
+            indefinitely until the request succeeded or failed.
         sleep : number or None
-            Time in seconds between status updates (defaults to 5 seconds).
-            If set to None, a server supplied value is used.
-        retries_notfound : integer
-            Number of retries in case the request was not found on the server.
-            Note that it usually takes a short time until a new request is
-            registered on the server, so a value too low might cause an
-            exception to be raised, even if the request is valid and will
-            eventually show up on the server.
+            Time in seconds between status updates (defaults to 5
+            seconds). If set to None, a server supplied value is used.
+        retries_notfound : int
+            Number of retries in case the request was not found on the
+            server. Note that it usually takes a short time until a new
+            request is registered on the server, so a value too low
+            might cause an exception to be raised, even if the request
+            is valid and will eventually show up on the server.
         verbose : bool or None
-            Set to True if status messages should be printed to stdout. If set
-            to None, the verbose flag of the current ExportRequest instance is
-            used instead.
+            Set to True if status messages should be printed to stdout.
+            If set to None, the :attr:`verbose` flag of the current
+            instance is used instead.
 
         Returns
         -------
-        True if the request succeeded or False if a timeout occured. In case
-        of an error an exception is raised.
+        result : bool
+            True if the request succeeded or False if a timeout
+            occured. In case of an error an exception is raised.
         """
         if timeout is not None:
             t_start = time.time()
@@ -463,47 +525,49 @@ class ExportRequest(object):
         """
         Download data files.
 
-        By default, the server-side filenames are used as local filenames,
-        except for export method 'url_quick', where the local filenames are
-        generated from record names (see parameter fname_from_rec). In case a
-        file with the same name already exists in the download directory, an
-        ascending number is appended to the filename.
+        By default, the server-side filenames are used as local
+        filenames, except for export method 'url_quick', where the
+        local filenames are generated from record names (see parameter
+        fname_from_rec). In case a file with the same name already
+        exists in the download directory, an ascending number is
+        appended to the filename.
 
         Note: Downloading data segments that are directories, e.g. data
-        segments from series like "hmi.rdVflows_fd15_frame", is currently
-        not supported. In order to download data from series like this,
-        you need to use the export methods 'url-tar' or 'ftp-tar' when
-        submitting the data export request.
+        segments from series like "hmi.rdVflows_fd15_frame", is
+        currently not supported. In order to download data from series
+        like this, you need to use the export methods 'url-tar' or
+        'ftp-tar' when submitting the data export request.
 
         Parameters
         ----------
         directory : string
             Download directory (must already exist).
-        index : integer, list of integers or None
-            Index (or indices) of the file(s) to be downloaded. If set to
-            None (the default), all files of the export request are
-            downloaded. Note that this parameter is ignored for export methods
-            'url-tar' and 'ftp-tar', where only a single tar file is available
-            for download.
+        index : int, list of ints or None
+            Index (or indices) of the file(s) to be downloaded. If set
+            to None (the default), all files of the export request are
+            downloaded. Note that this parameter is ignored for export
+            methods 'url-tar' and 'ftp-tar', where only a single tar
+            file is available for download.
         fname_from_rec : bool or None
-            If True, local filenames are generated from record names. If set to
-            False, the original filenames are used. If set to None (default),
-            local filenames are generated only for export method 'url_quick'.
-            Exceptions: For exports with methods 'url-tar' and 'ftp-tar', no
-            filename will be generated. This also applies to movie files from
-            exports with protocols 'mpg' or 'mp4', where the original filename
+            If True, local filenames are generated from record names.
+            If set to False, the original filenames are used. If set to
+            None (default), local filenames are generated only for
+            export method 'url_quick'. Exceptions: For exports with
+            methods 'url-tar' and 'ftp-tar', no filename will be
+            generated. This also applies to movie files from exports
+            with protocols 'mpg' or 'mp4', where the original filename
             is used locally.
         verbose : bool or None
-            Set to True if status messages should be printed to stdout. If set
-            to None, the verbose flag of the current ExportRequest instance is
-            used instead.
+            Set to True if status messages should be printed to stdout.
+            If set to None, the verbose flag of the current
+            ExportRequest instance is used instead.
 
         Returns
         -------
         result : pandas.DataFrame
-            DataFrame containing the record string, download URL and local
-            location of each downloaded file (DataFrame columns: 'record',
-            'url' and 'download').
+            DataFrame containing the record string, download URL and
+            local location of each downloaded file (DataFrame columns:
+            'record', 'url' and 'download').
         """
         out_dir = os.path.abspath(directory)
         if not os.path.isdir(out_dir):
@@ -569,20 +633,27 @@ class ExportRequest(object):
 
 
 class Client(object):
-    def __init__(self, server='jsoc', email=None, debug=False):
-        """
-        Client for remote DRMS server access.
+    """
+    Client for remote DRMS server access.
 
-        Parameters
-        ----------
-        server : string or ServerConfig
-            Registered server ID or ServerConfig instance.
-            Defaults to JSOC.
-        email : string or None
-            Default email address used data export requests.
-        debug : boolean
-            Enable or disable debug mode (default is disabled).
-        """
+    Parameters
+    ----------
+    server : string or ServerConfig
+        Registered server ID or ServerConfig instance.
+        Defaults to JSOC.
+    email : string or None
+        Default email address used data export requests.
+    debug : bool
+        Print debug output (disabled by default).
+
+    Attributes
+    ----------
+    email : string
+        Default email address used for data export requests.
+    debug : bool
+        Enable/disable debug output.
+    """
+    def __init__(self, server='jsoc', email=None, debug=False):
         self._json = HttpJsonClient(server=server, debug=debug)
         self._info_cache = {}
         self.email = email  # use property, for email validation
@@ -716,11 +787,12 @@ class Client(object):
 
     @property
     def _server(self):
-        """Remote server configuration"""
+        """(ServerConfig) Remote server configuration."""
         return self._json.server
 
     @property
     def debug(self):
+        """(bool) Enable/disable debug output."""
         return self._json.debug
 
     @debug.setter
@@ -729,7 +801,7 @@ class Client(object):
 
     @property
     def email(self):
-        """Default email address used for data export requests."""
+        """(string) Default email address used for data export requests."""
         return self._email
 
     @email.setter
@@ -745,18 +817,21 @@ class Client(object):
         Parameters
         ----------
         regex : string or None
-            Regular expression, used to select a subset of the available
-            series. If set to None, a list of all available series is returned.
-        full : boolean
-            If True, return a DataFrame containing additional series
-            information, like description and primekeys. If False (default),
-            the result is a list containing only the series names.
+            Regular expression, used to select a subset of the
+            available series. If set to None, a list of all available
+            series is returned.
+        full : bool
+            If True, return a pandas.DataFrame containing additional
+            series information, like description and primekeys. If
+            False (default), the result is a list containing only the
+            series names.
 
         Returns
         -------
         result : list or pandas.DataFrame
-            List of series names or DataFrame containing name, primekeys
-            and a description of the selected series (see full parameter).
+            List of series names or DataFrame containing name,
+            primekeys and a description of the selected series (see
+            parameter ``full``).
         """
         if self._server.url_show_series_wrapper is None:
             # No wrapper CGI available, use the regular version.
@@ -802,8 +877,9 @@ class Client(object):
 
         Returns
         -------
-        result : SeriesInfo
-            SeriesInfo instance containing information about the data series.
+        result : :class:`SeriesInfo`
+            SeriesInfo instance containing information about the data
+            series.
         """
         name = _extract_series_name(ds)
         if name is not None:
@@ -821,8 +897,8 @@ class Client(object):
 
     def keys(self, ds):
         """
-        Get a list of keywords that are available for a series. Use the info()
-        method for more details.
+        Get a list of keywords that are available for a series. Use
+        the :func:`info` method for more details.
 
         Parameters
         ----------
@@ -839,8 +915,8 @@ class Client(object):
 
     def pkeys(self, ds):
         """
-        Get a list of primekeys that are available for a series. Use the info()
-        method for more details.
+        Get a list of primekeys that are available for a series. Use
+        the :func:`info` method for more details.
 
         Parameters
         ----------
@@ -858,7 +934,7 @@ class Client(object):
     def get(self, ds, key=None, seg=None, link=None, convert_numeric=True,
             skip_conversion=None):
         """
-        This method is deprecated. Use Client.query() instead.
+        This method is deprecated. Use :func:`query` instead.
         """
         warnings.warn(
             'Client.get() is deprecated, use Client.query() instead',
@@ -870,47 +946,55 @@ class Client(object):
     def query(self, ds, key=None, seg=None, link=None, convert_numeric=True,
               skip_conversion=None, pkeys=False, rec_index=False, n=None):
         """
-        Query keywords, segments and/or links of a record set. At least one
-        of the arguments key, seg, link or pkeys needs to be specified.
+        Query keywords, segments and/or links of a record set. At
+        least one of the parameters key, seg, link or pkeys needs to
+        be specified.
 
         Parameters
         ----------
         ds : string
             Record set query.
         key : string, list of strings or None
-            List of requested keywords, optional. If set to None (default),
-            no keyword results will be returned, except when pkeys is True.
+            List of requested keywords, optional. If set to None
+            (default), no keyword results will be returned, except
+            when pkeys is True.
         seg : string, list of strings or None
-            List of requested segments, optional. If set to None (default),
-            no segment results will be returned.
+            List of requested segments, optional. If set to None
+            (default), no segment results will be returned.
         link : string, list of strings or None
-            List of requested Links, optional. If set to None (default), no
-            link results will be returned.
-        convert_numeric : boolean
-            Convert keywords with numeric types from string to numbers. This
-            may result in NaNs for invalid/missing values. Default is True.
+            List of requested Links, optional. If set to None
+            (default), no link results will be returned.
+        convert_numeric : bool
+            Convert keywords with numeric types from string to
+            numbers. This may result in NaNs for invalid/missing
+            values. Default is True.
         skip_conversion : list of strings or None
-            List of keywords names to be skipped when performing a numeric
-            conversion. Default is None.
-        pkeys : boolean
-            If True, all primekeys of the series are added to argument key.
-        rec_index : boolean
+            List of keywords names to be skipped when performing a
+            numeric conversion. Default is None.
+        pkeys : bool
+            If True, all primekeys of the series are added to the
+            ``key`` parameter.
+        rec_index : bool
             If True, record names are used as index for the resulting
             DataFrames.
-        n : integer or None
-            Limits the number of records returned by the query. For positive
-            values, the first n records of the record set are returned, for
-            negative values the last |n| records. If set to None (default),
-            no limit is applied.
+        n : int or None
+            Limits the number of records returned by the query. For
+            positive
+            values, the first n records of the record set are
+            returned, for negative values the last abs(n) records. If
+            set to None (default), no limit is applied.
 
         Returns
         -------
-        res_key : pandas.DataFrame (if key is not None or pkeys is True)
-            Queried keywords
-        res_seg : pandas.DataFrame (if seg is not None)
-            Queried segments
-        res_link : pandas.DataFrame (if link is not None)
-            Queried links
+        res_key : pandas.DataFrame, optional
+            Keyword query results. This DataFrame is only returned,
+            if key is not None or pkeys is set to True.
+        res_seg : pandas.DataFrame, optional
+            Segment query results. This DataFrame is only returned,
+            if seg is not None.
+        res_link : pandas.DataFrame, optional
+            Link query results. This DataFrame is only returned,
+            if link is not None.
         """
         if pkeys:
             pk = self.pkeys(ds)
@@ -968,10 +1052,11 @@ class Client(object):
 
     def check_email(self, email):
         """
-        Check if the email address is registered for data export. You can
-        register your email for data exports from JSOC at
-
-            http://jsoc.stanford.edu/ajax/register_email.html
+        Check if the email address is registered for data export.
+        You can register your email for data exports from JSOC on
+        the `JSOC email registration
+        <http://jsoc.stanford.edu/ajax/register_email.html>`__
+        webpage.
 
         Parameters
         ----------
@@ -980,7 +1065,9 @@ class Client(object):
 
         Returns
         -------
-        True if the email address is valid and registered, False otherwise.
+        result : bool
+            True if the email address is valid and registered, False
+            otherwise.
         """
         res = self._json.check_address(email)
         status = res.get('status')
@@ -992,18 +1079,19 @@ class Client(object):
         """
         Submit a data export request.
 
-        A registered email address is required for data exports. You can
-        register your email address for data exports from JSOC at
+        A registered email address is required for data exports. You
+        can register your email address for data exports from JSOC on
+        the `JSOC email registration
+        <http://jsoc.stanford.edu/ajax/register_email.html>`__
+        webpage.
 
-            http://jsoc.stanford.edu/ajax/register_email.html
+        An interactive webinterface and additional information is
+        available on the `JSOC data export
+        <http://jsoc.stanford.edu/ajax/exportdata.html>`__ webpage.
 
-        An interactive webinterface and additional information is available
-        on the JSOC data export webpage:
-
-            http://jsoc.stanford.edu/ajax/exportdata.html
-
-        Note that export requests that were submitted using the webinterface
-        can be accessed using the export_from_id() method.
+        Note that export requests that were submitted using the
+        webinterface can be accessed using the :func:`export_from_id`
+        method.
 
         Parameters
         ----------
@@ -1013,36 +1101,40 @@ class Client(object):
             Export method. Supported methods are: 'url_quick', 'url',
             'url-tar', 'ftp' and 'ftp-tar'. Default is 'url_quick'.
         protocol : string
-            Export protocol. Supported protocols are: 'as-is', 'fits', 'jpg',
-            'mpg' and 'mp4'. Default is 'as-is'.
+            Export protocol. Supported protocols are: 'as-is', 'fits',
+            'jpg', 'mpg' and 'mp4'. Default is 'as-is'.
         protocol_args : dict
-            Extra protocol arguments for protocols 'jpg', 'mpg' and 'mp4'.
-            Valid arguments are: 'ct', 'scaling', 'min', 'max' and 'size'.
+            Extra protocol arguments for protocols 'jpg', 'mpg' and
+            'mp4'. Valid arguments are: 'ct', 'scaling', 'min', 'max'
+            and 'size'.
         filenamefmt : string, None or False
-            Custom filename format string for exported files. This is ignored
-            for 'url_quick'/'as-is' data exports. If set to None (default),
-            the format string will be generated using the primekeys of the
-            data series. If set to False, the filename format string will be
-            omitted in the export request.
+            Custom filename format string for exported files. This is
+            ignored for 'url_quick'/'as-is' data exports. If set to
+            None (default), the format string will be generated using
+            the primekeys of the data series. If set to False, the
+            filename format string will be omitted in the export
+            request.
         n : int or None
-            Limits the number of records requested. For positive values, the
-            first n records of the record set are returned, for negative
-            values the last abs(n) records. If set to None (default), no limit
-            is applied.
+            Limits the number of records requested. For positive
+            values, the first n records of the record set are returned,
+            for negative values the last abs(n) records. If set to None
+            (default), no limit is applied.
         email : string or None
-            Registered email address. If email is None (default), the current
-            default email address is used, which in this case has to be set
-            before calling export() by using the Client.email property.
+            Registered email address. If email is None (default), the
+            current default email address is used, which in this case
+            has to be set before calling export() by using the
+            :attr:`Client.email` attribute.
         requestor : string, None or False
-            Export user ID. Default is None, in which case the user name is
-            determined from the email address. If set to False, the requestor
-            argument will be omitted in the export request.
+            Export user ID. Default is None, in which case the user
+            name is determined from the email address. If set to False,
+            the requestor argument will be omitted in the export
+            request.
         verbose : bool
             Print export status messages to stdout.
 
         Returns
         -------
-        result : ExportRequest
+        result : :class:`ExportRequest`
         """
         if email is None:
             if self._email is None:
@@ -1063,7 +1155,8 @@ class Client(object):
 
     def export_from_id(self, requestid, verbose=False):
         """
-        Create an ExportRequest instance from an already existing requestid.
+        Create an :class:`ExportRequest` instance from an existing
+        requestid.
 
         Parameters
         ----------
@@ -1074,7 +1167,7 @@ class Client(object):
 
         Returns
         -------
-        result : ExportRequest
+        result : :class:`ExportRequest`
         """
         return ExportRequest._create_from_id(
             requestid, client=self, verbose=verbose)
