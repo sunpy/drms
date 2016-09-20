@@ -21,15 +21,15 @@ __all__ = ['SeriesInfo', 'ExportRequest', 'Client']
 class SeriesInfo(object):
     """DRMS series details. Use Client.info() to create an instance."""
     def __init__(self, d, name=None):
-        self.json = d
+        self._d = d
         self.name = name
-        self.retention = self.json.get('retention')
-        self.unitsize = self.json.get('unitsize')
-        self.archive = self.json.get('archive')
-        self.tapegroup = self.json.get('tapegroup')
-        self.note = self.json.get('note')
-        self.primekeys = self.json.get('primekeys')
-        self.dbindex = self.json.get('dbindex')
+        self.retention = self._d.get('retention')
+        self.unitsize = self._d.get('unitsize')
+        self.archive = self._d.get('archive')
+        self.tapegroup = self._d.get('tapegroup')
+        self.note = self._d.get('note')
+        self.primekeys = self._d.get('primekeys')
+        self.dbindex = self._d.get('dbindex')
         self.keywords = self._parse_keywords(d['keywords'])
         self.links = self._parse_links(d['links'])
         self.segments = self._parse_segments(d['segments'])
@@ -185,9 +185,9 @@ class ExportRequest(object):
             res['fpath'] = data_dir + '/' + res.filename
 
         if self.method.startswith('url'):
-            baseurl = self._client.server.http_download_baseurl
+            baseurl = self._client._server.http_download_baseurl
         elif self.method.startswith('ftp'):
-            baseurl = self._client.server.ftp_download_baseurl
+            baseurl = self._client._server.ftp_download_baseurl
         else:
             raise RuntimeError(
                 'Download is not supported for export method "%s"' %
@@ -224,11 +224,6 @@ class ExportRequest(object):
     @verbose.setter
     def verbose(self, value):
         self._verbose = bool(value)
-
-    @property
-    def json(self):
-        """Dictionary with the full JSON reply of the last status update"""
-        return self._d
 
     @property
     def id(self):
@@ -298,7 +293,7 @@ class ExportRequest(object):
     def request_url(self):
         """URL of the export request"""
         data_dir = self.dir
-        http_baseurl = self._client.server.http_download_baseurl
+        http_baseurl = self._client._server.http_download_baseurl
         if data_dir is None or http_baseurl is None:
             return None
         if data_dir.startswith('/'):
@@ -593,7 +588,7 @@ class Client(object):
         self.email = email  # use property, for email validation
 
     def __repr__(self):
-        return '<Client "%s">' % self.server.name
+        return '<Client "%s">' % self._server.name
 
     def _convert_numeric_keywords(self, ds, kdf, skip_conversion=None):
         si = self.info(ds)
@@ -720,7 +715,8 @@ class Client(object):
         return fname
 
     @property
-    def server(self):
+    def _server(self):
+        """Remote server configuration"""
         return self._json.server
 
     @property
@@ -762,7 +758,7 @@ class Client(object):
             List of series names or DataFrame containing name, primekeys
             and a description of the selected series (see full parameter).
         """
-        if self.server.url_show_series_wrapper is None:
+        if self._server.url_show_series_wrapper is None:
             # No wrapper CGI available, use the regular version.
             d = self._json.show_series(regex)
             status = d.get('status')
