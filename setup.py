@@ -2,26 +2,13 @@
 from setuptools import setup
 import versioneer
 
-
 NAME = 'drms'
 DESCRIPTION = 'Access HMI, AIA and MDI data with Python'
+LONG_DESCRIPTION = open('README.rst').read()
 AUTHOR = 'Kolja Glogowski'
 AUTHOR_EMAIL = '"Kolja Glogowski" <kolja@pixie.de>'
 URL = 'https://github.com/kbg/drms'
 LICENSE = 'MIT'
-
-
-# The readme file uses Markdown, which does not seem to be supported by PyPI.
-# To solve this problem, we try to convert the README.md to reStructuredText
-# using pypandoc.
-try:
-    import pypandoc
-    LONG_DESCRIPTION = pypandoc.convert_file('README.md', 'rst')
-except:
-    # Fall back using the original Markdown text.
-    print('Warning: Pypandoc not found. Skipping README.md conversion.')
-    LONG_DESCRIPTION = open('README.md').read()
-
 
 setup(name=NAME,
       version=versioneer.get_version(),
@@ -49,5 +36,4 @@ setup(name=NAME,
           'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
           'Topic :: Scientific/Engineering :: Astronomy'],
-      platforms='any'
-      )
+      platforms='any')
