@@ -37,20 +37,21 @@ The ``drms`` Python package can be installed from
 
 ::
 
-    pip install --user drms
+    pip install drms
 
-To upgrade an already existing installation to the latest version, you
-can write
+To upgrade an already existing installation to the latest release, you
+can write::
 
-::
+    pip install -U drms
 
-    pip install -U --user drms
 
-The ``--user`` argument can be omitted in the ``pip`` command, if you are
-using a Python distribution, like
+Note: If you do not use a Python distribution, like
 `Anaconda <https://www.continuum.io/downloads>`_,
-or if you created an isolated Python environment using
-`Virtualenv <https://virtualenv.pypa.io/en/stable/>`_.
+and did not create an isolated Python environment using
+`Virtualenv <https://virtualenv.pypa.io/en/stable/>`_,
+you might need to add ``--user`` to the ``pip`` command::
+
+    pip install --user drms
 
 
 Acknowledgements
