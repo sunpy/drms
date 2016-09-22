@@ -54,6 +54,12 @@ author = 'Kolja Glogowski'
 # The short X.Y version.
 version = drms.__version__
 
+# Read the Docs apparently does not build the documentation in a clean working
+# directory, which causes versioneer to return a version that ends with
+# ".dirty". As a workaround, we just remove this substring from the version.
+if version.endswith('.dirty'):
+    version = version[:-6]
+
 # The full version, including alpha/beta/rc tags.
 release = version
 
