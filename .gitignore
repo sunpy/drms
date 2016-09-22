@@ -8,3 +8,5 @@ __pycache__
 /examples/downloads/
 /nogit/
 /.tox/
+/doc/build/
+/doc/generated/
