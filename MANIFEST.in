@@ -1,4 +1,12 @@
-include *.txt *.md
-recursive-include examples *.py
+include MANIFEST.in
+include *.txt *.md *.rst
+include setup.py setup.cfg
+include tox.ini
 include versioneer.py
-include drms/_version.py
+recursive-include drms *.py
+recursive-include examples *.py
+recursive-include doc *
+prune doc/build
+prune doc/generated
+prune */__pycache__
+global-exclude *.pyc *~ *.bak *.swp
