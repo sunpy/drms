@@ -355,7 +355,7 @@ class HttpJsonClient(object):
             method = 'url'
 
         if protocol in img_protocol_list:
-            d = {'ct': 'grey.sao', 'scaling': 'minmax', 'size': 1}
+            d = {'ct': 'grey.sao', 'scaling': 'MINMAX', 'size': 1}
             if protocol_args is not None:
                 for k, v in protocol_args.items():
                     if k.lower() == 'ct':

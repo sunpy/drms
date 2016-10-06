@@ -778,6 +778,68 @@ class Client(object):
                     return fname + ext
         return fname
 
+    # Export color table names, from (internal) series "jsoc.Color_Tables"
+    _export_color_table_names = [
+        'HMI_mag.lut',
+        'aia_131.lut',
+        'aia_1600.lut',
+        'aia_1700.lut',
+        'aia_171.lut',
+        'aia_193.lut',
+        'aia_211.lut',
+        'aia_304.lut',
+        'aia_335.lut',
+        'aia_4500.lut',
+        'aia_94.lut',
+        'aia_mixed',
+        'bb.sao',
+        'grey.sao',
+        'heat.sao']
+
+    # Export scaling types, from (internal) series "jsoc.Color_Tables"
+    _export_scaling_names = [
+        'LOG',
+        'MINMAX',
+        'MINMAXGIVEN',
+        'SQRT',
+        'mag']
+
+    @staticmethod
+    def _validate_export_protocol_args(protocol_args):
+        """
+        Validate export protocol arguments.
+        """
+        if protocol_args is None:
+            return
+
+        ct_key = 'ct'
+        ct = protocol_args.get(ct_key)
+        if ct is None:
+            ct_key = 'CT'
+            ct = protocol_args.get(ct_key)
+        if ct is not None:
+            ll = [s.lower() for s in Client._export_color_table_names]
+            try:
+                i = ll.index(ct.lower())
+            except ValueError:
+                msg = "'%s' is not a valid color table, " % ct
+                msg += 'available color tables: %s' % ', '.join(
+                    ["'%s'" % s for s in Client._export_color_table_names])
+                raise ValueError(msg)
+            protocol_args[ct_key] = Client._export_color_table_names[i]
+
+        scaling = protocol_args.get('scaling')
+        if scaling is not None:
+            ll = [s.lower() for s in Client._export_scaling_names]
+            try:
+                i = ll.index(scaling.lower())
+            except ValueError:
+                msg = "'%s' is not a valid scaling type, " % scaling
+                msg += 'available scaling types: %s' % ', '.join(
+                    ["'%s'" % s for s in Client._export_scaling_names])
+                raise ValueError(msg)
+            protocol_args['scaling'] = Client._export_scaling_names[i]
+
     @property
     def _server(self):
         """(ServerConfig) Remote server configuration."""
@@ -1108,7 +1170,8 @@ class Client(object):
         protocol_args : dict
             Extra protocol arguments for protocols 'jpg', 'mpg' and
             'mp4'. Valid arguments are: 'ct', 'scaling', 'min', 'max'
-            and 'size'.
+            and 'size'. See the JSOC data export webpage for more
+            details.
         filenamefmt : string, None or False
             Custom filename format string for exported files. This is
             ignored for 'url_quick'/'as-is' data exports. If set to
@@ -1142,11 +1205,16 @@ class Client(object):
                     'The email argument is required, when no default email '
                     'address was set')
             email = self._email
+
         if filenamefmt is None:
             sname = _extract_series_name(ds)
             filenamefmt = self._generate_filenamefmt(sname)
         elif filenamefmt is False:
             filenamefmt = None
+
+        if protocol.lower() in ['jpg', 'mpg', 'mp4']:
+            self._validate_export_protocol_args(protocol_args)
+
         d = self._json.exp_request(
             ds, email, method=method, protocol=protocol,
             protocol_args=protocol_args, filenamefmt=filenamefmt,
