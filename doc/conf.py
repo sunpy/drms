@@ -60,6 +60,13 @@ version = drms.__version__
 if version.endswith('.dirty'):
     version = version[:-6]
 
+# RtD also seems to change some files in the working directory, which causes
+# versioneer to return a version like '0.5.0+0g.....'. Remove the part after
+# the '+' if this starts with a '0'.
+v = version.split('+')
+if len(v) > 1 and v[1].startswith('0'):
+    version = v[0]
+
 # The full version, including alpha/beta/rc tags.
 release = version
 
