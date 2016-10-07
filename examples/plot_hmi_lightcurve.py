@@ -1,5 +1,5 @@
 from __future__ import absolute_import, division, print_function
-from pylab import *
+import matplotlib.pyplot as plt
 import example_helpers
 import drms
 
@@ -30,15 +30,15 @@ avg = res.DATAMEAN/1e3
 std = res.DATARMS/1e3
 
 # Create plot
-figure(1, figsize=(15, 7)); clf()
-title(qstr, fontsize='medium')
-fill_between(
+fig = plt.figure(figsize=(15, 7))
+ax = plt.subplot()
+ax.set_title(qstr, fontsize='medium')
+ax.fill_between(
     t, avg+std, avg-std, edgecolor='none', facecolor='b', alpha=0.3,
     interpolate=True)
-plot(t, avg, color='b')
-xlabel('Time')
-ylabel('Disk-averaged continuum intensity [kDN/s]')
-tight_layout()
-draw()
+plt.plot(t, avg, color='b')
+ax.set_xlabel('Time')
+ax.set_ylabel('Disk-averaged continuum intensity [kDN/s]')
+fig.tight_layout()
 
-show()
+plt.show()

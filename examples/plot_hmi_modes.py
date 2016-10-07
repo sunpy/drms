@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division, print_function
-from pylab import *
+import matplotlib.pyplot as plt
+import numpy as np
 import example_helpers
 import drms
 
@@ -32,7 +33,7 @@ fname = data_url + s[segname][0]
 
 # Read the data segment
 print('Reading data from %r...' % fname)
-a = genfromtxt(fname)
+a = np.genfromtxt(fname)
 
 # For column names, see appendix of Larson & Schou (2015SoPh..290.3221L)
 l = a[:, 0].astype(int)
@@ -47,41 +48,43 @@ elif a.shape[1] in [26, 50, 86]:
 snu = a[:, sig_offs + 2]/1e3
 
 # Plot: zoomed in on lower l
-figure(1, figsize=(11, 7)); clf()
-title('Time = %s ... %s, L = %d ... %d, NDT = %d' % (
+fig = plt.figure(1, figsize=(11, 7))
+ax = plt.subplot()
+ax.set_title('Time = %s ... %s, L = %d ... %d, NDT = %d' % (
     k.T_START, k.T_STOP, k.LMIN, k.LMAX, k.NDT), fontsize='medium')
-for ni in unique(n):
+for ni in np.unique(n):
     idx = (n == ni)
-    plot(l[idx], nu[idx], 'b.-')
-xlim(0, 120)
-ylim(0.8, 4.5)
-xlabel('Harmonic degree')
-ylabel('Frequency [mHz]')
-tight_layout()
-draw()
+    plt.plot(l[idx], nu[idx], 'b.-')
+ax.set_xlim(0, 120)
+ax.set_ylim(0.8, 4.5)
+ax.set_xlabel('Harmonic degree')
+ax.set_ylabel('Frequency [mHz]')
+fig.tight_layout()
+plt.draw()
 
 # Plot: higher l, n <= 20, with errors
-figure(2, figsize=(11, 7)); clf()
-title('Time = %s ... %s, L = %d ... %d, NDT = %d' % (
+fig = plt.figure(2, figsize=(11, 7))
+ax = plt.subplot()
+ax.set_title('Time = %s ... %s, L = %d ... %d, NDT = %d' % (
     k.T_START, k.T_STOP, k.LMIN, k.LMAX, k.NDT), fontsize='medium')
-for ni in unique(n):
+for ni in np.unique(n):
     if ni <= 20:
         idx = (n == ni)
-        plot(l[idx], nu[idx], 'b.', ms=3)
+        plt.plot(l[idx], nu[idx], 'b.', ms=3)
         if ni < 10:
-            plot(l[idx], nu[idx] + 1000*snu[idx], 'g')
-            plot(l[idx], nu[idx] - 1000*snu[idx], 'g')
+            plt.plot(l[idx], nu[idx] + 1000*snu[idx], 'g')
+            plt.plot(l[idx], nu[idx] - 1000*snu[idx], 'g')
         else:
-            plot(l[idx], nu[idx] + 500*snu[idx], 'r')
-            plot(l[idx], nu[idx] - 500*snu[idx], 'r')
-legend(loc='upper right', handles=[
-    Line2D([0], [0], color='r', label='500 sigma'),
-    Line2D([0], [0], color='g', label='1000 sigma')])
-xlim(-5, 305)
-ylim(0.8, 4.5)
-xlabel('Harmonic degree')
-ylabel('Frequency [mHz]')
-tight_layout()
-draw()
+            plt.plot(l[idx], nu[idx] + 500*snu[idx], 'r')
+            plt.plot(l[idx], nu[idx] - 500*snu[idx], 'r')
+plt.legend(loc='upper right', handles=[
+    plt.Line2D([0], [0], color='r', label='500 sigma'),
+    plt.Line2D([0], [0], color='g', label='1000 sigma')])
+ax.set_xlim(-5, 305)
+ax.set_ylim(0.8, 4.5)
+ax.set_xlabel('Harmonic degree')
+ax.set_ylabel('Frequency [mHz]')
+fig.tight_layout()
+plt.draw()
 
-show()
+plt.show()
