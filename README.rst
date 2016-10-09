@@ -57,9 +57,8 @@ you might need to add ``--user`` to the ``pip`` command::
 Acknowledgements
 ----------------
 
-The author of this project has received funding from the European
+The main author of this project has received funding from the European
 Research Council under the European Union's Seventh Framework Programme
 (FP/2007-2013) / ERC Grant Agreement no. 307117.
 
-Some of the data export code was contributed by Monica Bobra and Art
-Amezcua.
+See AUTHORS.txt for a list of contributors.

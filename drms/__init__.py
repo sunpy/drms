@@ -1,5 +1,5 @@
-# Copyright (c) 2014-2016 Kolja Glogowski
-# Copyright (c) 2016 Monica Bobra and Arthur Amezcua
+# Copyright (c) 2014-2016 Kolja Glogowski and others.
+# See AUTHORS.txt for a list of contributors.
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation

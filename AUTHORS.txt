@@ -1,0 +1,10 @@
+Maintainer and project lead:
+
+- Kolja Glogowski <kolja@pixie.de>
+
+
+Contributors:
+
+- Monica Bobra
+- Arthur Amezcua
+- David Perez-Suarez

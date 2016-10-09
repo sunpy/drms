@@ -68,9 +68,9 @@ can write::
 Acknowledgements
 ----------------
 
-The author of this project has received funding from the European
+The main author of this project has received funding from the European
 Research Council under the European Union's Seventh Framework Programme
 (FP/2007-2013) / ERC Grant Agreement no. 307117.
 
-Some of the data export code was contributed by Monica Bobra and Art
-Amezcua.
+See :download:`LICENSE.txt <../LICENSE.txt>` for the license text and
+:download:`AUTHORS.txt <../AUTHORS.txt>` for a list of contributors.
