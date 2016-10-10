@@ -55,11 +55,13 @@ aspect = abs((xmax - xmin)/nx * ny/(ymax - ymin))
 
 # Create plot
 fig = plt.figure(1, figsize=(13.5, 6))
-ax = plt.subplot()
-ax.set_title('%s, Time: %s ... %s' % (qstr, k.T_START, k.T_STOP), fontsize='medium')
-plt.imshow(a, vmin=-300, vmax=300, origin='lower', interpolation='nearest',
-       cmap='gray', extent=extent, aspect=aspect)
-plt.gca().invert_xaxis()
+fig.clf()  # avoid overplotting in interactive sessions
+ax = fig.add_subplot(111)
+ax.set_title('%s, Time: %s ... %s' % (qstr, k.T_START, k.T_STOP),
+             fontsize='medium')
+ax.imshow(a, vmin=-300, vmax=300, origin='lower', interpolation='nearest',
+          cmap='gray', extent=extent, aspect=aspect)
+ax.invert_xaxis()
 ax.set_xlabel('Carrington longitude')
 ax.set_ylabel('Sine latitude')
 fig.tight_layout()

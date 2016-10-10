@@ -48,32 +48,34 @@ n, mn, sn = a.CAPN2, a_avg.CAPN2, a_std.CAPN2
 s, ms, ss = a.CAPS2, a_avg.CAPS2, a_std.CAPS2
 
 fig = plt.figure(1, figsize=(15, 7))
-ax = plt.subplot()
+fig.clf()  # avoid overplotting in interactive sessions
+ax = fig.add_subplot(111)
 ax.set_title(qstr, fontsize='medium')
-plt.plot(t, n, 'b', alpha=0.5, label='North pole')
-plt.plot(t, s, 'g', alpha=0.5, label='South pole')
-plt.plot(t, mn, 'r', label='Moving average')
-plt.plot(t, ms, 'r', label='')
+ax.plot(t, n, 'b', alpha=0.5, label='North pole')
+ax.plot(t, s, 'g', alpha=0.5, label='South pole')
+ax.plot(t, mn, 'r', label='Moving average')
+ax.plot(t, ms, 'r', label='')
 ax.set_xlabel('Time')
 ax.set_ylabel('Mean radial field strength [G]')
-plt.legend()
+ax.legend()
 fig.tight_layout()
 plt.draw()
 
 fig = plt.figure(2, figsize=(15, 7))
-ax = plt.subplot()
+fig.clf()  # avoid overplotting in interactive sessions
+ax = fig.add_subplot(111)
 ax.set_title(qstr, fontsize='medium')
-plt.fill_between(
+ax.fill_between(
     t, mn-sn, mn+sn, edgecolor='none', facecolor='b', alpha=0.3,
     interpolate=True)
-plt.fill_between(
+ax.fill_between(
     t, ms-ss, ms+ss, edgecolor='none', facecolor='g', alpha=0.3,
     interpolate=True)
-plt.plot(t, mn, 'b', label='North pole')
-plt.plot(t, ms, 'g', label='South pole')
+ax.plot(t, mn, 'b', label='North pole')
+ax.plot(t, ms, 'g', label='South pole')
 ax.set_xlabel('Time')
 ax.set_ylabel('Mean radial field strength [G]')
-plt.legend()
+ax.legend()
 fig.tight_layout()
 plt.draw()
 

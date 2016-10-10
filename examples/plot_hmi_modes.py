@@ -49,12 +49,13 @@ snu = a[:, sig_offs + 2]/1e3
 
 # Plot: zoomed in on lower l
 fig = plt.figure(1, figsize=(11, 7))
-ax = plt.subplot()
+fig.clf()  # avoid overplotting in interactive sessions
+ax = fig.add_subplot(111)
 ax.set_title('Time = %s ... %s, L = %d ... %d, NDT = %d' % (
     k.T_START, k.T_STOP, k.LMIN, k.LMAX, k.NDT), fontsize='medium')
 for ni in np.unique(n):
     idx = (n == ni)
-    plt.plot(l[idx], nu[idx], 'b.-')
+    ax.plot(l[idx], nu[idx], 'b.-')
 ax.set_xlim(0, 120)
 ax.set_ylim(0.8, 4.5)
 ax.set_xlabel('Harmonic degree')
@@ -64,20 +65,21 @@ plt.draw()
 
 # Plot: higher l, n <= 20, with errors
 fig = plt.figure(2, figsize=(11, 7))
-ax = plt.subplot()
+fig.clf()  # avoid overplotting in interactive sessions
+ax = fig.add_subplot(111)
 ax.set_title('Time = %s ... %s, L = %d ... %d, NDT = %d' % (
     k.T_START, k.T_STOP, k.LMIN, k.LMAX, k.NDT), fontsize='medium')
 for ni in np.unique(n):
     if ni <= 20:
         idx = (n == ni)
-        plt.plot(l[idx], nu[idx], 'b.', ms=3)
+        ax.plot(l[idx], nu[idx], 'b.', ms=3)
         if ni < 10:
-            plt.plot(l[idx], nu[idx] + 1000*snu[idx], 'g')
-            plt.plot(l[idx], nu[idx] - 1000*snu[idx], 'g')
+            ax.plot(l[idx], nu[idx] + 1000*snu[idx], 'g')
+            ax.plot(l[idx], nu[idx] - 1000*snu[idx], 'g')
         else:
-            plt.plot(l[idx], nu[idx] + 500*snu[idx], 'r')
-            plt.plot(l[idx], nu[idx] - 500*snu[idx], 'r')
-plt.legend(loc='upper right', handles=[
+            ax.plot(l[idx], nu[idx] + 500*snu[idx], 'r')
+            ax.plot(l[idx], nu[idx] - 500*snu[idx], 'r')
+ax.legend(loc='upper right', handles=[
     plt.Line2D([0], [0], color='r', label='500 sigma'),
     plt.Line2D([0], [0], color='g', label='1000 sigma')])
 ax.set_xlim(-5, 305)

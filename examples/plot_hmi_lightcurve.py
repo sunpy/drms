@@ -30,13 +30,14 @@ avg = res.DATAMEAN/1e3
 std = res.DATARMS/1e3
 
 # Create plot
-fig = plt.figure(figsize=(15, 7))
-ax = plt.subplot()
+fig = plt.figure(1, figsize=(15, 7))
+fig.clf()  # avoid overplotting in interactive sessions
+ax = fig.add_subplot(111)
 ax.set_title(qstr, fontsize='medium')
 ax.fill_between(
     t, avg+std, avg-std, edgecolor='none', facecolor='b', alpha=0.3,
     interpolate=True)
-plt.plot(t, avg, color='b')
+ax.plot(t, avg, color='b')
 ax.set_xlabel('Time')
 ax.set_ylabel('Disk-averaged continuum intensity [kDN/s]')
 fig.tight_layout()
