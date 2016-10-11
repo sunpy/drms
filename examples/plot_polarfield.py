@@ -47,9 +47,7 @@ t = a.index.to_pydatetime()
 n, mn, sn = a.CAPN2, a_avg.CAPN2, a_std.CAPN2
 s, ms, ss = a.CAPS2, a_avg.CAPS2, a_std.CAPS2
 
-fig = plt.figure(1, figsize=(15, 7))
-fig.clf()  # avoid overplotting in interactive sessions
-ax = fig.add_subplot(111)
+fig, ax = plt.subplots(1, 1, figsize=(15, 7))
 ax.set_title(qstr, fontsize='medium')
 ax.plot(t, n, 'b', alpha=0.5, label='North pole')
 ax.plot(t, s, 'g', alpha=0.5, label='South pole')
@@ -59,11 +57,8 @@ ax.set_xlabel('Time')
 ax.set_ylabel('Mean radial field strength [G]')
 ax.legend()
 fig.tight_layout()
-plt.draw()
 
-fig = plt.figure(2, figsize=(15, 7))
-fig.clf()  # avoid overplotting in interactive sessions
-ax = fig.add_subplot(111)
+fig, ax = plt.subplots(1, 1, figsize=(15, 7))
 ax.set_title(qstr, fontsize='medium')
 ax.fill_between(
     t, mn-sn, mn+sn, edgecolor='none', facecolor='b', alpha=0.3,
@@ -77,6 +72,5 @@ ax.set_xlabel('Time')
 ax.set_ylabel('Mean radial field strength [G]')
 ax.legend()
 fig.tight_layout()
-plt.draw()
 
 plt.show()

@@ -30,9 +30,7 @@ avg = res.DATAMEAN/1e3
 std = res.DATARMS/1e3
 
 # Create plot
-fig = plt.figure(1, figsize=(15, 7))
-fig.clf()  # avoid overplotting in interactive sessions
-ax = fig.add_subplot(111)
+fig, ax = plt.subplots(1, 1, figsize=(15, 7))
 ax.set_title(qstr, fontsize='medium')
 ax.fill_between(
     t, avg+std, avg-std, edgecolor='none', facecolor='b', alpha=0.3,

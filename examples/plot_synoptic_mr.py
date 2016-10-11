@@ -54,9 +54,7 @@ extent = (xmin - abs(k.CDELT1)/2, xmax + abs(k.CDELT1)/2,
 aspect = abs((xmax - xmin)/nx * ny/(ymax - ymin))
 
 # Create plot
-fig = plt.figure(1, figsize=(13.5, 6))
-fig.clf()  # avoid overplotting in interactive sessions
-ax = fig.add_subplot(111)
+fig, ax = plt.subplots(1, 1, figsize=(13.5, 6))
 ax.set_title('%s, Time: %s ... %s' % (qstr, k.T_START, k.T_STOP),
              fontsize='medium')
 ax.imshow(a, vmin=-300, vmax=300, origin='lower', interpolation='nearest',
@@ -65,6 +63,5 @@ ax.invert_xaxis()
 ax.set_xlabel('Carrington longitude')
 ax.set_ylabel('Sine latitude')
 fig.tight_layout()
-plt.draw()
 
 plt.show()

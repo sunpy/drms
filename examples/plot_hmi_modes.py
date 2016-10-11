@@ -48,9 +48,7 @@ elif a.shape[1] in [26, 50, 86]:
 snu = a[:, sig_offs + 2]/1e3
 
 # Plot: zoomed in on lower l
-fig = plt.figure(1, figsize=(11, 7))
-fig.clf()  # avoid overplotting in interactive sessions
-ax = fig.add_subplot(111)
+fig, ax = plt.subplots(1, 1, figsize=(11, 7))
 ax.set_title('Time = %s ... %s, L = %d ... %d, NDT = %d' % (
     k.T_START, k.T_STOP, k.LMIN, k.LMAX, k.NDT), fontsize='medium')
 for ni in np.unique(n):
@@ -61,12 +59,9 @@ ax.set_ylim(0.8, 4.5)
 ax.set_xlabel('Harmonic degree')
 ax.set_ylabel('Frequency [mHz]')
 fig.tight_layout()
-plt.draw()
 
 # Plot: higher l, n <= 20, with errors
-fig = plt.figure(2, figsize=(11, 7))
-fig.clf()  # avoid overplotting in interactive sessions
-ax = fig.add_subplot(111)
+fig, ax = plt.subplots(1, 1, figsize=(11, 7))
 ax.set_title('Time = %s ... %s, L = %d ... %d, NDT = %d' % (
     k.T_START, k.T_STOP, k.LMIN, k.LMAX, k.NDT), fontsize='medium')
 for ni in np.unique(n):
@@ -87,6 +82,5 @@ ax.set_ylim(0.8, 4.5)
 ax.set_xlabel('Harmonic degree')
 ax.set_ylabel('Frequency [mHz]')
 fig.tight_layout()
-plt.draw()
 
 plt.show()
