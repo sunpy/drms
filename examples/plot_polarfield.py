@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division, print_function
-from pylab import *
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import example_helpers
 import drms
@@ -25,7 +26,7 @@ print(' -> %d lines retrieved.' % len(res))
 res.index = drms.to_datetime(res.pop('T_REC'))
 
 # Determine smallest timestep
-dt = diff(res.index.to_pydatetime()).min()
+dt = np.diff(res.index.to_pydatetime()).min()
 
 # Make sure the time series contains all time steps (fills gaps with NaNs)
 # Note: This does not seem to work with old pandas versions (e.g. v0.14.1)
@@ -46,32 +47,30 @@ t = a.index.to_pydatetime()
 n, mn, sn = a.CAPN2, a_avg.CAPN2, a_std.CAPN2
 s, ms, ss = a.CAPS2, a_avg.CAPS2, a_std.CAPS2
 
-figure(1, figsize=(15, 7)); clf()
-title(qstr, fontsize='medium')
-plot(t, n, 'b', alpha=0.5, label='North pole')
-plot(t, s, 'g', alpha=0.5, label='South pole')
-plot(t, mn, 'r', label='Moving average')
-plot(t, ms, 'r', label='')
-xlabel('Time')
-ylabel('Mean radial field strength [G]')
-legend()
-tight_layout()
-draw()
+fig, ax = plt.subplots(1, 1, figsize=(15, 7))
+ax.set_title(qstr, fontsize='medium')
+ax.plot(t, n, 'b', alpha=0.5, label='North pole')
+ax.plot(t, s, 'g', alpha=0.5, label='South pole')
+ax.plot(t, mn, 'r', label='Moving average')
+ax.plot(t, ms, 'r', label='')
+ax.set_xlabel('Time')
+ax.set_ylabel('Mean radial field strength [G]')
+ax.legend()
+fig.tight_layout()
 
-figure(2, figsize=(15, 7)); clf()
-title(qstr, fontsize='medium')
-plt.fill_between(
+fig, ax = plt.subplots(1, 1, figsize=(15, 7))
+ax.set_title(qstr, fontsize='medium')
+ax.fill_between(
     t, mn-sn, mn+sn, edgecolor='none', facecolor='b', alpha=0.3,
     interpolate=True)
-plt.fill_between(
+ax.fill_between(
     t, ms-ss, ms+ss, edgecolor='none', facecolor='g', alpha=0.3,
     interpolate=True)
-plot(t, mn, 'b', label='North pole')
-plot(t, ms, 'g', label='South pole')
-xlabel('Time')
-ylabel('Mean radial field strength [G]')
-legend()
-tight_layout()
-draw()
+ax.plot(t, mn, 'b', label='North pole')
+ax.plot(t, ms, 'g', label='South pole')
+ax.set_xlabel('Time')
+ax.set_ylabel('Mean radial field strength [G]')
+ax.legend()
+fig.tight_layout()
 
-show()
+plt.show()

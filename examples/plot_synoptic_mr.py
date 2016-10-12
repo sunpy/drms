@@ -1,5 +1,5 @@
 from __future__ import absolute_import, division, print_function
-from pylab import *
+import matplotlib.pyplot as plt
 from astropy.io import fits
 import example_helpers
 import drms
@@ -54,14 +54,14 @@ extent = (xmin - abs(k.CDELT1)/2, xmax + abs(k.CDELT1)/2,
 aspect = abs((xmax - xmin)/nx * ny/(ymax - ymin))
 
 # Create plot
-figure(1, figsize=(13.5, 6)); clf()
-title('%s, Time: %s ... %s' % (qstr, k.T_START, k.T_STOP), fontsize='medium')
-imshow(a, vmin=-300, vmax=300, origin='lower', interpolation='nearest',
-       cmap='gray', extent=extent, aspect=aspect)
-gca().invert_xaxis()
-xlabel('Carrington longitude')
-ylabel('Sine latitude')
-tight_layout()
-draw()
+fig, ax = plt.subplots(1, 1, figsize=(13.5, 6))
+ax.set_title('%s, Time: %s ... %s' % (qstr, k.T_START, k.T_STOP),
+             fontsize='medium')
+ax.imshow(a, vmin=-300, vmax=300, origin='lower', interpolation='nearest',
+          cmap='gray', extent=extent, aspect=aspect)
+ax.invert_xaxis()
+ax.set_xlabel('Carrington longitude')
+ax.set_ylabel('Sine latitude')
+fig.tight_layout()
 
-show()
+plt.show()
