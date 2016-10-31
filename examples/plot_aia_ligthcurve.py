@@ -57,8 +57,8 @@ print(' -> %d lines after QUALITY selection.' % len(res))
 res.index = drms.to_datetime(res.T_REC)
 
 # Create some simple plots
-plt.close('all')
-res[['DATAMEAN']].plot()
-res[['DATASKEW', 'DATARMS', 'DATAMEAN']].plot()
-res[['DATAMAX', 'DATAMIN', 'DATAMEAN']].plot()
+ax = res[['DATAMIN', 'DATAMAX', 'DATAMEAN', 'DATARMS', 'DATASKEW']].plot(
+    figsize=(8, 10), subplots=True)
+ax[0].set_title(qstr, fontsize='medium')
+plt.tight_layout()
 plt.show()
