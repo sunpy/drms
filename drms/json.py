@@ -107,7 +107,7 @@ class HttpJsonClient(object):
     """
     def __init__(self, server='jsoc', debug=False):
         if isinstance(server, ServerConfig):
-            self._server_config = server
+            self._server = server
         else:
             self._server = _server_configs[server.lower()]
         self.debug = debug
