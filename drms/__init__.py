@@ -31,10 +31,10 @@ The latest release is avaiable at https://github.com/kbg/drms .
 from __future__ import absolute_import, division, print_function
 
 from . import config, error, json, client, utils
-from .error import DrmsError, DrmsQueryError, DrmsExportError
+from .error import *
+from .client import *
+from .utils import *
 from .json import const
-from .client import SeriesInfo, ExportRequest, Client
-from .utils import to_datetime
 
 # Keep the following three lines like this, so that versioneer does not add
 # them again when running "python versioneer.py setup".
@@ -42,10 +42,10 @@ from ._version import get_versions
 __version__ = get_versions()['version']
 del get_versions
 
-__all__ = [
-    'DrmsError', 'DrmsQueryError', 'DrmsExportError',
-    'SeriesInfo', 'ExportRequest', 'Client',
-    'const', 'to_datetime']
+__all__ = ['const']
+__all__ += error.__all__
+__all__ += client.__all__
+__all__ += utils.__all__
 
 # We imported all public classes and functions from submodules. The submodule
 # symbols themselves are now removed to keep the package namespace cleaner.
