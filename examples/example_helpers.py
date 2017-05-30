@@ -34,13 +34,17 @@ def is_drms_package_directory(path):
     if not op.isfile(init_fpath):
         return False
 
+    client_fpath = op.join(path, 'client.py')
+    if not op.isfile(client_fpath):
+        return False
+
     try:
-        init_code = open(init_fpath).read()
+        code = open(client_fpath).read()
     except IOError:
         return False
 
-    for s in ['Kolja', 'DrmsQueryError', 'Client', '__version__']:
-        if s not in init_code:
+    for s in ['class Client', 'def series', 'def query', 'def export']:
+        if s not in code:
             return False
 
     return True
