@@ -113,6 +113,23 @@ class ServerConfig(object):
     def to_dict(self):
         return self._d
 
+    def check_supported(self, op):
+        """Check if an operation is supported by the server."""
+        if op == 'series':
+            return ((self.cgi_show_series is not None) or
+                    (self.cgi_show_series_wrapper is not None))
+        elif op == 'info':
+            return self.cgi_jsoc_info is not None
+        elif op == 'query':
+            return self.cgi_jsoc_info is not None
+        elif op == 'email':
+            return self.cgi_check_address is not None
+        elif op == 'export':
+            return ((self.cgi_jsoc_info is not None) and
+                    (self.cgi_jsoc_fetch is not None))
+        else:
+            raise ValueError('Unknown operation: %r' % op)
+
 
 def register_server(config):
     """Register a server configuration."""

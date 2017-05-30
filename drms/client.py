@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 
 from .json import HttpJsonClient
-from .error import DrmsQueryError, DrmsExportError
+from .error import DrmsQueryError, DrmsExportError, DrmsOperationNotSupported
 from .utils import _pd_to_numeric_coerce, _split_arg, _extract_series_name
 
 __all__ = ['SeriesInfo', 'ExportRequest', 'Client']
@@ -897,6 +897,9 @@ class Client(object):
             primekeys and a description of the selected series (see
             parameter ``full``).
         """
+        if not self._server.check_supported('series'):
+            raise DrmsOperationNotSupported(
+                'Server does not support series list access')
         if self._server.url_show_series_wrapper is None:
             # No wrapper CGI available, use the regular version.
             d = self._json.show_series(regex)
@@ -945,6 +948,9 @@ class Client(object):
             SeriesInfo instance containing information about the data
             series.
         """
+        if not self._server.check_supported('info'):
+            raise DrmsOperationNotSupported(
+                'Server does not support series info access')
         name = _extract_series_name(ds)
         if name is not None:
             name = name.lower()
@@ -1060,6 +1066,9 @@ class Client(object):
             Link query results. This DataFrame is only returned,
             if link is not None.
         """
+        if not self._server.check_supported('query'):
+            raise DrmsOperationNotSupported(
+                'Server does not support DRMS queries')
         if pkeys:
             pk = self.pkeys(ds)
             key = _split_arg(key) if key is not None else []
@@ -1133,6 +1142,9 @@ class Client(object):
             True if the email address is valid and registered, False
             otherwise.
         """
+        if not self._server.check_supported('email'):
+            raise DrmsOperationNotSupported(
+                'Server does not support user emails')
         res = self._json.check_address(email)
         status = res.get('status')
         return status is not None and int(status) == 2
@@ -1199,6 +1211,9 @@ class Client(object):
         -------
         result : :class:`ExportRequest`
         """
+        if not self._server.check_supported('export'):
+            raise DrmsOperationNotSupported(
+                'Server does not support export requests')
         if email is None:
             if self._email is None:
                 raise ValueError(
@@ -1235,6 +1250,9 @@ class Client(object):
         -------
         result : :class:`ExportRequest`
         """
+        if not self._server.check_supported('export'):
+            raise DrmsOperationNotSupported(
+                'Server does not support export requests')
         return ExportRequest._create_from_id(requestid, client=self)
 
 
