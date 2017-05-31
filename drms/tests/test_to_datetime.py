@@ -2,6 +2,7 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 import pandas as pd
+import numpy as np
 import drms
 
 
@@ -52,6 +53,17 @@ def test_force_string(time_string, expected):
     assert drms.to_datetime(time_string, force=True) == expected
 
 
-# test_xx_list
-# test_xx_ndarray
-# test_xx_pandas_series
+@pytest.mark.parametrize('time_series, expected', [
+    (pd.Series(['2010.05.01_00:00_TAI', '2013.12.21_23:32:34_TAI']),
+     pd.Series([pd.Timestamp('2010-05-01 00:00:00'), pd.Timestamp('2013-12-21 23:32:34')])),
+    (['2010.05.01_00:00_TAI', '2013.12.21_23:32:34_TAI'],
+     [pd.Timestamp('2010-05-01 00:00:00'), pd.Timestamp('2013-12-21 23:32:34')]),
+    (('2010.05.01_00:00_TAI', '2013.12.21_23:32:34_TAI'),
+     (pd.Timestamp('2010-05-01 00:00:00'), pd.Timestamp('2013-12-21 23:32:34'))),
+    ({'a': '2010.05.01_00:00_TAI', 'b': '2013.12.21_23:32:34_TAI'},
+     {'a': pd.Timestamp('2010-05-01 00:00:00'), 'b': pd.Timestamp('2013-12-21 23:32:34')}),
+    (np.array(['2010.05.01_00:00_TAI', '2013.12.21_23:32:34_TAI']),
+     np.array([pd.Timestamp('2010-05-01 00:00:00'), pd.Timestamp('2013-12-21 23:32:34')]))
+    ])
+def test_time_series(time_series, expected):
+    drms.to_datetime(time_series).equals(expected)
