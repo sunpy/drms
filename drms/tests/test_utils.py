@@ -1,13 +1,28 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
+import pandas as pd
+
 from drms.utils import (
     _pd_to_datetime_coerce, _pd_to_numeric_coerce,
     _split_arg, _extract_series_name)
 
 
-# test_pd_to_datetime
-# test_pd_to_numeric
+@pytest.mark.parametrize('arg, exp', [
+    (pd.Series(['1.0', '2', -3]), pd.Series([1.0, 2.0, -3.0])),
+    (pd.Series(['1.0', 'apple', -3]), pd.Series([1.0, float('nan'), -3.0]))
+    ])
+def test_pd_to_numeric_coerce(arg, exp):
+    assert _pd_to_numeric_coerce(arg).equals(exp)
+
+
+@pytest.mark.parametrize('arg, exp', [
+    (pd.Series(['2016-04-01 00:00:00', '2016-04-01 06:00:00']),
+     pd.Series([pd.Timestamp('2016-04-01 00:00:00'),
+                pd.Timestamp('2016-04-01 06:00:00')]))
+    ])
+def test_pd_to_datetime_coerce(arg, exp):
+    assert _pd_to_datetime_coerce(arg).equals(exp)
 
 
 @pytest.mark.parametrize('in_obj, expected', [
