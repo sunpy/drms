@@ -1,3 +1,4 @@
+
 from __future__ import absolute_import, division, print_function
 
 import pytest
@@ -62,9 +63,36 @@ def test_force_string(time_string, expected):
     (data_tai_in, data_tai_out),
     (pd.Series(data_tai_in), data_tai_out),
     (tuple(data_tai_in), data_tai_out),
-    (np.array(data_tai_in), np.array(data_tai_out)),
-    (dict(zip(tuple(range(len(data_tai_in))), tuple(data_tai_in))),
-     dict(zip(tuple(range(len(data_tai_out))), tuple(data_tai_out))))
+    (np.array(data_tai_in), data_tai_out),
     ])
 def test_time_series(time_series, expected):
-    drms.to_datetime(time_series).equals(expected)
+    assert drms.to_datetime(time_series).equals(expected)
+
+
+data_invalid = [
+    ('2010.05.01_TAI', False),
+    ('2010.05.01_00:00_TAI', False),
+    ('', True),
+    ('1600', True),
+    ('foo', True),
+    ('2013.12.21_23:32:34_TAI', False)
+    ]
+data_invalid_in = [data[0] for data in data_invalid]
+data_invalid_out = pd.Series([data[1] for data in data_invalid])
+
+
+@pytest.mark.parametrize('time_string, expected', data_invalid)
+def test_corner_case(time_string, expected):
+    assert pd.isnull(drms.to_datetime(time_string)) == expected
+    assert isinstance(drms.to_datetime([]), pd.Series)
+    assert drms.to_datetime([]).empty
+
+
+@pytest.mark.parametrize('time_series, expected', [
+    (data_invalid_in, data_invalid_out),
+    (pd.Series(data_invalid_in), data_invalid_out),
+    (tuple(data_invalid_in), data_invalid_out),
+    (np.array(data_invalid_in), data_invalid_out),
+    ])
+def test_corner_case_series(time_series, expected):
+    assert pd.isnull(drms.to_datetime(time_series)).equals(expected)
