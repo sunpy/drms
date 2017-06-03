@@ -6,14 +6,19 @@ import numpy as np
 import drms
 
 
-@pytest.mark.parametrize('time_string, expected', [
+data_tai = [
     ('2010.05.01_TAI', pd.Timestamp('2010-05-01 00:00:00')),
     ('2010.05.01_00:00_TAI', pd.Timestamp('2010-05-01 00:00:00')),
     ('2010.05.01_00:00:00_TAI', pd.Timestamp('2010-05-01 00:00:00')),
     ('2010.05.01_01:23:45_TAI', pd.Timestamp('2010-05-01 01:23:45')),
     ('2013.12.21_23:32_TAI', pd.Timestamp('2013-12-21 23:32:00')),
     ('2013.12.21_23:32:34_TAI', pd.Timestamp('2013-12-21 23:32:34')),
-    ])
+    ]
+data_tai_in = [data[0] for data in data_tai]
+data_tai_out = pd.Series([data[1] for data in data_tai])
+
+
+@pytest.mark.parametrize('time_string, expected', data_tai)
 def test_tai_string(time_string, expected):
     assert drms.to_datetime(time_string) == expected
 
@@ -54,16 +59,12 @@ def test_force_string(time_string, expected):
 
 
 @pytest.mark.parametrize('time_series, expected', [
-    (pd.Series(['2010.05.01_00:00_TAI', '2013.12.21_23:32:34_TAI']),
-     pd.Series([pd.Timestamp('2010-05-01 00:00:00'), pd.Timestamp('2013-12-21 23:32:34')])),
-    (['2010.05.01_00:00_TAI', '2013.12.21_23:32:34_TAI'],
-     [pd.Timestamp('2010-05-01 00:00:00'), pd.Timestamp('2013-12-21 23:32:34')]),
-    (('2010.05.01_00:00_TAI', '2013.12.21_23:32:34_TAI'),
-     (pd.Timestamp('2010-05-01 00:00:00'), pd.Timestamp('2013-12-21 23:32:34'))),
-    ({'a': '2010.05.01_00:00_TAI', 'b': '2013.12.21_23:32:34_TAI'},
-     {'a': pd.Timestamp('2010-05-01 00:00:00'), 'b': pd.Timestamp('2013-12-21 23:32:34')}),
-    (np.array(['2010.05.01_00:00_TAI', '2013.12.21_23:32:34_TAI']),
-     np.array([pd.Timestamp('2010-05-01 00:00:00'), pd.Timestamp('2013-12-21 23:32:34')]))
+    (data_tai_in, data_tai_out),
+    (pd.Series(data_tai_in), data_tai_out),
+    (tuple(data_tai_in), data_tai_out),
+    (np.array(data_tai_in), np.array(data_tai_out)),
+    (dict(zip(tuple(range(len(data_tai_in))), tuple(data_tai_in))),
+     dict(zip(tuple(range(len(data_tai_out))), tuple(data_tai_out))))
     ])
 def test_time_series(time_series, expected):
     drms.to_datetime(time_series).equals(expected)
