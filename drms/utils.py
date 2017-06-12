@@ -3,6 +3,7 @@ from __future__ import absolute_import, division, print_function
 import re
 import six
 import pandas as pd
+import numpy as np
 
 __all__ = ['to_datetime']
 
@@ -72,10 +73,10 @@ def to_datetime(tstr, force=False):
     result : pandas.Series or pandas.Timestamp
         Pandas series or a single Timestamp object.
     """
-    s = pd.Series(tstr)
+    s = pd.Series(tstr).astype(str)
     if force or s.str.endswith('_TAI').any():
         s = s.str.replace('_TAI', '')
         s = s.str.replace('_', ' ')
         s = s.str.replace('.', '-', n=2)
     res = _pd_to_datetime_coerce(s)
-    return res.iloc[0] if isinstance(tstr, six.string_types) else res
+    return res.iloc[0] if (len(res) == 1) and np.isscalar(tstr) else res
