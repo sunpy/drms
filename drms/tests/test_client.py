@@ -48,9 +48,9 @@ def test_client_custom_config():
     assert c._server.name == 'TEST'
 
 
-def test_repr(self):
+def test_repr():
     assert repr(drms.Client()) == '<Client "JSOC">'
     assert repr(drms.Client(server='kis')) == '<Client "KIS">'
 
-def test_convert_numeric_keywords(self):
+def test_convert_numeric_keywords():
     pass
