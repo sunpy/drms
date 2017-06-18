@@ -3,6 +3,8 @@ from __future__ import absolute_import, division, print_function
 import pytest
 import drms
 
+from drms.error import DrmsQueryError, DrmsExportError, DrmsOperationNotSupported
+from drms.config import ServerConfig
 
 # Invalid email addresses used for testing
 invalid_emails = [
@@ -60,3 +62,8 @@ def test_email_cmdopt_init(email):
     else:
         c = drms.Client('jsoc', email=email)
         assert c.email == email
+
+def test_query_invalid():
+    cfg = ServerConfig(name='TEST')
+    with pytest.raises(DrmsOperationNotSupported):
+        c = drms.Client(server=cfg, email='user@example.com')
