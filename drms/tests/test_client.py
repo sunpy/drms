@@ -51,6 +51,3 @@ def test_client_custom_config():
 def test_repr():
     assert repr(drms.Client()) == '<Client "JSOC">'
     assert repr(drms.Client(server='kis')) == '<Client "KIS">'
-
-def test_convert_numeric_keywords():
-    pass

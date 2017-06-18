@@ -19,6 +19,7 @@ def test_series_info_basic(jsoc_client, series, pkeys, segments):
     for s in segments:
         assert s in si.segments.index
 
+
 @pytest.mark.jsoc
 @pytest.mark.parametrize('series, pkeys', [
     ('hmi.v_45s', ['T_REC', 'CAMERA']),
@@ -30,7 +31,7 @@ def test_series_info_basic(jsoc_client, series, pkeys, segments):
     ('iris.lev1', ['T_OBS', 'FSN']),
     ('mdi.fd_m_lev182', ['T_REC'])
     ])
-def test_series_primekeys(jsoc_client,series, pkeys):
+def test_series_primekeys(jsoc_client, series, pkeys):
     pkey_list = jsoc_client.pkeys(series)
     key_list = jsoc_client.keys(series)
     for k in pkeys:
