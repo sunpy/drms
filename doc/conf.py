@@ -12,7 +12,7 @@ import drms
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = '1.1'
+needs_sphinx = '1.3'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -22,14 +22,12 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinx.ext.coverage',
-    'numpydoc'
+    'sphinx.ext.napoleon'
 ]
 
 # Generate API docs.
 autosummary_generate = ['api.rst']
 
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -123,7 +121,25 @@ todo_include_todos = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'drmsdoc'
+
+try:
+    from sunpy_sphinx_theme.conf import *
+
+    # Custom sidebar templates, maps document names to template names.
+    html_sidebars = {'**': ['docsidebar.html']}
+
+except ImportError:
+
+    html_theme = 'drmsdoc'
+    # Add any paths that contain templates here, relative to this directory.
+    templates_path = ['_templates']
+    # Add any paths that contain custom themes here, relative to this directory.
+    html_theme_path = ['_themes']
+    # Add any paths that contain custom static files (such as style sheets) here,
+    # relative to this directory. They are copied after the builtin static files,
+    # so a file named "default.css" will overwrite the builtin "default.css".
+    html_static_path = ['_static']
+
 #html_theme = 'classic'
 #html_theme = 'sphinxdoc'
 #html_theme = 'sphinx_rtd_theme'
@@ -132,9 +148,6 @@ html_theme = 'drmsdoc'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #html_theme_options = {}
-
-# Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = ['_themes']
 
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
@@ -152,10 +165,6 @@ html_theme_path = ['_themes']
 # pixels large.
 #html_favicon = None
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -301,3 +310,4 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
