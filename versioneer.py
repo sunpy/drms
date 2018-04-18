@@ -430,6 +430,7 @@ LONG_VERSION_PY['git'] = '''
 
 """Git implementation of _version.py."""
 
+from __future__ import absolute_import
 import errno
 import os
 import re
@@ -1186,6 +1187,7 @@ SHORT_VERSION_PY = """
 # unpacked source archive. Distribution tarballs contain a pre-generated copy
 # of this file.
 
+from __future__ import absolute_import
 import json
 
 version_json = '''
