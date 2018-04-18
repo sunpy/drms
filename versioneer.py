@@ -276,7 +276,7 @@ https://creativecommons.org/publicdomain/zero/1.0/ .
 
 """
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 try:
     import configparser
 except ImportError:
