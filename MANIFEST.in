@@ -10,3 +10,4 @@ prune doc/build
 prune doc/generated
 prune */__pycache__
 global-exclude *.pyc *~ *.bak *.swp
+include drms/_version.py
