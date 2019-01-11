@@ -22,7 +22,7 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinx.ext.coverage',
-    'sphinx.ext.napoleon'
+    'numpydoc'
 ]
 
 # Generate API docs.
@@ -124,12 +124,9 @@ todo_include_todos = False
 
 try:
     from sunpy_sphinx_theme.conf import *
-
     # Custom sidebar templates, maps document names to template names.
     html_sidebars = {'**': ['docsidebar.html']}
-
 except ImportError:
-
     html_theme = 'drmsdoc'
     # Add any paths that contain templates here, relative to this directory.
     templates_path = ['_templates']
@@ -310,4 +307,3 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
-
