@@ -2,3 +2,4 @@ six
 numpy
 pandas
 numpydoc
+sunpy-sphinx-theme

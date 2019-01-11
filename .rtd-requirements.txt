@@ -1,2 +1,0 @@
-# Extra requirements for RTD
-sunpy-sphinx-theme
