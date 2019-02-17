@@ -9,7 +9,7 @@ This tutorial gives an introduction on how to use the ``drms`` Python
 module. More detailed information on the different classes and functions
 can be found in the :ref:`API Reference Manual <api>`. In addition to
 this tutorial, many example scripts are available in the
-`source code package <https://github.com/kbg/drms/releases/latest>`_
+`source code package <https://github.com/sunpy/drms/releases/latest>`_
 of the ``drms`` module.
 
 .. tip::
@@ -414,10 +414,10 @@ Example scripts
 ---------------
 
 There are many example scripts available in the
-`examples directory <https://github.com/kbg/drms/tree/master/examples>`_
+`examples directory <https://github.com/sunpy/drms/tree/master/examples>`_
 of the ``drms`` Python package source code. An archive of the latest
 source code release can be downloaded from the
-`drms relase page <https://github.com/kbg/drms/releases/latest>`_
+`drms relase page <https://github.com/sunpy/drms/releases/latest>`_
 on Github.
 
 .. For more information, use ``help(drms)`` inside the Python interpreter,

@@ -32,7 +32,7 @@ The ``drms`` module supports Python 2.7 and Python 3.4 or newer. It
 requires the following Python packages:
 
 -  NumPy, version 1.9.0 or newer
--  Pandas, version 0.14.1 or newer
+-  Pandas, version 0.15.0 or newer
 -  Six, version 1.8.0 or newer
 
 The module might also work with earlier versions, but it has not been

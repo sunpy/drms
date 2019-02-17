@@ -8,3 +8,6 @@ Contributors:
 - Monica Bobra
 - Arthur Amezcua
 - David Perez-Suarez
+- Nitin Choudhary
+- Stuart Mumford
+- Nabil Freij
