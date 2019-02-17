@@ -4,7 +4,7 @@ drms documentation
 
 :Release: |version|
 :Date:    |today|
-:Github: https://github.com/kbg/drms
+:Github: https://github.com/sunpy/drms
 :PyPI: https://pypi.python.org/pypi/drms
 
 Python module for accessing HMI, AIA and MDI data.

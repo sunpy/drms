@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2016 Kolja Glogowski and others.
+# Copyright (c) 2014-2019 Kolja Glogowski and others.
 # See AUTHORS.txt for a list of contributors.
 #
 # Permission is hereby granted, free of charge, to any person
@@ -25,7 +25,7 @@
 """
 Access HMI, AIA and MDI data with Python
 
-The latest release is avaiable at https://github.com/kbg/drms .
+The latest release is avaiable at https://github.com/sunpy/drms .
 """
 
 from __future__ import absolute_import, division, print_function

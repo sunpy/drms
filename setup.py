@@ -7,7 +7,7 @@ DESCRIPTION = 'Access HMI, AIA and MDI data with Python'
 LONG_DESCRIPTION = open('README.rst').read()
 AUTHOR = 'Kolja Glogowski'
 AUTHOR_EMAIL = '"Kolja Glogowski" <kolja@pixie.de>'
-URL = 'https://github.com/kbg/drms'
+URL = 'https://github.com/sunpy/drms'
 LICENSE = 'MIT'
 
 setup(name=NAME,
@@ -36,5 +36,6 @@ setup(name=NAME,
           'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
           'Topic :: Scientific/Engineering :: Astronomy'],
       platforms='any')

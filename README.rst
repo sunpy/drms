@@ -3,8 +3,8 @@ drms
 ====
 
 `Docs <http://drms.readthedocs.io/>`_ |
-`Tutorial <http://drms.readthedocs.io/en/stable/tutorial.html>`_ |
-`Github <https://github.com/kbg/drms>`_ |
+`Tutorial <https://drms.readthedocs.io/en/latest/tutorial.html>`_ |
+`Github <https://github.com/sunpy/drms>`_ |
 `PyPI <https://pypi.python.org/pypi/drms>`_
 
 The ``drms`` module provides an easy-to-use interface for accessing HMI,
@@ -22,7 +22,7 @@ The ``drms`` module supports Python 2.7 and Python 3.4 or newer. It
 requires the following Python packages:
 
 -  NumPy, version 1.9.0 or newer
--  Pandas, version 0.14.1 or newer
+-  Pandas, version 0.15.0 or newer
 -  Six, version 1.8.0 or newer
 
 The module might also work with earlier versions, but it has not been
