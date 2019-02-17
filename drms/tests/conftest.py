@@ -79,19 +79,34 @@ jsoc_reachable = lazily_cached(site_reachable, jsoc_testurl)
 kis_reachable = lazily_cached(site_reachable, kis_testurl)
 
 
+def _get_item_marker(item, name):
+    """
+    Compatibility function for pytest < 3.6.
+
+    Notes
+    -----
+    The method pytest.Item.get_closest_marker() is available since pytest 3.6,
+    while the method pytest.Item.get_marker() was removed in pytest 4.1.
+    """
+    if hasattr(item, 'get_closest_marker'):
+        return item.get_closest_marker(name)
+    else:
+        return item.get_marker(name)
+
+
 def pytest_runtest_setup(item):
     # Skip JSOC online site tests if the site is not reachable.
-    if item.get_marker('jsoc') is not None:
+    if _get_item_marker(item, 'jsoc') is not None:
         if not jsoc_reachable():
             pytest.skip('JSOC is not reachable')
 
     # Skip KIS online site tests if the site is not reachable.
-    if item.get_marker('kis') is not None:
+    if _get_item_marker(item, 'kis') is not None:
         if not kis_reachable():
             pytest.skip('KIS is not reachable')
 
     # Skip export tests if no email address was specified.
-    if item.get_marker('export') is not None:
+    if _get_item_marker(item, 'export') is not None:
         email = item.config.getoption('email')
         if email is None:
             pytest.skip('No email address specified; use the --email '
