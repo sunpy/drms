@@ -4,6 +4,7 @@ import os
 import re
 import time
 import warnings
+from collections import OrderedDict
 from six import string_types
 from six.moves.urllib.request import urlretrieve
 from six.moves.urllib.error import HTTPError, URLError
@@ -1086,7 +1087,8 @@ class Client(object):
             if 'keywords' in lres:
                 names = [it['name'] for it in lres['keywords']]
                 values = [it['values'] for it in lres['keywords']]
-                res_key = pd.DataFrame.from_items(zip(names, values))
+                res_key = pd.DataFrame.from_dict(
+                    OrderedDict(zip(names, values)))
             else:
                 res_key = pd.DataFrame()
             if convert_numeric:
@@ -1097,7 +1099,8 @@ class Client(object):
             if 'segments' in lres:
                 names = [it['name'] for it in lres['segments']]
                 values = [it['values'] for it in lres['segments']]
-                res_seg = pd.DataFrame.from_items(zip(names, values))
+                res_seg = pd.DataFrame.from_dict(
+                    OrderedDict(zip(names, values)))
             else:
                 res_seg = pd.DataFrame()
             res.append(res_seg)
@@ -1106,7 +1109,8 @@ class Client(object):
             if 'links' in lres:
                 names = [it['name'] for it in lres['links']]
                 values = [it['values'] for it in lres['links']]
-                res_link = pd.DataFrame.from_items(zip(names, values))
+                res_link = pd.DataFrame.from_dict(
+                    OrderedDict(zip(names, values)))
             else:
                 res_link = pd.DataFrame()
             res.append(res_link)
