@@ -22,7 +22,7 @@ setup(name=NAME,
       packages=['drms', 'drms.tests'],
       install_requires=[
           'numpy>=1.9.0',
-          'pandas>=0.14.1',
+          'pandas>=0.15.0',
           'six>=1.8.0'],
       classifiers=[
           'Intended Audience :: Developers',

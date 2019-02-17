@@ -79,4 +79,5 @@ def to_datetime(tstr, force=False):
         s = s.str.replace('_', ' ')
         s = s.str.replace('.', '-', n=2)
     res = _pd_to_datetime_coerce(s)
+    res = res.dt.tz_localize(None)  # remove any timezone information
     return res.iloc[0] if (len(res) == 1) and np.isscalar(tstr) else res
