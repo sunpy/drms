@@ -5,7 +5,10 @@ drms
 `Docs <http://drms.readthedocs.io/>`_ |
 `Tutorial <https://drms.readthedocs.io/en/latest/tutorial.html>`_ |
 `Github <https://github.com/sunpy/drms>`_ |
-`PyPI <https://pypi.python.org/pypi/drms>`_
+`PyPI <https://pypi.python.org/pypi/drms>`_ 
+
+.. image:: https://zenodo.org/badge/58651845.svg
+   :target: https://zenodo.org/badge/latestdoi/58651845
 
 The ``drms`` module provides an easy-to-use interface for accessing HMI,
 AIA and MDI data with Python. It uses the publicly accessible
