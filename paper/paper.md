@@ -11,7 +11,7 @@ authors:
     orcid: 0000-0002-5662-9604
     affiliation: 3
   - name: Nitin Choudhary
-    orcid:
+    orcid: 0000-0001-6915-4583
     affiliation: 4
   - name: Arthur B. Amezcua
     orcid:
@@ -26,7 +26,7 @@ affiliations:
    index: 2
  - name: W.W. Hansen Experimental Physics Laboratory, Stanford University, Stanford, CA 94305, USA
    index: 3
- - name: Department of Mathematics, Indian Institute of Technology Kharagpur, Kharagpur, West Bengal 72130, India
+ - name: Department of Mathematics, Indian Institute of Technology Kharagpur, Kharagpur, West Bengal 721302, India
    index: 4
  - name: School of Mathematics and Statistics, The University of Sheffield, Sheffield S3 7RH, UK
    index: 5
