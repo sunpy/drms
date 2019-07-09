@@ -1,3 +1,7 @@
+% Copyright (c) 2016 Open Journals
+% License: MIT
+% Origin: https://github.com/openjournals/whedon
+
 \documentclass[10pt,a4paper,onecolumn]{article}
 \usepackage{marginnote}
 \usepackage{graphicx}
