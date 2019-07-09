@@ -20,9 +20,9 @@ authors:
     orcid: 0000-0003-4217-4642
     affiliation: 5
 affiliations:
- - name: Kiepenheuer Institut für Sonnenphysik, Freiburg, Germany
+ - name: Kiepenheuer Institut für Sonnenphysik, 79104, Freiburg, Germany
    index: 1
- - name: eScience Department, Computing Center, University of Freiburg, Freiburg, Germany
+ - name: eScience Department, Computing Center, University of Freiburg, 79104, Freiburg, Germany
    index: 2
  - name: W.W. Hansen Experimental Physics Laboratory, Stanford University, Stanford, CA 94305, USA
    index: 3
