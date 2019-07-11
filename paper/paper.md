@@ -20,7 +20,7 @@ authors:
     orcid: 0000-0003-4217-4642
     affiliation: 5
 affiliations:
- - name: Kiepenheuer Institut für Sonnenphysik, 79104, Freiburg, Germany
+ - name: Kiepenheuer-Institut für Sonnenphysik, 79104, Freiburg, Germany
    index: 1
  - name: eScience Department, Computing Center, University of Freiburg, 79104, Freiburg, Germany
    index: 2
