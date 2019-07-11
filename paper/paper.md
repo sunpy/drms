@@ -14,7 +14,6 @@ authors:
     orcid: 0000-0001-6915-4583
     affiliation: 4
   - name: Arthur B. Amezcua
-    orcid:
     affiliation: 3
   - name: Stuart J. Mumford
     orcid: 0000-0003-4217-4642
