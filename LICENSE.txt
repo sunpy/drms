@@ -1,5 +1,4 @@
-Copyright (c) 2014-2019 Kolja Glogowski and others.
-See AUTHORS.txt for a list of contributors.
+Copyright (c) 2014-2019 Kolja Glogowski and others (see AUTHORS.txt)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
