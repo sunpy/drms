@@ -42,27 +42,31 @@ tested with any versions older than the ones listed above.
 Installation
 ------------
 
-The ``drms`` Python package can be installed from
-`PyPI <https://pypi.python.org/pypi/drms>`_ using
+If you are using `Anaconda`_, it is recommended to use the `conda-forge`_
+package::
+
+    conda config --append channels conda-forge
+    conda install drms
+
+Otherwise the ``drms`` Python package can be installed from `PyPI`_ using
 
 ::
 
     pip install drms
 
-To upgrade an already existing installation to the latest release, you
-can write::
-
-    pip install -U drms
-
 
 .. note::
-   If you do not use a Python distribution, like
-   `Anaconda <https://www.continuum.io/downloads>`_,
-   and did not create an isolated Python environment using
-   `Virtualenv <https://virtualenv.pypa.io/en/stable/>`_,
+   If you do not use a Python distribution, like `Anaconda`_,
+   and did not create an isolated Python environment using `Virtualenv`_,
    you might need to add ``--user`` to the ``pip`` command::
 
        pip install --user drms
+
+
+.. _PyPI: https://pypi.python.org/pypi/drms
+.. _conda-forge: https://anaconda.org/conda-forge/drms
+.. _Anaconda: https://www.anaconda.com/distribution/
+.. _Virtualenv: https://virtualenv.pypa.io
 
 
 Acknowledgements
