@@ -57,6 +57,28 @@ you might need to add ``--user`` to the ``pip`` command::
     pip install --user drms
 
 
+Running Tests
+-------------
+
+In order to run any unit tests, `pytest`_ needs to be installed.
+
+Basic tests for the currently installed ``drms`` package can be run using::
+
+    python -m drms.tests
+
+To perform online tests against the JSOC servers, use the ``--run-jsoc`` flag::
+
+    python -m drms.tests --run-jsoc
+
+To also include additional email verification and JSOC export tests,
+you need to specify a `registered email address`_, e.g.::
+
+    python -m drms.tests --run-jsoc --email name@example.com
+
+.. _pytest: https://pypi.org/project/pytest/
+.. _registered email address: http://jsoc.stanford.edu/ajax/register_email.html
+
+
 Getting Help
 ------------
 
