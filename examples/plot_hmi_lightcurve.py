@@ -3,6 +3,13 @@ import matplotlib.pyplot as plt
 import example_helpers
 import drms
 
+import pandas
+pandas_version = tuple(map(int, pandas.__version__.split('.')[:2]))
+if pandas_version >= (0, 22):
+    # Since pandas v0.22, we need to explicitely register matplotlib
+    # converters to use pandas.Timestamp objects in plots.
+    pandas.plotting.register_matplotlib_converters()
+
 
 # Series name and timespan
 series = 'hmi.ic_720s'

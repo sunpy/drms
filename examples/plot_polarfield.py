@@ -5,6 +5,12 @@ import pandas as pd
 import example_helpers
 import drms
 
+pandas_version = tuple(map(int, pd.__version__.split('.')[:2]))
+if pandas_version >= (0, 22):
+    # Since pandas v0.22, we need to explicitely register matplotlib
+    # converters to use pandas.Timestamp objects in plots.
+    pd.plotting.register_matplotlib_converters()
+
 
 # Series name, time range and time steps
 series = 'hmi.meanpf_720s'
@@ -34,7 +40,7 @@ a = res.asfreq(dt)
 
 # Compute 30d moving average and standard deviation using a boxcar window
 win_size = int(30*24*3600/dt.total_seconds())
-if tuple(map(int, pd.__version__.split('.')[:2])) >= (0, 18):
+if pandas_version >= (0, 18):
     a_avg = a.rolling(win_size, min_periods=1, center=True).mean()
     a_std = a.rolling(win_size, min_periods=1, center=True).std()
 else:
