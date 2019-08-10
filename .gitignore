@@ -6,6 +6,7 @@ __pycache__
 /*.egg-info/
 /examples/jsoc.stanford.edu/
 /examples/downloads/
+/examples/joss_figure.pdf
 /nogit/
 /.tox/
 /doc/build/
