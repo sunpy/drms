@@ -19,6 +19,15 @@ def ask_for_export_email():
     return email
 
 
+def get_export_email():
+    """
+    Get export email address from the JSOC_EXPORT_EMAIL environ variable, or
+    ask the the user to enter their address if JSOC_EXPORT_EMAIL is not set.
+    """
+    email = os.environ.get('JSOC_EXPORT_EMAIL')
+    return email if email is not None else ask_for_export_email()
+
+
 def python_path_prepend(reldir):
     """Prepend relative path to the Python import path list."""
     absdir = op.abspath(op.join(op.dirname(__file__), reldir))

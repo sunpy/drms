@@ -14,10 +14,13 @@ import drms
 print(__doc__)
 
 
-# If you don't want to enter your email address during program execution, you
-# can set this variable to the email address you have registered for JSOC data
-# exports. If you have not registered your email yet, you can do this on the
-# JSOC website at: http://jsoc.stanford.edu/ajax/register_email.html
+# This example requires a registered export email address. You can register
+# JSOC exports at: http://jsoc.stanford.edu/ajax/register_email.html
+#
+# You will be asked for your registered email address during execution of
+# this example. If you don't want to enter it every time you run this script,
+# you can set the environment variable JSOC_EXPORT_EMAIL or the variable
+# below to your registered email address.
 email = ''
 
 # Series, harpnum, timespan and segment selection
@@ -39,7 +42,7 @@ c = drms.Client(verbose=True)
 # Check if the email address was set at the top of this script. If not, ask for
 # a registered email address.
 if not email:
-    email = example_helpers.ask_for_export_email()
+    email = example_helpers.get_export_email()
 if not email or not c.check_email(email):
     raise RuntimeError('Email address is not valid or not registered.')
 
