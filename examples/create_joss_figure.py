@@ -133,8 +133,9 @@ fig, ax = plt.subplots(
 ax_meta, ax_img = ax[:, 0], ax[:, 1]
 
 # Create metadata line plots in the left column
+# Note: t.values is used for errorbar() because of an issue with pandas < 0.24
 axi = ax_meta[0]
-axi.errorbar(t, kw.USFLUX/1e22, yerr=kw.ERRVF/1e22, fmt='.', ms=2,
+axi.errorbar(t.values, kw.USFLUX/1e22, yerr=kw.ERRVF/1e22, fmt='.', ms=2,
              capsize=0, label='USFLUX')
 axi.set_title('Total unsigned flux')
 axi.set_ylabel(r'Mx $\times 10^{\minus 22}$')
