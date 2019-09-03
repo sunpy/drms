@@ -7,7 +7,11 @@ drms
 `Github <https://github.com/sunpy/drms>`_ |
 `PyPI <https://pypi.python.org/pypi/drms>`_ 
 
-.. image:: https://zenodo.org/badge/58651845.svg
+|JOSS| |Zenodo|
+
+.. |JOSS| image:: https://joss.theoj.org/papers/10.21105/joss.01614/status.svg
+   :target: https://doi.org/10.21105/joss.01614
+.. |Zenodo| image:: https://zenodo.org/badge/58651845.svg
    :target: https://zenodo.org/badge/latestdoi/58651845
 
 The ``drms`` module provides an easy-to-use interface for accessing HMI,
