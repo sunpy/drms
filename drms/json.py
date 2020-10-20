@@ -400,7 +400,8 @@ class HttpJsonClient(object):
         n = int(n) if n is not None else 0
         d['process=n'] = '%d' % n
         if process is not None:
-            allowed_processes = ['im_patch', 'resize', 'rebin']
+            allowed_processes = ['im_patch', 'resize', 'rebin', 'aia_scale_aialev1',
+                                 'Maproj']
             process_strings = {}
             for p, opts in process.items():
                 if p not in allowed_processes:
