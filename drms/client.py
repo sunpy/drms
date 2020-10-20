@@ -1155,7 +1155,8 @@ class Client(object):
 
     def export(self, ds, method='url_quick', protocol='as-is',
                protocol_args=None, filenamefmt=None, n=None, email=None,
-               requestor=None):
+               requestor=None,
+               process=None):
         """
         Submit a data export request.
 
@@ -1205,6 +1206,10 @@ class Client(object):
             current default email address is used, which in this case
             has to be set before calling export() by using the
             :attr:`Client.email` attribute.
+        process : `dict`, None
+            Dictionary of processing commands. Each entry is also a `dict`
+            containing all of the applicable options for that processing
+            command.
         requestor : string, None or False
             Export user ID. Default is None, in which case the user
             name is determined from the email address. If set to False,
@@ -1237,7 +1242,8 @@ class Client(object):
         d = self._json.exp_request(
             ds, email, method=method, protocol=protocol,
             protocol_args=protocol_args, filenamefmt=filenamefmt,
-            n=n, requestor=requestor)
+            n=n, requestor=requestor,
+            process=process)
         return ExportRequest(d, client=self)
 
     def export_from_id(self, requestid):
