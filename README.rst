@@ -131,7 +131,7 @@ our `Code of Conduct`_.
 Citation
 --------
 
-If you use drms in your work, please consider citing our `paper`_.
+If you use ``drms`` in your work, please consider citing our `paper`_.
 
 .. code :: bibtex
 
