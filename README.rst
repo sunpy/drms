@@ -128,6 +128,27 @@ our `Code of Conduct`_.
 
 .. _Code of Conduct: https://docs.sunpy.org/en/latest/code_of_conduct.html
 
+Citation
+--------
+
+If you use ``drms`` in your work, please consider citing our `paper`_.
+
+.. code :: bibtex
+
+    @article{Glogowski2019,
+      doi = {10.21105/joss.01614},
+      url = {https://doi.org/10.21105/joss.01614},
+      year = {2019},
+      publisher = {The Open Journal},
+      volume = {4},
+      number = {40},
+      pages = {1614},
+      author = {Kolja Glogowski and Monica G. Bobra and Nitin Choudhary and Arthur B. Amezcua and Stuart J. Mumford},
+      title = {drms: A Python package for accessing HMI and AIA data},
+      journal = {Journal of Open Source Software}
+    }
+
+.. _paper: https://doi.org/10.21105/joss.01614
 
 Acknowledgements
 ----------------
