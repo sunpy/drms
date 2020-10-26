@@ -2,7 +2,7 @@ If you use drms in your work, please consider citing our paper:
 
 Glogowski et al., (2019). drms: A Python package for accessing HMI and AIA data. Journal of Open Source Software, 4(40), 1614, https://doi.org/10.21105/joss.01614.
 
-Bibtex entry:
+Here is the Bibtex entry:
 
 @article{Glogowski2019,
   doi = {10.21105/joss.01614},
