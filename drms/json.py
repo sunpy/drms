@@ -401,11 +401,11 @@ class HttpJsonClient(object):
         d['process=n'] = '%d' % n
         if process is not None:
             allowed_processes = ['im_patch', 'resize', 'rebin', 'aia_scale_aialev1',
-                                 'Maproj']
+                                 'aia_scale_orig', 'aia_scale_other', 'Maproj', 'HmiB2ptr']
             process_strings = {}
             for p, opts in process.items():
                 if p not in allowed_processes:
-                    raise ValueError(f'{p} is not an allowed processing option.')
+                    raise ValueError(f'{p} is not one of the allowed processing options {allowed_processes}')
                 process_strings[p] = ','.join([f'{k}={v}' for k, v in opts.items()])
             processes = '|'.join([f'{k},{v}' for k, v in process_strings.items()])
             d['process=n'] = f"{d['process=n']}|{processes}"
