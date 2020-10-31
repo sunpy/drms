@@ -1,41 +1,24 @@
 #!/usr/bin/env python
+import os
+from itertools import chain
+
 from setuptools import setup
-import versioneer
+from setuptools.config import read_configuration
 
-NAME = 'drms'
-DESCRIPTION = 'Access HMI, AIA and MDI data with Python'
-LONG_DESCRIPTION = open('README.rst').read()
-AUTHOR = 'Kolja Glogowski'
-AUTHOR_EMAIL = '"Kolja Glogowski" <kolja@pixie.de>'
-URL = 'https://github.com/sunpy/drms'
-LICENSE = 'MIT'
+################################################################################
+# Programmatically generate some extras combos.
+################################################################################
+extras = read_configuration('setup.cfg')['options']['extras_require']
 
-setup(name=NAME,
-      version=versioneer.get_version(),
-      cmdclass=versioneer.get_cmdclass(),
-      description=DESCRIPTION,
-      long_description=LONG_DESCRIPTION,
-      author=AUTHOR,
-      author_email=AUTHOR_EMAIL,
-      url=URL,
-      license=LICENSE,
-      packages=['drms', 'drms.tests', 'drms.tests.online'],
-      install_requires=[
-          'numpy>=1.9.0',
-          'pandas>=0.15.0',
-          'six>=1.8.0'],
-      classifiers=[
-          'Intended Audience :: Developers',
-          'Intended Audience :: Science/Research',
-          'License :: OSI Approved :: MIT License',
-          'Operating System :: OS Independent',
-          'Programming Language :: Python',
-          'Programming Language :: Python :: 2',
-          'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.4',
-          'Programming Language :: Python :: 3.5',
-          'Programming Language :: Python :: 3.6',
-          'Programming Language :: Python :: 3.7',
-          'Topic :: Scientific/Engineering :: Astronomy'],
-      platforms='any')
+# Dev is everything
+extras['dev'] = list(chain(*list(extras.values())))
+
+# All is everything but tests and docs
+exclude_keys = ('tests', 'docs', 'dev')
+ex_extras = dict([i for i in list(extras.items()) if i[0] not in exclude_keys])
+# Concatenate all the values together for 'all'
+extras['all'] = list(chain.from_iterable(list(ex_extras.values())))
+
+setup(
+    extras_require=extras, use_scm_version={'write_to': os.path.join('drms', '_version.py')},
+)

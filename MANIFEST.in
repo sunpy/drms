@@ -1,13 +1,18 @@
-include MANIFEST.in
-include *.txt *.md *.rst
-include setup.py setup.cfg
-include tox.ini
-include versioneer.py
-recursive-include drms *.py
-recursive-include examples *.py
-recursive-include doc *
-prune doc/build
-prune doc/generated
-prune */__pycache__
-global-exclude *.pyc *~ *.bak *.swp
-include drms/_version.py
+# Exclude specific files
+# All files which are tracked by git and not explicitly excluded here are included by setuptools_scm
+exclude .codecov.yaml
+exclude .editorconfig
+exclude .gitattributes
+exclude .gitignore
+exclude .pre-commit-config.yaml
+exclude azure-pipelines.yml
+exclude readthedocs.yml
+prune paper
+prune changelog
+
+# This subpckage is only used in development checkouts and should not be
+# included in built tarballs
+prune drms/_dev
+prune docs/_build
+prune build
+global-exclude *.pyc *.o

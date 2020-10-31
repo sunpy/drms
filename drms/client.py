@@ -1,25 +1,22 @@
-from __future__ import absolute_import, division, print_function
-
 import os
 import re
 import time
-import warnings
 from collections import OrderedDict
-from six import string_types
-from six.moves.urllib.request import urlretrieve
-from six.moves.urllib.error import HTTPError, URLError
-from six.moves.urllib.parse import urljoin
-import pandas as pd
-import numpy as np
+from urllib.error import URLError, HTTPError
+from urllib.parse import urljoin
+from urllib.request import urlretrieve
 
+import numpy as np
+import pandas as pd
+
+from .exceptions import DrmsExportError, DrmsOperationNotSupported, DrmsQueryError
 from .json import HttpJsonClient
-from .error import DrmsQueryError, DrmsExportError, DrmsOperationNotSupported
-from .utils import _pd_to_numeric_coerce, _split_arg, _extract_series_name
+from .utils import _extract_series_name, _pd_to_numeric_coerce, _split_arg
 
 __all__ = ['SeriesInfo', 'ExportRequest', 'Client']
 
 
-class SeriesInfo(object):
+class SeriesInfo:
     """
     DRMS series details.
 
@@ -50,6 +47,7 @@ class SeriesInfo(object):
     tapegroup : int
         Tape group.
     """
+
     def __init__(self, d, name=None):
         self._d = d
         self.name = name
@@ -66,8 +64,7 @@ class SeriesInfo(object):
 
     @staticmethod
     def _parse_keywords(d):
-        keys = [
-            'name', 'type', 'recscope', 'defval', 'units', 'note', 'linkinfo']
+        keys = ['name', 'type', 'recscope', 'defval', 'units', 'note', 'linkinfo']
         res = []
         for di in d:
             resi = []
@@ -78,13 +75,13 @@ class SeriesInfo(object):
             res = None  # workaround for older pandas versions
         res = pd.DataFrame(res, columns=keys)
         res.index = res.pop('name')
-        res['is_time'] = (res.type == 'time')
-        res['is_integer'] = (res.type == 'short')
-        res['is_integer'] |= (res.type == 'int')
-        res['is_integer'] |= (res.type == 'longlong')
-        res['is_real'] = (res.type == 'float')
-        res['is_real'] |= (res.type == 'double')
-        res['is_numeric'] = (res.is_integer | res.is_real)
+        res['is_time'] = res.type == 'time'
+        res['is_integer'] = res.type == 'short'
+        res['is_integer'] |= res.type == 'int'
+        res['is_integer'] |= res.type == 'longlong'
+        res['is_real'] = res.type == 'float'
+        res['is_real'] |= res.type == 'double'
+        res['is_numeric'] = res.is_integer | res.is_real
         return res
 
     @staticmethod
@@ -121,39 +118,17 @@ class SeriesInfo(object):
         if self.name is None:
             return '<SeriesInfo>'
         else:
-            return '<SeriesInfo "%s">' % self.name
+            return f'<SeriesInfo {self.name}>'
 
 
-class ExportRequest(object):
+class ExportRequest:
     """
     Class for handling data export requests.
 
     Use :func:`Client.export` or :func:`Client.export_from_id` to
     create an instance.
-
-    Attributes
-    ----------
-    id : string
-        Request ID.
-    status : int
-        Export request status.
-    urls : pandas.DataFrame
-        URLs of all downloadable files.
-    request_url : string
-        URL of the export request.
-    method : string
-        Data export method.
-    protocol : string
-        Data export protocol.
-    data : pandas.DataFrame
-        Records and filenames of the export request.
-    dir : string
-        Common directory of the requested files on the server.
-    tarfile : string
-        Filename, if a TAR file was requested.
-    keywords : string
-        Filename of textfile containing record keywords.
     """
+
     _status_code_ok = 0
     _status_code_notfound = 6
     _status_codes_pending = [1, 2, _status_code_notfound]
@@ -172,15 +147,13 @@ class ExportRequest(object):
         return cls(d, client)
 
     def __repr__(self):
-        idstr = str(None) if self._requestid is None else (
-            '"%s"' % self._requestid)
-        return '<ExportRequest id=%s, status=%d>' % (idstr, self._status)
+        idstr = str(None) if self._requestid is None else (f'{self._requestid}')
+        return f'<ExportRequest id={idstr}, status={int(self._status)}>'
 
     @staticmethod
     def _parse_data(d):
         keys = ['record', 'filename']
-        res = None if d is None else [
-            (di.get(keys[0]), di.get(keys[1])) for di in d]
+        res = None if d is None else [(di.get(keys[0]), di.get(keys[1])) for di in d]
         if not res:
             res = None  # workaround for older pandas versions
         res = pd.DataFrame(res, columns=keys)
@@ -208,11 +181,13 @@ class ExportRequest(object):
         msg = self._d.get('error')
         if msg is None:
             msg = 'DRMS export request failed.'
-        msg += ' [status=%d]' % self._status
+        msg += f' [status={int(self._status)}]'
         raise DrmsExportError(msg)
 
     def _generate_download_urls(self):
-        """Generate download URLs for the current request."""
+        """
+        Generate download URLs for the current request.
+        """
         res = self.data.copy()
         data_dir = self.dir
 
@@ -224,8 +199,7 @@ class ExportRequest(object):
         # tar exports provide only a single TAR file with full path
         if self.tarfile is not None:
             data_dir = None
-            res = pd.DataFrame(
-                [(None, self.tarfile)], columns=['record', 'filename'])
+            res = pd.DataFrame([(None, self.tarfile)], columns=['record', 'filename'])
 
         # If data_dir is None, the filename column should contain the full
         # path of the file and we need to extract the basename part. If
@@ -236,16 +210,14 @@ class ExportRequest(object):
             split_fpath = res.fpath.str.split('/')
             res['filename'] = [sfp[-1] for sfp in split_fpath]
         else:
-            res['fpath'] = data_dir + '/' + res.filename
+            res['fpath'] = [f'{data_dir}/{filename}' for filename in res.filename]
 
         if self.method.startswith('url'):
             baseurl = self._client._server.http_download_baseurl
         elif self.method.startswith('ftp'):
             baseurl = self._client._server.ftp_download_baseurl
         else:
-            raise RuntimeError(
-                'Download is not supported for export method "%s"' %
-                self.method)
+            raise RuntimeError(f'Download is not supported for export method {self.method}')
 
         # Generate download URLs.
         urls = []
@@ -257,43 +229,54 @@ class ExportRequest(object):
 
         # Remove rows with missing files.
         res = res[res.filename != 'NoDataFile']
-
         del res['fpath']
         return res
 
     @staticmethod
     def _next_available_filename(fname):
-        """Find next available filename, append a number if neccessary."""
+        """
+        Find next available filename, append a number if neccessary.
+        """
         i = 1
         new_fname = fname
         while os.path.exists(new_fname):
-            new_fname = '%s.%d' % (fname, i)
+            new_fname = f'{fname}.{int(i)}'
             i += 1
         return new_fname
 
     @property
     def id(self):
-        """(string) Request ID."""
+        """
+        (string) Request ID.
+        """
         return self._requestid
 
     @property
     def status(self):
-        """(int) Export request status."""
+        """
+        (int) Export request status.
+        """
         return self._status
 
     @property
     def method(self):
-        """(string) Export method."""
+        """
+        (string) Export method.
+        """
         return self._d.get('method')
 
     @property
     def protocol(self):
-        """(string) Export protocol."""
+        """
+        (string) Export protocol.
+        """
         return self._d.get('protocol')
 
     @property
     def dir(self):
-        """(string) Common directory of the requested files on the server."""
+        """
+        (string) Common directory of the requested files on the server.
+        """
         if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
@@ -317,7 +300,9 @@ class ExportRequest(object):
 
     @property
     def tarfile(self):
-        """(string) Filename, if a TAR file was requested."""
+        """
+        (string) Filename, if a TAR file was requested.
+        """
         if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
@@ -327,7 +312,9 @@ class ExportRequest(object):
 
     @property
     def keywords(self):
-        """(string) Filename of textfile containing record keywords."""
+        """
+        (string) Filename of textfile containing record keywords.
+        """
         if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
@@ -337,7 +324,9 @@ class ExportRequest(object):
 
     @property
     def request_url(self):
-        """(string) URL of the export request."""
+        """
+        (string) URL of the export request.
+        """
         data_dir = self.dir
         http_baseurl = self._client._server.http_download_baseurl
         if data_dir is None or http_baseurl is None:
@@ -351,8 +340,8 @@ class ExportRequest(object):
         """
         (pandas.DataFrame) URLs of all downloadable files.
 
-        Returns a pandas.DataFrame containing the records, filenames
-        and URLs of the export request (DataFrame columns: 'record',
+        Returns a pandas.DataFrame containing the records, filenames and
+        URLs of the export request (DataFrame columns: 'record',
         'filename' and 'url').
         """
         if self._download_urls_cache is None:
@@ -429,8 +418,8 @@ class ExportRequest(object):
     def wait(self, timeout=None, sleep=5, retries_notfound=5, verbose=None):
         """
         Wait for the server to process the export request. This method
-        continously updates the request status until the server signals
-        that the export request has succeeded or failed.
+        continuously updates the request status until the server signals that
+        the export request has succeeded or failed.
 
         Parameters
         ----------
@@ -474,17 +463,15 @@ class ExportRequest(object):
 
         while True:
             if verbose:
-                idstr = str(None) if self._requestid is None else (
-                    '"%s"' % self._requestid)
-                print('Export request pending. [id=%s, status=%d]' % (
-                    idstr, self._status))
+                idstr = str(None) if self._requestid is None else (f'{self._requestid}')
+                print(f'Export request pending. [id={idstr}, status={self._status}]')
 
             # Use the user-provided sleep value or the server's wait value.
             # In case neither is available, wait for 5 seconds.
             wait_secs = self._d.get('wait', 5) if sleep is None else sleep
 
             # Consider the time that passed since the last status update.
-            wait_secs -= (time.time() - self._d_time)
+            wait_secs -= time.time() - self._d_time
             if wait_secs < 0:
                 wait_secs = 0
 
@@ -494,7 +481,7 @@ class ExportRequest(object):
                     return False
 
             if verbose:
-                print('Waiting for %d seconds...' % round(wait_secs))
+                print(f'Waiting for {int(round(wait_secs))} seconds...')
             time.sleep(wait_secs)
 
             if self.has_finished():
@@ -505,12 +492,10 @@ class ExportRequest(object):
                 if retries_notfound <= 0:
                     self._raise_on_error(notfound_ok=False)
                 if verbose:
-                    print('Request not found on server, %d retries left.' %
-                          retries_notfound)
+                    print(f'Request not found on server, {retries_notfound} retries left.')
                 retries_notfound -= 1
 
-    def download(self, directory, index=None, fname_from_rec=None,
-                 verbose=None):
+    def download(self, directory, index=None, fname_from_rec=None, verbose=None):
         """
         Download data files.
 
@@ -560,7 +545,7 @@ class ExportRequest(object):
         """
         out_dir = os.path.abspath(directory)
         if not os.path.isdir(out_dir):
-            raise IOError('Download directory "%s" does not exist' % out_dir)
+            raise OSError(f'Download directory {out_dir} does not exist')
 
         if np.isscalar(index):
             index = [int(index)]
@@ -589,8 +574,7 @@ class ExportRequest(object):
         for i in range(ndata):
             di = data.iloc[i]
             if fname_from_rec:
-                filename = self._client._filename_from_export_record(
-                    di.record, old_fname=di.filename)
+                filename = self._client._filename_from_export_record(di.record, old_fname=di.filename)
                 if filename is None:
                     filename = di.filename
             else:
@@ -598,11 +582,11 @@ class ExportRequest(object):
 
             fpath = os.path.join(out_dir, filename)
             fpath_new = self._next_available_filename(fpath)
-            fpath_tmp = self._next_available_filename(fpath_new + '.part')
+            fpath_tmp = self._next_available_filename(f'{fpath_new}.part')
             if verbose:
-                print('Downloading file %d of %d...' % (i + 1, ndata))
-                print('    record: %s' % di.record)
-                print('  filename: %s' % di.filename)
+                print(f'Downloading file {int(i + 1)} of {int(ndata)}...')
+                print(f'    record: {di.record}')
+                print(f'  filename: {di.filename}')
             try:
                 urlretrieve(di.url, fpath_tmp)
             except (HTTPError, URLError):
@@ -613,7 +597,7 @@ class ExportRequest(object):
                 fpath_new = self._next_available_filename(fpath)
                 os.rename(fpath_tmp, fpath_new)
                 if verbose:
-                    print('  -> "%s"' % os.path.relpath(fpath_new))
+                    print(f'  -> {os.path.relpath(fpath_new)}')
             downloads.append(fpath_new)
 
         res = data[['record', 'url']].copy()
@@ -621,7 +605,7 @@ class ExportRequest(object):
         return res
 
 
-class Client(object):
+class Client:
     """
     Client for remote DRMS server access.
 
@@ -636,24 +620,16 @@ class Client(object):
         Print export status messages to stdout (disabled by default).
     debug : bool
         Print debug output (disabled by default).
-
-    Attributes
-    ----------
-    email : string
-        Default email address used for data export requests.
-    verbose : bool
-        Enable/disable export status output.
-    debug : bool
-        Enable/disable debug output.
     """
+
     def __init__(self, server='jsoc', email=None, verbose=False, debug=False):
         self._json = HttpJsonClient(server=server, debug=debug)
         self._info_cache = {}
         self.verbose = verbose  # use property for convertion to bool
-        self.email = email      # use property for email validation
+        self.email = email  # use property for email validation
 
     def __repr__(self):
-        return '<Client "%s">' % self._server.name
+        return f'<Client {self._server.name}>'
 
     def _convert_numeric_keywords(self, ds, kdf, skip_conversion=None):
         si = self.info(ds)
@@ -662,7 +638,7 @@ class Client(object):
         num_keys += ['*recnum*', '*sunum*', '*size*']
         if skip_conversion is None:
             skip_conversion = []
-        elif isinstance(skip_conversion, string_types):
+        elif isinstance(skip_conversion, str):
             skip_conversion = [skip_conversion]
         for k in kdf:
             if k in skip_conversion:
@@ -674,51 +650,55 @@ class Client(object):
             if k in int_keys and kdf[k].dtype is np.dtype(object):
                 idx = kdf[k].str.startswith('0x')
                 if idx.any():
-                    kdf.loc[idx, k] = kdf.loc[idx, k].map(
-                        lambda x: int(x, base=16))
+                    kdf.loc[idx, k] = kdf.loc[idx, k].map(lambda x: int(x, base=16))
             if k in num_keys:
                 kdf[k] = _pd_to_numeric_coerce(kdf[k])
 
     @staticmethod
     def _raise_query_error(d, status=None):
-        """Raises a DrmsQueryError, using the json error message from d"""
+        """
+        Raises a DrmsQueryError, using the json error message from d.
+        """
         if status is None:
             status = d.get('status')
         msg = d.get('error')
         if msg is None:
             msg = 'DRMS Query failed.'
-        msg += ' [status=%s]' % status
+        msg += f' [status={status}]'
         raise DrmsQueryError(msg)
 
     def _generate_filenamefmt(self, sname):
-        """Generate filename format string for export requests."""
+        """
+        Generate filename format string for export requests.
+        """
         try:
             si = self.info(sname)
-        except:
+        except Exception:
             # Cannot generate filename format for unknown series.
             return None
 
         pkfmt_list = []
         for k in si.primekeys:
             if si.keywords.loc[k].is_time:
-                pkfmt_list.append('{%s:A}' % k)
+                pkfmt_list.append(f'{{{k}:A}}')
             else:
-                pkfmt_list.append('{%s}' % k)
+                pkfmt_list.append(f'{k}')
 
         if pkfmt_list:
-            return '%s.%s.{segment}' % (si.name, '.'.join(pkfmt_list))
+            return '{}.{}.{{segment}}'.format(si.name, '.'.join(pkfmt_list))
         else:
-            return si.name + '.{recnum:%lld}.{segment}'
+            return str(si.name) + '.{recnum:%lld}.{segment}'
 
     # Some regular expressions used to parse export request queries.
-    _re_export_recset = re.compile(
-        r'^\s*([\w\.]+)\s*(\[.*\])?\s*(?:\{([\w\s\.,]*)\})?\s*$')
+    _re_export_recset = re.compile(r'^\s*([\w\.]+)\s*(\[.*\])?\s*(?:\{([\w\s\.,]*)\})?\s*$')
     _re_export_recset_pkeys = re.compile(r'\[([^\[^\]]*)\]')
     _re_export_recset_slist = re.compile(r'[\s,]+')
 
     @staticmethod
     def _parse_export_recset(rs):
-        """Parse export request record set."""
+        """
+        Parse export request record set.
+        """
         if rs is None:
             return None, None, None
         m = Client._re_export_recset.match(rs)
@@ -732,7 +712,9 @@ class Client(object):
         return sname, pkeys, segs
 
     def _filename_from_export_record(self, rs, old_fname=None):
-        """Generate a filename from an export request record."""
+        """
+        Generate a filename from an export request record.
+        """
         sname, pkeys, segs = self._parse_export_recset(rs)
         if sname is None:
             return None
@@ -741,7 +723,7 @@ class Client(object):
         # make them suitable for filenames.
         try:
             si = self.info(sname)
-        except:
+        except Exception:
             # Cannot generate filename for unknown series.
             return None
 
@@ -754,7 +736,7 @@ class Client(object):
                 # Cleanup time strings.
                 if si.keywords.loc[si.primekeys[i]].is_time:
                     v = pkeys[i]
-                    v = v.replace('.', '').replace(':', '').replace('-', '')
+                    v = v.replace('.', "").replace(':', "").replace('-', "")
                     pkeys[i] = v
 
         # Generate filename.
@@ -763,17 +745,16 @@ class Client(object):
             pkeys = [k for k in pkeys if k.strip()]
             pkeys_str = '.'.join(pkeys)
             if pkeys_str:
-                fname += '.' + pkeys_str
+                fname += f'.{pkeys_str}'
         if segs is not None:
             segs = [s for s in segs if s.strip()]
             segs_str = '.'.join(segs)
             if segs_str:
-                fname += '.' + segs_str
+                fname += f'.{segs_str}'
 
         if old_fname is not None:
             # Try to use the file extension of the original filename.
-            known_fname_extensions = [
-                '.fits', '.txt', '.jpg', '.mpg', '.mp4', '.tar']
+            known_fname_extensions = ['.fits', '.txt', '.jpg', '.mpg', '.mp4', '.tar']
             for ext in known_fname_extensions:
                 if old_fname.endswith(ext):
                     return fname + ext
@@ -795,15 +776,11 @@ class Client(object):
         'aia_mixed',
         'bb.sao',
         'grey.sao',
-        'heat.sao']
+        'heat.sao',
+    ]
 
     # Export scaling types, from (internal) series "jsoc.Color_Tables"
-    _export_scaling_names = [
-        'LOG',
-        'MINMAX',
-        'MINMAXGIVEN',
-        'SQRT',
-        'mag']
+    _export_scaling_names = ['LOG', 'MINMAX', 'MINMAXGIVEN', 'SQRT', 'mag']
 
     @staticmethod
     def _validate_export_protocol_args(protocol_args):
@@ -823,9 +800,10 @@ class Client(object):
             try:
                 i = ll.index(ct.lower())
             except ValueError:
-                msg = "'%s' is not a valid color table, " % ct
-                msg += 'available color tables: %s' % ', '.join(
-                    ["'%s'" % s for s in Client._export_color_table_names])
+                msg = f'{ct} is not a valid color table, '
+                msg += 'available color tables: {}'.format(
+                    ', '.join([str(s) for s in Client._export_color_table_names])
+                )
                 raise ValueError(msg)
             protocol_args[ct_key] = Client._export_color_table_names[i]
 
@@ -835,20 +813,25 @@ class Client(object):
             try:
                 i = ll.index(scaling.lower())
             except ValueError:
-                msg = "'%s' is not a valid scaling type, " % scaling
-                msg += 'available scaling types: %s' % ', '.join(
-                    ["'%s'" % s for s in Client._export_scaling_names])
+                msg = f'{scaling} is not a valid scaling type,'
+                msg += 'available scaling types: {}'.format(
+                    ', '.join([str(s) for s in Client._export_scaling_names])
+                )
                 raise ValueError(msg)
             protocol_args['scaling'] = Client._export_scaling_names[i]
 
     @property
     def _server(self):
-        """(ServerConfig) Remote server configuration."""
+        """
+        (ServerConfig) Remote server configuration.
+        """
         return self._json.server
 
     @property
     def debug(self):
-        """(bool) Enable/disable debug output."""
+        """
+        (bool) Enable/disable debug output.
+        """
         return self._json.debug
 
     @debug.setter
@@ -857,7 +840,9 @@ class Client(object):
 
     @property
     def email(self):
-        """(string) Default email address used for data export requests."""
+        """
+        (string) Default email address used for data export requests.
+        """
         return self._email
 
     @email.setter
@@ -868,7 +853,9 @@ class Client(object):
 
     @property
     def verbose(self):
-        """(bool) Enable/disable export status output."""
+        """
+        (bool) Enable/disable export status output.
+        """
         return self._verbose
 
     @verbose.setter
@@ -899,8 +886,7 @@ class Client(object):
             parameter ``full``).
         """
         if not self._server.check_supported('series'):
-            raise DrmsOperationNotSupported(
-                'Server does not support series list access')
+            raise DrmsOperationNotSupported('Server does not support series list access')
         if self._server.url_show_series_wrapper is None:
             # No wrapper CGI available, use the regular version.
             d = self._json.show_series(regex)
@@ -911,8 +897,7 @@ class Client(object):
                 keys = ('name', 'primekeys', 'note')
                 if not d['names']:
                     return pd.DataFrame(columns=keys)
-                recs = [(it['name'], _split_arg(it['primekeys']), it['note'])
-                        for it in d['names']]
+                recs = [(it['name'], _split_arg(it['primekeys']), it['note']) for it in d['names']]
                 return pd.DataFrame(recs, columns=keys)
             else:
                 if not d['names']:
@@ -928,7 +913,7 @@ class Client(object):
                 recs = []
                 for it in d['seriesList']:
                     name, info = tuple(it.items())[0]
-                    note = info.get('description', '')
+                    note = info.get('description', "")
                     recs.append((name, note))
                 return pd.DataFrame(recs, columns=keys)
             else:
@@ -945,13 +930,12 @@ class Client(object):
 
         Returns
         -------
-        result : :class:`SeriesInfo`
+        result : `SeriesInfo`
             SeriesInfo instance containing information about the data
             series.
         """
         if not self._server.check_supported('info'):
-            raise DrmsOperationNotSupported(
-                'Server does not support series info access')
+            raise DrmsOperationNotSupported('Server does not support series info access')
         name = _extract_series_name(ds)
         if name is not None:
             name = name.lower()
@@ -968,8 +952,8 @@ class Client(object):
 
     def keys(self, ds):
         """
-        Get a list of keywords that are available for a series. Use
-        the :func:`info` method for more details.
+        Get a list of keywords that are available for a series. Use the
+        :func:`info` method for more details.
 
         Parameters
         ----------
@@ -986,8 +970,8 @@ class Client(object):
 
     def pkeys(self, ds):
         """
-        Get a list of primekeys that are available for a series. Use
-        the :func:`info` method for more details.
+        Get a list of primekeys that are available for a series. Use the
+        :func:`info` method for more details.
 
         Parameters
         ----------
@@ -1002,24 +986,21 @@ class Client(object):
         si = self.info(ds)
         return list(si.primekeys)
 
-    def get(self, ds, key=None, seg=None, link=None, convert_numeric=True,
-            skip_conversion=None):
+    def query(
+        self,
+        ds,
+        key=None,
+        seg=None,
+        link=None,
+        convert_numeric=True,
+        skip_conversion=None,
+        pkeys=False,
+        rec_index=False,
+        n=None,
+    ):
         """
-        This method is deprecated. Use :func:`query` instead.
-        """
-        warnings.warn(
-            'Client.get() is deprecated, use Client.query() instead',
-            DeprecationWarning)
-        return self.query(
-            ds, key=key, seg=seg, link=link, convert_numeric=convert_numeric,
-            skip_conversion=skip_conversion)
-
-    def query(self, ds, key=None, seg=None, link=None, convert_numeric=True,
-              skip_conversion=None, pkeys=False, rec_index=False, n=None):
-        """
-        Query keywords, segments and/or links of a record set. At
-        least one of the parameters key, seg, link or pkeys needs to
-        be specified.
+        Query keywords, segments and/or links of a record set. At least one of
+        the parameters key, seg, link or pkeys needs to be specified.
 
         Parameters
         ----------
@@ -1068,16 +1049,14 @@ class Client(object):
             if link is not None.
         """
         if not self._server.check_supported('query'):
-            raise DrmsOperationNotSupported(
-                'Server does not support DRMS queries')
+            raise DrmsOperationNotSupported('Server does not support DRMS queries')
         if pkeys:
             pk = self.pkeys(ds)
             key = _split_arg(key) if key is not None else []
             key = [k for k in key if k not in pk]
             key = pk + key
 
-        lres = self._json.rs_list(
-            ds, key, seg, link, recinfo=rec_index, n=n)
+        lres = self._json.rs_list(ds, key, seg, link, recinfo=rec_index, n=n)
         status = lres.get('status')
         if status != 0:
             self._raise_query_error(lres)
@@ -1087,8 +1066,7 @@ class Client(object):
             if 'keywords' in lres:
                 names = [it['name'] for it in lres['keywords']]
                 values = [it['values'] for it in lres['keywords']]
-                res_key = pd.DataFrame.from_dict(
-                    OrderedDict(zip(names, values)))
+                res_key = pd.DataFrame.from_dict(OrderedDict(zip(names, values)))
             else:
                 res_key = pd.DataFrame()
             if convert_numeric:
@@ -1099,8 +1077,7 @@ class Client(object):
             if 'segments' in lres:
                 names = [it['name'] for it in lres['segments']]
                 values = [it['values'] for it in lres['segments']]
-                res_seg = pd.DataFrame.from_dict(
-                    OrderedDict(zip(names, values)))
+                res_seg = pd.DataFrame.from_dict(OrderedDict(zip(names, values)))
             else:
                 res_seg = pd.DataFrame()
             res.append(res_seg)
@@ -1109,8 +1086,7 @@ class Client(object):
             if 'links' in lres:
                 names = [it['name'] for it in lres['links']]
                 values = [it['values'] for it in lres['links']]
-                res_link = pd.DataFrame.from_dict(
-                    OrderedDict(zip(names, values)))
+                res_link = pd.DataFrame.from_dict(OrderedDict(zip(names, values)))
             else:
                 res_link = pd.DataFrame()
             res.append(res_link)
@@ -1130,9 +1106,9 @@ class Client(object):
     def check_email(self, email):
         """
         Check if the email address is registered for data export.
-        You can register your email for data exports from JSOC on
-        the `JSOC email registration
-        <http://jsoc.stanford.edu/ajax/register_email.html>`__
+
+        You can register your email for data exports from JSOC on the
+        `JSOC email registration <http://jsoc.stanford.edu/ajax/register_email.html>`__
         webpage.
 
         Parameters
@@ -1147,15 +1123,22 @@ class Client(object):
             otherwise.
         """
         if not self._server.check_supported('email'):
-            raise DrmsOperationNotSupported(
-                'Server does not support user emails')
+            raise DrmsOperationNotSupported('Server does not support user emails')
         res = self._json.check_address(email)
         status = res.get('status')
         return status is not None and int(status) == 2
 
-    def export(self, ds, method='url_quick', protocol='as-is',
-               protocol_args=None, filenamefmt=None, n=None, email=None,
-               requestor=None):
+    def export(
+        self,
+        ds,
+        method='url_quick',
+        protocol='as-is',
+        protocol_args=None,
+        filenamefmt=None,
+        n=None,
+        email=None,
+        requestor=None,
+    ):
         """
         Submit a data export request.
 
@@ -1213,16 +1196,13 @@ class Client(object):
 
         Returns
         -------
-        result : :class:`ExportRequest`
+        result : `ExportRequest`
         """
         if not self._server.check_supported('export'):
-            raise DrmsOperationNotSupported(
-                'Server does not support export requests')
+            raise DrmsOperationNotSupported('Server does not support export requests')
         if email is None:
             if self._email is None:
-                raise ValueError(
-                    'The email argument is required, when no default email '
-                    'address was set')
+                raise ValueError('The email argument is required, when no default email address was set')
             email = self._email
 
         if filenamefmt is None:
@@ -1235,15 +1215,20 @@ class Client(object):
             self._validate_export_protocol_args(protocol_args)
 
         d = self._json.exp_request(
-            ds, email, method=method, protocol=protocol,
-            protocol_args=protocol_args, filenamefmt=filenamefmt,
-            n=n, requestor=requestor)
+            ds,
+            email,
+            method=method,
+            protocol=protocol,
+            protocol_args=protocol_args,
+            filenamefmt=filenamefmt,
+            n=n,
+            requestor=requestor,
+        )
         return ExportRequest(d, client=self)
 
     def export_from_id(self, requestid):
         """
-        Create an :class:`ExportRequest` instance from an existing
-        requestid.
+        Create an `ExportRequest` instance from an existing requestid.
 
         Parameters
         ----------
@@ -1252,26 +1237,8 @@ class Client(object):
 
         Returns
         -------
-        result : :class:`ExportRequest`
+        result : `ExportRequest`
         """
         if not self._server.check_supported('export'):
-            raise DrmsOperationNotSupported(
-                'Server does not support export requests')
+            raise DrmsOperationNotSupported('Server does not support export requests')
         return ExportRequest._create_from_id(requestid, client=self)
-
-
-def _test_info(c, ds):
-    sname = c.series(ds)
-    res = []
-    skiplist = [r'jsoc.*']
-    for sni in sname:
-        skipit = False
-        print(sni)
-        for spat in skiplist:
-            if re.match(spat, sni):
-                print('** skipping series **')
-                skipit = True
-                break
-        if not skipit:
-            res.append(c.info(sni))
-    return res

@@ -1,41 +1,35 @@
-from __future__ import absolute_import, division, print_function
-
+import os
 import re
-import six
-import pandas as pd
+from functools import partial
+
 import numpy as np
+import pandas as pd
+import pkg_resources
 
 __all__ = ['to_datetime']
 
 
-# Compatibility functions for older pandas versions.
-if tuple(map(int, pd.__version__.split('.')[:2])) < (0, 17):
-    def _pd_to_datetime_coerce(arg):
-        return pd.to_datetime(arg, coerce=True)
+def _pd_to_datetime_coerce(arg):
+    return pd.to_datetime(arg, errors='coerce')
 
-    def _pd_to_numeric_coerce(arg):
-        if not isinstance(arg, pd.Series):
-            arg = pd.Series(arg)
-        return arg.convert_objects(
-            convert_dates=False, convert_numeric=True,
-            convert_timedeltas=False)
-else:
-    def _pd_to_datetime_coerce(arg):
-        return pd.to_datetime(arg, errors='coerce')
 
-    def _pd_to_numeric_coerce(arg):
-        return pd.to_numeric(arg, errors='coerce')
+def _pd_to_numeric_coerce(arg):
+    return pd.to_numeric(arg, errors='coerce')
 
 
 def _split_arg(arg):
-    """Split a comma-separated string into a list."""
-    if isinstance(arg, six.string_types):
+    """
+    Split a comma-separated string into a list.
+    """
+    if isinstance(arg, str):
         arg = [it for it in re.split(r'[\s,]+', arg) if it]
     return arg
 
 
 def _extract_series_name(ds):
-    """Extract series name from record set."""
+    """
+    Extract series name from record set.
+    """
     m = re.match(r'^\s*([\w\.]+).*$', ds)
     return m.group(1) if m is not None else None
 
@@ -75,9 +69,90 @@ def to_datetime(tstr, force=False):
     """
     s = pd.Series(tstr).astype(str)
     if force or s.str.endswith('_TAI').any():
-        s = s.str.replace('_TAI', '')
+        s = s.str.replace('_TAI', "")
         s = s.str.replace('_', ' ')
         s = s.str.replace('.', '-', n=2)
     res = _pd_to_datetime_coerce(s)
-    res = res.dt.tz_localize(None)  # remove any timezone information
+    res = res.dt.tz_localize(None)
     return res.iloc[0] if (len(res) == 1) and np.isscalar(tstr) else res
+
+
+def generate_changelog_for_docs(directory, output_filename=None):
+    """
+    This is a modified version of the `towncrier._main` function with a few
+    things disabled.
+
+    This function is based heavily on towncrier, please see
+    licenses/TOWNCRIER.rst
+    """
+    from towncrier import (
+        _get_date,
+        append_to_newsfile,
+        find_fragments,
+        get_project_name,
+        get_version,
+        load_config,
+        render_fragments,
+        split_fragments,
+    )
+
+    print('Updating Changelog...')
+    directory = os.path.abspath(directory)
+    _join_dir = partial(os.path.join, directory)
+    config = load_config(directory)
+    if not config:
+        raise FileNotFoundError(f'Could not locate the towncrier config file at path {directory}.')
+
+    print('Loading template...')
+    if config['template'] is None:
+        template = pkg_resources.resource_string('towncrier', 'templates/template.rst').decode('utf8')
+    else:
+        with open(config['template'], 'rb') as tmpl:
+            template = tmpl.read().decode('utf8')
+
+    print('Finding news fragments...')
+
+    definitions = config['types']
+
+    if config.get('directory'):
+        base_directory = _join_dir(config['directory'])
+        fragment_directory = None
+
+    fragments, fragment_filenames = find_fragments(
+        base_directory, config['sections'], fragment_directory, definitions
+    )
+
+    print('Rendering news fragments...')
+    fragments = split_fragments(fragments, definitions)
+    rendered = render_fragments(
+        # The 0th underline is used for the top line
+        template,
+        config['issue_format'],
+        fragments,
+        definitions,
+        config['underlines'][1:],
+        config['wrap'],
+    )
+
+    project_version = get_version(_join_dir(config['package_dir']), config['package'])
+
+    package = config.get('package')
+    if package:
+        project_name = get_project_name(os.path.abspath(_join_dir(config['package_dir'])), package)
+    else:
+        # Can't determine a project_name, but maybe it is not needed.
+        project_name = ""
+
+    project_date = _get_date()
+
+    top_line = config['title_format'].format(name=project_name, version=project_version, project_date=project_date)
+    top_line += f'\n{config["underlines"][0] * len(top_line)}\n'
+
+    print('Writing to newsfile...')
+    start_line = config['start_line']
+    if not output_filename:
+        output_filename = _join_dir(config['filename'])
+    output_filename = os.path.abspath(output_filename)
+    append_to_newsfile(directory, output_filename, start_line, top_line, rendered)
+
+    print('Done!')

@@ -1,25 +1,29 @@
-from __future__ import absolute_import, division, print_function
-import example_helpers
+"""
+==================================
+List all keywords for a HMI series
+==================================
+
+This example shows how to display the keywords for a HMI series.
+"""
+
 import drms
 
-
-# DRMS series name
-series = 'hmi.v_45s'
+###############################################################################
+# Make the basic query.
 
 # Create DRMS JSON client, use debug=True to see the query URLs
-c = drms.Client()
+client = drms.Client()
 
 # Query series info
-si = c.info(series)
+series_info = client.info('hmi.v_45s')
 
 # Print keyword info
-print('Listing keywords for "%s":\n' % si.name)
-for k in sorted(si.keywords.index):
-    ki = si.keywords.loc[k]
-    print(k)
-    print('  type ....... %s ' % ki.type)
-    print('  recscope ... %s ' % ki.recscope)
-    print('  defval ..... %s ' % ki.defval)
-    print('  units ...... %s ' % ki.units)
-    print('  note ....... %s ' % ki.note)
-    print()
+print(f'Listing keywords for {series_info.name}:\n')
+for keyword in sorted(series_info.keywords.index):
+    keyword_info = series_info.keywords.loc[keyword]
+    print(keyword)
+    print(f'  type ....... {keyword_info.type} ')
+    print(f'  recscope ... {keyword_info.recscope} ')
+    print(f'  defval ..... {keyword_info.defval} ')
+    print(f'  units ...... {keyword_info.units} ')
+    print(f'  note ....... {keyword_info.note} ')

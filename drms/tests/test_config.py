@@ -1,9 +1,6 @@
-from __future__ import absolute_import, division, print_function
-
 import pytest
-import six
-import drms
-from drms.config import ServerConfig, register_server, _server_configs
+
+from drms.config import ServerConfig, _server_configs, register_server
 
 
 def test_create_config_basic():
@@ -23,7 +20,7 @@ def test_create_config_basic():
 
 def test_create_config_missing_name():
     with pytest.raises(ValueError):
-        cfg = ServerConfig()
+        ServerConfig()
 
 
 def test_copy_config():
@@ -59,17 +56,16 @@ def test_register_server_existing():
 
 def test_config_jsoc():
     assert 'jsoc' in _server_configs
+
     cfg = _server_configs['jsoc']
-
     assert cfg.name.lower() == 'jsoc'
-    assert isinstance(cfg.encoding, six.string_types)
-
-    assert isinstance(cfg.cgi_show_series, six.string_types)
-    assert isinstance(cfg.cgi_jsoc_info, six.string_types)
-    assert isinstance(cfg.cgi_jsoc_fetch, six.string_types)
-    assert isinstance(cfg.cgi_check_address, six.string_types)
-    assert isinstance(cfg.cgi_show_series_wrapper, six.string_types)
-    assert isinstance(cfg.show_series_wrapper_dbhost, six.string_types)
+    assert isinstance(cfg.encoding, str)
+    assert isinstance(cfg.cgi_show_series, str)
+    assert isinstance(cfg.cgi_jsoc_info, str)
+    assert isinstance(cfg.cgi_jsoc_fetch, str)
+    assert isinstance(cfg.cgi_check_address, str)
+    assert isinstance(cfg.cgi_show_series_wrapper, str)
+    assert isinstance(cfg.show_series_wrapper_dbhost, str)
     assert cfg.http_download_baseurl.startswith('http://')
     assert cfg.ftp_download_baseurl.startswith('ftp://')
 
@@ -87,10 +83,10 @@ def test_config_kis():
     cfg = _server_configs['kis']
 
     assert cfg.name.lower() == 'kis'
-    assert isinstance(cfg.encoding, six.string_types)
+    assert isinstance(cfg.encoding, str)
 
-    assert isinstance(cfg.cgi_show_series, six.string_types)
-    assert isinstance(cfg.cgi_jsoc_info, six.string_types)
+    assert isinstance(cfg.cgi_show_series, str)
+    assert isinstance(cfg.cgi_jsoc_info, str)
     assert cfg.cgi_jsoc_fetch is None
     assert cfg.cgi_check_address is None
     assert cfg.cgi_show_series_wrapper is None
@@ -107,27 +103,29 @@ def test_config_kis():
     assert cfg.url_show_series_wrapper is None
 
 
-@pytest.mark.parametrize('server_name, operation, expected', [
-    ('jsoc', 'series', True),
-    ('jsoc', 'info', True),
-    ('jsoc', 'query', True),
-    ('jsoc', 'email', True),
-    ('jsoc', 'export', True),
-    ('kis', 'series', True),
-    ('kis', 'info', True),
-    ('kis', 'query', True),
-    ('kis', 'email', False),
-    ('kis', 'export', False),
-    ])
+@pytest.mark.parametrize(
+    'server_name, operation, expected',
+    [
+        ('jsoc', 'series', True),
+        ('jsoc', 'info', True),
+        ('jsoc', 'query', True),
+        ('jsoc', 'email', True),
+        ('jsoc', 'export', True),
+        ('kis', 'series', True),
+        ('kis', 'info', True),
+        ('kis', 'query', True),
+        ('kis', 'email', False),
+        ('kis', 'export', False),
+    ],
+)
 def test_supported(server_name, operation, expected):
     cfg = _server_configs[server_name]
     assert cfg.check_supported(operation) == expected
 
 
-@pytest.mark.parametrize('server_name, operation', [
-    ('jsoc', 'bar'),
-    ('kis', 'foo'),
-    ])
+@pytest.mark.parametrize(
+    'server_name, operation', [('jsoc', 'bar'), ('kis', 'foo')],
+)
 def test_supported_invalid_operation(server_name, operation):
     cfg = _server_configs[server_name]
     with pytest.raises(ValueError):
