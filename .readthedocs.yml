@@ -1,9 +1,17 @@
-build:
-  image: latest
+# readthedocs.yml
+# Read the Docs configuration file
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
 
-requirements_file: doc/rtd_requirements.txt
+version: 2
+
+sphinx:
+  builder: html
+  configuration: docs/conf.py
+  fail_on_warning: false
 
 python:
-  version: 3.6
-  pip_install: false
-  setup_py_install: true
+   install:
+      - method: pip
+        extra_requirements:
+           - dev
+        path: .

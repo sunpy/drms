@@ -1,47 +1,47 @@
-from __future__ import absolute_import, division, print_function
+"""
+=========================================
+Downloading and plotting a HMI lightcurve
+=========================================
+
+This example shows how to download HMI data from JSOC and make a lightcurve plot.
+"""
+
 import matplotlib.pyplot as plt
-import example_helpers
+
 import drms
 
-import pandas
-pandas_version = tuple(map(int, pandas.__version__.split('.')[:2]))
-if pandas_version >= (0, 22):
-    # Since pandas v0.22, we need to explicitely register matplotlib
-    # converters to use pandas.Timestamp objects in plots.
-    pandas.plotting.register_matplotlib_converters()
+###############################################################################
+# Create DRMS client, uses the JSOC baseurl by default, set debug=True to see the DRMS query URLs.
 
+client = drms.Client()
 
-# Series name and timespan
-series = 'hmi.ic_720s'
-#tsel = '2014.01.01_TAI/365d@1h'
-tsel = '2010.05.01_TAI-2016.04.01_TAI@6h'
+###############################################################################
+# Construct the DRMS query string: "Series[timespan]"
 
-# DRMS query string
-qstr = '%s[%s]' % (series, tsel)
-
-
-# Create DRMS JSON client, use debug=True to see the query URLs
-c = drms.Client()
+qstr = f'hmi.ic_720s[2010.05.01_TAI-2016.04.01_TAI@6h]'
 
 # Send request to the DRMS server
-print('Querying keyword data...\n -> %s' % qstr)
-res = c.query(qstr, key=['T_REC', 'DATAMEAN', 'DATARMS'])
-print(' -> %d lines retrieved.' % len(res))
+print('Querying keyword data...\n -> {qstr}')
+result = client.query(qstr, key=['T_REC', 'DATAMEAN', 'DATARMS'])
+print(f' -> {int(len(result))} lines retrieved.')
+
+###############################################################################
+# Now to plot the image.
 
 # Convert T_REC strings to datetime and use it as index for the series
-res.index = drms.to_datetime(res.pop('T_REC'))
+result.index = drms.to_datetime(result.pop('T_REC'))
 
 # Note: DATARMS contains the standard deviation, not the RMS!
-t = res.index
-avg = res.DATAMEAN/1e3
-std = res.DATARMS/1e3
+t = result.index
+avg = result.DATAMEAN / 1e3
+std = result.DATARMS / 1e3
 
 # Create plot
 fig, ax = plt.subplots(1, 1, figsize=(15, 7))
 ax.set_title(qstr, fontsize='medium')
 ax.fill_between(
-    t, avg+std, avg-std, edgecolor='none', facecolor='b', alpha=0.3,
-    interpolate=True)
+    t, avg + std, avg - std, edgecolor='none', facecolor='b', alpha=0.3, interpolate=True,
+)
 ax.plot(t, avg, color='b')
 ax.set_xlabel('Time')
 ax.set_ylabel('Disk-averaged continuum intensity [kDN/s]')

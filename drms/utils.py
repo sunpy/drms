@@ -1,41 +1,32 @@
-from __future__ import absolute_import, division, print_function
-
 import re
-import six
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 
 __all__ = ['to_datetime']
 
 
-# Compatibility functions for older pandas versions.
-if tuple(map(int, pd.__version__.split('.')[:2])) < (0, 17):
-    def _pd_to_datetime_coerce(arg):
-        return pd.to_datetime(arg, coerce=True)
+def _pd_to_datetime_coerce(arg):
+    return pd.to_datetime(arg, errors='coerce')
 
-    def _pd_to_numeric_coerce(arg):
-        if not isinstance(arg, pd.Series):
-            arg = pd.Series(arg)
-        return arg.convert_objects(
-            convert_dates=False, convert_numeric=True,
-            convert_timedeltas=False)
-else:
-    def _pd_to_datetime_coerce(arg):
-        return pd.to_datetime(arg, errors='coerce')
 
-    def _pd_to_numeric_coerce(arg):
-        return pd.to_numeric(arg, errors='coerce')
+def _pd_to_numeric_coerce(arg):
+    return pd.to_numeric(arg, errors='coerce')
 
 
 def _split_arg(arg):
-    """Split a comma-separated string into a list."""
-    if isinstance(arg, six.string_types):
+    """
+    Split a comma-separated string into a list.
+    """
+    if isinstance(arg, str):
         arg = [it for it in re.split(r'[\s,]+', arg) if it]
     return arg
 
 
 def _extract_series_name(ds):
-    """Extract series name from record set."""
+    """
+    Extract series name from record set.
+    """
     m = re.match(r'^\s*([\w\.]+).*$', ds)
     return m.group(1) if m is not None else None
 
@@ -73,11 +64,11 @@ def to_datetime(tstr, force=False):
     result : pandas.Series or pandas.Timestamp
         Pandas series or a single Timestamp object.
     """
-    s = pd.Series(tstr).astype(str)
+    s = pd.Series(tstr, dtype=object).astype(str)
     if force or s.str.endswith('_TAI').any():
-        s = s.str.replace('_TAI', '')
+        s = s.str.replace('_TAI', "")
         s = s.str.replace('_', ' ')
         s = s.str.replace('.', '-', n=2)
     res = _pd_to_datetime_coerce(s)
-    res = res.dt.tz_localize(None)  # remove any timezone information
+    res = res.dt.tz_localize(None)
     return res.iloc[0] if (len(res) == 1) and np.isscalar(tstr) else res

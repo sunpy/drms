@@ -1,64 +1,73 @@
-from __future__ import absolute_import, division, print_function
+"""
+============================================
+Downloading and plotting a HMI synoptic data
+============================================
+
+This example shows how to download HMI synoptic data from JSOC and make a plot.
+"""
+
 import matplotlib.pyplot as plt
+
 from astropy.io import fits
-import example_helpers
+
 import drms
 
+###############################################################################
+# Create DRMS client, uses the JSOC baseurl by default, set debug=True to see the DRMS query URLs.
 
-# Series name, carrington rotation and data segment
-series = 'hmi.synoptic_mr_720s'
-cr = 2150
-segname = 'synopMr'
+client = drms.Client()
 
-# DRMS-Server URL (or shortcut) and data url (if any) for the data segment
-drms_url, data_url = 'jsoc', 'http://jsoc.stanford.edu'
-#drms_url, data_url = 'kis', ''
+###############################################################################
+# Construct the DRMS query string: "Series[Carrington rotation]"
 
-# DRMS query string
-qstr = '%s[%s]' % (series, cr)
-
-
-# Create DRMS JSON client, use debug=True to see the query URLs
-c = drms.Client(drms_url)
+qstr = 'hmi.synoptic_mr_720s[2150]'
 
 # Send request to the DRMS server
-print('Querying keyword data...\n -> %s' % qstr)
-k, s = c.query(qstr, key=drms.const.all, seg=segname)
-print(' -> %d lines retrieved.' % len(k))
+print('Querying keyword data...\n -> {qstr}')
+segname = 'synopMr'
+results, filenames = client.query(qstr, key=drms.const.all, seg=segname)
+print(f' -> {len(results)} lines retrieved.')
 
 # Use only the first line of the query result
-k = k.iloc[0]
-fname = data_url + s[segname][0]
+results = results.iloc[0]
+fname = f'http://jsoc.stanford.edu{filenames[segname][0]}'
 
 # Read the data segment
 # Note: HTTP downloads get cached in ~/.astropy/cache/downloads
-print('Reading data from %r...' % fname)
+print(f'Reading data from {fname}...')
 a = fits.getdata(fname)
 ny, nx = a.shape
 
+###############################################################################
+# Now to plot the image.
+
 # Convert pixel to world coordinates using WCS keywords
-xmin = (1 - k.CRPIX1)*k.CDELT1 + k.CRVAL1
-xmax = (nx - k.CRPIX1)*k.CDELT1 + k.CRVAL1
-ymin = (1 - k.CRPIX2)*k.CDELT2 + k.CRVAL2
-ymax = (ny - k.CRPIX2)*k.CDELT2 + k.CRVAL2
+xmin = (1 - results.CRPIX1) * results.CDELT1 + results.CRVAL1
+xmax = (nx - results.CRPIX1) * results.CDELT1 + results.CRVAL1
+ymin = (1 - results.CRPIX2) * results.CDELT2 + results.CRVAL2
+ymax = (ny - results.CRPIX2) * results.CDELT2 + results.CRVAL2
 
 # Convert to Carrington longitude
-xmin = k.LON_LAST - xmin
-xmax = k.LON_LAST - xmax
+xmin = results.LON_LAST - xmin
+xmax = results.LON_LAST - xmax
 
 # Compute the plot extent used with imshow
-extent = (xmin - abs(k.CDELT1)/2, xmax + abs(k.CDELT1)/2,
-          ymin - abs(k.CDELT2)/2, ymax + abs(k.CDELT2)/2)
+extent = (
+    xmin - abs(results.CDELT1) / 2,
+    xmax + abs(results.CDELT1) / 2,
+    ymin - abs(results.CDELT2) / 2,
+    ymax + abs(results.CDELT2) / 2,
+)
 
 # Aspect ratio for imshow in respect to the extent computed above
-aspect = abs((xmax - xmin)/nx * ny/(ymax - ymin))
+aspect = abs((xmax - xmin) / nx * ny / (ymax - ymin))
 
 # Create plot
 fig, ax = plt.subplots(1, 1, figsize=(13.5, 6))
-ax.set_title('%s, Time: %s ... %s' % (qstr, k.T_START, k.T_STOP),
-             fontsize='medium')
-ax.imshow(a, vmin=-300, vmax=300, origin='lower', interpolation='nearest',
-          cmap='gray', extent=extent, aspect=aspect)
+ax.set_title(f'{qstr}, Time: {results.T_START} ... {results.T_STOP}', fontsize='medium')
+ax.imshow(
+    a, vmin=-300, vmax=300, origin='lower', interpolation='nearest', cmap='gray', extent=extent, aspect=aspect,
+)
 ax.invert_xaxis()
 ax.set_xlabel('Carrington longitude')
 ax.set_ylabel('Sine latitude')

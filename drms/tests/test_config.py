@@ -1,9 +1,6 @@
-from __future__ import absolute_import, division, print_function
-
 import pytest
-import six
-import drms
-from drms.config import ServerConfig, register_server, _server_configs
+
+from drms.config import ServerConfig, _server_configs, register_server
 
 
 def test_create_config_basic():
@@ -19,11 +16,12 @@ def test_create_config_basic():
             assert v == 'latin1'
         else:
             assert v is None
+    assert repr(cfg) == '<ServerConfig: TEST>'
 
 
 def test_create_config_missing_name():
     with pytest.raises(ValueError):
-        cfg = ServerConfig()
+        ServerConfig()
 
 
 def test_copy_config():
@@ -59,17 +57,16 @@ def test_register_server_existing():
 
 def test_config_jsoc():
     assert 'jsoc' in _server_configs
+
     cfg = _server_configs['jsoc']
-
     assert cfg.name.lower() == 'jsoc'
-    assert isinstance(cfg.encoding, six.string_types)
-
-    assert isinstance(cfg.cgi_show_series, six.string_types)
-    assert isinstance(cfg.cgi_jsoc_info, six.string_types)
-    assert isinstance(cfg.cgi_jsoc_fetch, six.string_types)
-    assert isinstance(cfg.cgi_check_address, six.string_types)
-    assert isinstance(cfg.cgi_show_series_wrapper, six.string_types)
-    assert isinstance(cfg.show_series_wrapper_dbhost, six.string_types)
+    assert isinstance(cfg.encoding, str)
+    assert isinstance(cfg.cgi_show_series, str)
+    assert isinstance(cfg.cgi_jsoc_info, str)
+    assert isinstance(cfg.cgi_jsoc_fetch, str)
+    assert isinstance(cfg.cgi_check_address, str)
+    assert isinstance(cfg.cgi_show_series_wrapper, str)
+    assert isinstance(cfg.show_series_wrapper_dbhost, str)
     assert cfg.http_download_baseurl.startswith('http://')
     assert cfg.ftp_download_baseurl.startswith('ftp://')
 
@@ -87,10 +84,10 @@ def test_config_kis():
     cfg = _server_configs['kis']
 
     assert cfg.name.lower() == 'kis'
-    assert isinstance(cfg.encoding, six.string_types)
+    assert isinstance(cfg.encoding, str)
 
-    assert isinstance(cfg.cgi_show_series, six.string_types)
-    assert isinstance(cfg.cgi_jsoc_info, six.string_types)
+    assert isinstance(cfg.cgi_show_series, str)
+    assert isinstance(cfg.cgi_jsoc_info, str)
     assert cfg.cgi_jsoc_fetch is None
     assert cfg.cgi_check_address is None
     assert cfg.cgi_show_series_wrapper is None
@@ -107,28 +104,66 @@ def test_config_kis():
     assert cfg.url_show_series_wrapper is None
 
 
-@pytest.mark.parametrize('server_name, operation, expected', [
-    ('jsoc', 'series', True),
-    ('jsoc', 'info', True),
-    ('jsoc', 'query', True),
-    ('jsoc', 'email', True),
-    ('jsoc', 'export', True),
-    ('kis', 'series', True),
-    ('kis', 'info', True),
-    ('kis', 'query', True),
-    ('kis', 'email', False),
-    ('kis', 'export', False),
-    ])
+@pytest.mark.parametrize(
+    'server_name, operation, expected',
+    [
+        ('jsoc', 'series', True),
+        ('jsoc', 'info', True),
+        ('jsoc', 'query', True),
+        ('jsoc', 'email', True),
+        ('jsoc', 'export', True),
+        ('kis', 'series', True),
+        ('kis', 'info', True),
+        ('kis', 'query', True),
+        ('kis', 'email', False),
+        ('kis', 'export', False),
+    ],
+)
 def test_supported(server_name, operation, expected):
     cfg = _server_configs[server_name]
     assert cfg.check_supported(operation) == expected
 
 
-@pytest.mark.parametrize('server_name, operation', [
-    ('jsoc', 'bar'),
-    ('kis', 'foo'),
-    ])
+@pytest.mark.parametrize(
+    'server_name, operation', [('jsoc', 'bar'), ('kis', 'foo')],
+)
 def test_supported_invalid_operation(server_name, operation):
     cfg = _server_configs[server_name]
     with pytest.raises(ValueError):
         cfg.check_supported(operation)
+
+
+def test_create_config_invalid_key():
+    with pytest.raises(ValueError):
+        cfg = ServerConfig(foo='bar')
+
+
+def test_getset_attr():
+    cfg = ServerConfig(name='TEST')
+    assert getattr(cfg, 'name') == 'TEST'
+    assert getattr(cfg, '__dict__') == {'_d': {'encoding': 'latin1', 'name': 'TEST'}}
+    with pytest.raises(AttributeError):
+        getattr(cfg, 'foo')
+    setattr(cfg, 'name', 'NewTest')
+    assert getattr(cfg, 'name') == 'NewTest'
+    with pytest.raises(ValueError):
+        setattr(cfg, 'name', 123)
+    setattr(cfg, '__sizeof__', 127)
+    assert getattr(cfg, '__sizeof__') == 127
+
+
+def test_to_dict():
+    cfg = ServerConfig(name='TEST')
+    _dict = cfg.to_dict()
+    assert isinstance(_dict, dict)
+    assert _dict == {'encoding': 'latin1', 'name': 'TEST'}
+
+
+def test_inbuilt_dir():
+    cfg = ServerConfig(name='TEST')
+    valid_keys = ServerConfig._valid_keys
+    list_attr = dir(cfg)
+    assert isinstance(list_attr, list)
+    assert set(dir(object)).issubset(set(list_attr))
+    assert set(valid_keys).issubset(set(list_attr))
+    assert set(list(cfg.__dict__.keys())).issubset(set(list_attr))
