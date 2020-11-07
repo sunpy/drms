@@ -36,6 +36,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
+    'sunpy.util.sphinx.changelog',
 ]
 numpydoc_show_class_members = False
 
@@ -117,17 +118,3 @@ sphinx_gallery_conf = {
     'remove_config_comments': True,
     'doc_module': ('sunpy'),
 }
-
-"""
-Write the latest changelog into the documentation.
-"""
-target_file = os.path.abspath('./whatsnew/latest_changelog.txt')
-try:
-    from drms.utils import generate_changelog_for_docs
-
-    if is_development:
-        generate_changelog_for_docs('../', target_file)
-except Exception as e:
-    print(f'Failed to add changelog to docs with error {e}.')
-# Make sure the file exists or else sphinx will complain.
-open(target_file, 'a').close()
