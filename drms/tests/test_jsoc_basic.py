@@ -18,7 +18,7 @@ def test_series_list_all(jsoc_client):
 @pytest.mark.remote_data
 @pytest.mark.parametrize('schema', ['aia', 'hmi', 'mdi'])
 def test_series_list_schemata(jsoc_client, schema):
-    regex = r'{}\.'.format(schema)
+    regex = fr'{schema}\.'
     slist = jsoc_client.series(regex)
     assert len(slist) > 0
     for sname in slist:

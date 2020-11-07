@@ -125,8 +125,8 @@ class ExportRequest:
     """
     Class for handling data export requests.
 
-    Use :func:`Client.export` or :func:`Client.export_from_id` to
-    create an instance.
+    Use :func:`Client.export` or :func:`Client.export_from_id` to create
+    an instance.
     """
 
     _status_code_ok = 0

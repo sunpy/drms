@@ -91,7 +91,7 @@ If you need to convert timestamps between TAI and UTC, you can use the `Astropy 
     >>> ta.utc  # doctest: +REMOTE_DATA
     <Time object: scale='utc' format='datetime' value=2016-03-31 23:59:24>
 
-The ``"hmi.v_45s"`` series has a data segment with the name ``"Dopplergram"``, which contains Dopplergrams for each record in the series, that are stored as `FITS <http://fits.gsfclient.nasa.gov/>`_ files.
+The ``"hmi.v_45s"`` series has a data segment with the name ``"Dopplergram"``, which contains Dopplergrams for each record in the series, that are stored as `FITS <http://fits.gsfclient.nasa.gov/>`__ files.
 The location of the FITS files for the record set query in the example above, can be obtained by using the ``seg`` parameter of the :func:`Client.query` method::
 
     >>> s = client.query('hmi.v_45s[2016.04.01_TAI/1d@6h]', seg='Dopplergram')  # doctest: +REMOTE_DATA
@@ -170,7 +170,7 @@ Note that :func:`Client.export` performs an ``url_quick`` / ``as-is`` export req
 
     >>> r = client.export('hmi.v_45s[2016.04.01_TAI/1d@6h]{Dopplergram}')  # doctest: +REMOTE_DATA
     >>> r  # doctest: +REMOTE_DATA
-    <ExportRequest id=None, status=0>
+    <ExportRequest: id=None, status=0>
 
     >>> r.data.filename  # doctest: +REMOTE_DATA
     0    /SUM58/D803708321/S00008/Dopplergram.fits
@@ -253,7 +253,7 @@ In order to obtain FITS files that include keyword data in their headers, we the
 
     >>> r = client.export(ds, method='url', protocol='fits')  # doctest: +REMOTE_DATA
     >>> r  # doctest: +REMOTE_DATA
-    <ExportRequest id=JSOC_..., status=2>
+    <ExportRequest: id=JSOC_..., status=2>
 
 We now need to wait for the server to prepare the requested files::
 
