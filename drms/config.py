@@ -7,14 +7,6 @@ class ServerConfig:
     """
     DRMS Server configuration.
 
-    Parameters
-    ----------
-    name : string
-        Server configuration name.
-    config : dict
-        Dictionary containing configuration entries (see below for a
-        list of available entries).
-
     Additional keyword arguments can be used to add additional entries
     to config. In case a keyword argument already exists in the config
     dictionary, the config entry will be replaced by the kwargs value.
@@ -36,6 +28,14 @@ class ServerConfig:
         encoding
         http_download_baseurl
         ftp_download_baseurl
+
+    Parameters
+    ----------
+    name : str
+        Server configuration name.
+    config : dict
+        Dictionary containing configuration entries (see below for a
+        list of available entries).
     """
 
     _valid_keys = [

@@ -54,7 +54,7 @@ def to_datetime(tstr, force=False):
 
     Parameters
     ----------
-    tstr : string or list/Series of strings
+    tstr : str or List[str] or pandas.Series
         DateTime strings.
     force : bool
         Set to True to omit the endswith('_TAI') check.
