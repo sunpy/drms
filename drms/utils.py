@@ -67,7 +67,7 @@ def to_datetime(tstr, force=False):
     result : pandas.Series or pandas.Timestamp
         Pandas series or a single Timestamp object.
     """
-    s = pd.Series(tstr).astype(str)
+    s = pd.Series(tstr, dtype=object).astype(str)
     if force or s.str.endswith('_TAI').any():
         s = s.str.replace('_TAI', "")
         s = s.str.replace('_', ' ')

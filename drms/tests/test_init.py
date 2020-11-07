@@ -25,8 +25,11 @@ def test_symbols(symbol):
 
 def test_version():
     assert isinstance(drms.__version__, str)
-    drms.__version__.split('+')[0]
-    m = re.match(r'(\d+)\.(\d+)\.(\d+).*', drms.__version__)
+    version = drms.__version__.split('+')[0]
+    # Check to make sure it isn't empty
+    assert version
+    # To match the 0.6 in 0.6.dev3 or v0.6
+    m = re.match(r'v*\d+\.\d+\.*', version)
     assert m is not None
 
 

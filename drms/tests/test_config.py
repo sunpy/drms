@@ -16,6 +16,7 @@ def test_create_config_basic():
             assert v == 'latin1'
         else:
             assert v is None
+    assert repr(cfg) == '<ServerConfig: TEST>'
 
 
 def test_create_config_missing_name():
@@ -130,3 +131,39 @@ def test_supported_invalid_operation(server_name, operation):
     cfg = _server_configs[server_name]
     with pytest.raises(ValueError):
         cfg.check_supported(operation)
+
+
+def test_create_config_invalid_key():
+    with pytest.raises(ValueError):
+        cfg = ServerConfig(foo='bar')
+
+
+def test_getset_attr():
+    cfg = ServerConfig(name='TEST')
+    assert getattr(cfg, 'name') == 'TEST'
+    assert getattr(cfg, '__dict__') == {'_d': {'encoding': 'latin1', 'name': 'TEST'}}
+    with pytest.raises(AttributeError):
+        getattr(cfg, 'foo')
+    setattr(cfg, 'name', 'NewTest')
+    assert getattr(cfg, 'name') == 'NewTest'
+    with pytest.raises(ValueError):
+        setattr(cfg, 'name', 123)
+    setattr(cfg, '__sizeof__', 127)
+    assert getattr(cfg, '__sizeof__') == 127
+
+
+def test_to_dict():
+    cfg = ServerConfig(name='TEST')
+    _dict = cfg.to_dict()
+    assert isinstance(_dict, dict)
+    assert _dict == {'encoding': 'latin1', 'name': 'TEST'}
+
+
+def test_inbuilt_dir():
+    cfg = ServerConfig(name='TEST')
+    valid_keys = ServerConfig._valid_keys
+    list_attr = dir(cfg)
+    assert isinstance(list_attr, list)
+    assert set(dir(object)).issubset(set(list_attr))
+    assert set(valid_keys).issubset(set(list_attr))
+    assert set(list(cfg.__dict__.keys())).issubset(set(list_attr))

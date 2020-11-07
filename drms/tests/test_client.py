@@ -42,3 +42,8 @@ def test_client_custom_config():
     c = drms.Client(server=cfg)
     assert isinstance(c._server, ServerConfig)
     assert c._server.name == 'TEST'
+
+
+def test_repr():
+    assert repr(drms.Client()) == '<Client: JSOC>'
+    assert repr(drms.Client(server='kis')) == '<Client: KIS>'

@@ -118,7 +118,7 @@ class SeriesInfo:
         if self.name is None:
             return '<SeriesInfo>'
         else:
-            return f'<SeriesInfo {self.name}>'
+            return f'<SeriesInfo: {self.name}>'
 
 
 class ExportRequest:
@@ -148,7 +148,7 @@ class ExportRequest:
 
     def __repr__(self):
         idstr = str(None) if self._requestid is None else (f'{self._requestid}')
-        return f'<ExportRequest id={idstr}, status={int(self._status)}>'
+        return f'<ExportRequest: id={idstr}, status={int(self._status)}>'
 
     @staticmethod
     def _parse_data(d):
@@ -629,7 +629,7 @@ class Client:
         self.email = email  # use property for email validation
 
     def __repr__(self):
-        return f'<Client {self._server.name}>'
+        return f'<Client: {self._server.name}>'
 
     def _convert_numeric_keywords(self, ds, kdf, skip_conversion=None):
         si = self.info(ds)

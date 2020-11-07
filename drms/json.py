@@ -68,7 +68,7 @@ class HttpJsonRequest:
         self._data = None
 
     def __repr__(self):
-        return f'<HttpJsonRequest {self.url}>'
+        return f'<HttpJsonRequest: {self.url}>'
 
     @property
     def url(self):
@@ -108,7 +108,7 @@ class HttpJsonClient:
         self.debug = debug
 
     def __repr__(self):
-        return f'<HttpJsonClient "{self._server.name}">'
+        return f'<HttpJsonClient: {self._server.name}>'
 
     def _json_request(self, url):
         if self.debug:
