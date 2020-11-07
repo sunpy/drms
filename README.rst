@@ -26,11 +26,10 @@ about drms or SunPy, check out:
 
 -  `drms Documentation`_
 -  `SunPy Matrix Channel`_
--  `SunPy Mailing List`_
+-  `SunPy mailing list`_
 
 .. _drms Documentation: https://docs.sunpy.org/projects/drms/en/latest/
 .. _SunPy Matrix Channel: https://riot.im/app/#/room/#sunpy:matrix.org
-.. _SunPy Mailing List: https://groups.google.com/forum/#!forum/sunpy
 
 Contributing
 ------------
@@ -47,12 +46,12 @@ For more information on contributing to SunPy and to DRMS, please read our `Newc
 .. _issues page: https://github.com/sunpy/drms/issues
 .. _Newcomers guide: https://docs.sunpy.org/en/latest/dev_guide/newcomers.html
 
-Code of Conduct
----------------
+Code of Conduct (CoC)
+---------------------
 
-When you are interacting with the SunPy community you are asked to follow our `Code of Conduct`_.
+When you are interacting with the SunPy community you are asked to follow our `code of conduct`_.
 
-.. _Code of Conduct: https://docs.sunpy.org/en/latest/code_of_conduct.html
+.. _code of conduct: https://docs.sunpy.org/en/latest/code_of_conduct.html
 
 Citation
 --------
