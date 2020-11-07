@@ -2,10 +2,10 @@
 drms
 ====
 
-`Docs <https://docs.sunpy.org/projects/drms/>`_ |
-`Tutorial <https://docs.sunpy.org/projects/drms/en/latest/tutorial.html>`_ |
-`Github <https://github.com/sunpy/drms>`_ |
-`PyPI <https://pypi.python.org/pypi/drms>`_
+`Docs <https://docs.sunpy.org/projects/drms/>`__ |
+`Tutorial <https://docs.sunpy.org/projects/drms/en/latest/tutorial.html>`__ |
+`Github <https://github.com/sunpy/drms>`__ |
+`PyPI <https://pypi.python.org/pypi/drms>`__
 
 |JOSS| |Zenodo|
 
@@ -15,8 +15,8 @@ drms
    :target: https://zenodo.org/badge/latestdoi/58651845
 
 The ``drms`` module provides an easy-to-use interface for accessing HMI, AIA and MDI data with Python.
-It uses the publicly accessible `JSOC <http://jsoc.stanford.edu/>`_ DRMS server by default, but can also be used with local `NetDRMS <http://jsoc.stanford.edu/netdrms/>`_ sites.
-More information, including a detailed tutorial, is available in the `Documentation <https://docs.sunpy.org/projects/drms/>`_.
+It uses the publicly accessible `JSOC <http://jsoc.stanford.edu/>`__ DRMS server by default, but can also be used with local `NetDRMS <http://jsoc.stanford.edu/netdrms/>`__ sites.
+More information, including a detailed tutorial, is available in the `Documentation <https://docs.sunpy.org/projects/drms/>`__.
 
 Getting Help
 ------------

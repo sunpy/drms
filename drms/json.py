@@ -93,7 +93,7 @@ class HttpJsonClient:
 
     Parameters
     ----------
-    server : string or drms.config.ServerConfig
+    server : str or drms.config.ServerConfig
         Registered server ID or ServerConfig instance.
         Defaults to JSOC.
     debug : bool
@@ -133,7 +133,7 @@ class HttpJsonClient:
 
         Parameters
         ----------
-        ds_filter : string
+        ds_filter : str
             Name filter regexp.
 
         Returns
@@ -157,7 +157,7 @@ class HttpJsonClient:
 
         Parameters
         ----------
-        ds_filter : string
+        ds_filter : str
             Name filter regexp.
         info : bool
             If False (default), the result only contains series names.
@@ -183,7 +183,7 @@ class HttpJsonClient:
 
         Parameters
         ----------
-        ds : string
+        ds : str
             Name of the data series.
 
         Returns
@@ -201,7 +201,7 @@ class HttpJsonClient:
 
         Parameters
         ----------
-        ds : string
+        ds : str
             Record set query (only one series).
 
         Returns
@@ -219,13 +219,13 @@ class HttpJsonClient:
 
         Parameters
         ----------
-        ds : string
+        ds : str
             Record set query.
-        key : string, list or None
+        key : str, list or None
             List of requested keywords, optional.
-        seg : string, list or None
+        seg : str, list or None
             List of requested segments, optional.
-        link : string or None
+        link : str or None
             List of requested Links, optional.
         recinfo : bool
             Request record info for each record in the record set.
@@ -234,7 +234,7 @@ class HttpJsonClient:
             of the record set are returned, for negative values the
             last abs(n) records. If set to None (default), no limit is
             applied.
-        uid : string or None
+        uid : str or None
             Session ID used when calling rs_list CGI, optional.
 
         Returns
@@ -267,7 +267,7 @@ class HttpJsonClient:
 
         Parameters
         ----------
-        email : string
+        email : str
             Email address to be verified.
 
         Returns
@@ -300,21 +300,21 @@ class HttpJsonClient:
 
         Parameters
         ----------
-        ds : string
+        ds : str
             Data export record set query.
-        notify : string
+        notify : str
             Registered email address.
-        method : string
+        method : str
             Export method. Supported methods are: 'url_quick', 'url',
             'url-tar', 'ftp' and 'ftp-tar'. Default is 'url_quick'.
-        protocol : string
+        protocol : str
             Export protocol. Supported protocols are: 'as-is', 'fits',
             'jpg', 'mpg' and 'mp4'. Default is 'as-is'.
         protocol_args : dict or None
             Extra protocol arguments for protocols 'jpg', 'mpg' and
             'mp4'. Valid arguments are: 'ct', 'scaling', 'min', 'max'
             and 'size'.
-        filenamefmt : string, None
+        filenamefmt : str, None
             Custom filename format string for exported files. This is
             ignored for 'url_quick'/'as-is' data exports.
         n : int or None
@@ -322,7 +322,7 @@ class HttpJsonClient:
             values, the first n records of the record set are returned,
             for negative values the last abs(n) records. If set to None
             (default), no limit is applied.
-        requestor : string, None or False
+        requestor : str, None or bool
             Export user ID. Default is None, in which case the user
             name is determined from the email address. If set to False,
             the requestor argument will be omitted in the export
@@ -412,7 +412,7 @@ class HttpJsonClient:
 
         Parameters
         ----------
-        requestid : string
+        requestid : str
             Request identifier returned by exp_request.
 
         Returns

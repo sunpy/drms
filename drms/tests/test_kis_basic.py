@@ -18,7 +18,7 @@ def test_series_list_all(kis_client):
 @pytest.mark.remote_data
 @pytest.mark.parametrize('schema', ['hmi', 'mdi'])
 def test_series_list_schemata(kis_client, schema):
-    regex = r'{}\.'.format(schema)
+    regex = fr'{schema}\.'
     slist = kis_client.series(regex)
     assert len(slist) > 0
     for sname in slist:

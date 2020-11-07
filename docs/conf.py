@@ -59,11 +59,17 @@ master_doc = 'index'
 # documents. Set to the "smart" one.
 default_role = 'obj'
 
-# -- Options for intersphinx extension ---------------------------------------
+# Enable nitpicky mode, which forces links to be non-broken
+nitpicky = True
+nitpick_ignore = [
+    ('py:obj', 'numpy.datetime64'),
+    # See https://github.com/numpy/numpy/issues/10039
+]
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', (None, 'http://data.astropy.org/intersphinx/python3.inv'),),
+    'pandas': ('http://pandas.pydata.org/pandas-docs/stable/', None),
     'numpy': ('https://docs.scipy.org/doc/numpy/', (None, 'http://data.astropy.org/intersphinx/numpy.inv'),),
     'scipy': (
         'https://docs.scipy.org/doc/scipy/reference/',

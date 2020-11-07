@@ -24,9 +24,9 @@ class SeriesInfo:
 
     Attributes
     ----------
-    name : string
+    name : str
         Series name.
-    primekeys : list of strings
+    primekeys : List[str]
         Series primekeys.
     keywords : pandas.DataFrame
         Details about series keywords.
@@ -34,9 +34,9 @@ class SeriesInfo:
         Details about series links.
     segments : pandas.DataFrame
         Details about series segments.
-    note : string
+    note : str
         Series description.
-    dbindex : list of strings
+    dbindex : List[str]
         Series database index.
     retention : int
         Default retention time.
@@ -125,8 +125,8 @@ class ExportRequest:
     """
     Class for handling data export requests.
 
-    Use :func:`Client.export` or :func:`Client.export_from_id` to
-    create an instance.
+    Use :func:`Client.export` or :func:`Client.export_from_id` to create
+    an instance.
     """
 
     _status_code_ok = 0
@@ -423,11 +423,11 @@ class ExportRequest:
 
         Parameters
         ----------
-        timeout : number or None
+        timeout : int or None
             Maximum number of seconds until this method times out. If
             set to None (the default), the status will be updated
             indefinitely until the request succeeded or failed.
-        sleep : number or None
+        sleep : int or None
             Time in seconds between status updates (defaults to 5
             seconds). If set to None, a server supplied value is used.
         retries_notfound : int
@@ -514,9 +514,9 @@ class ExportRequest:
 
         Parameters
         ----------
-        directory : string
+        directory : str
             Download directory (must already exist).
-        index : int, list of ints or None
+        index : int, List[int], None
             Index (or indices) of the file(s) to be downloaded. If set
             to None (the default), all files of the export request are
             downloaded. Note that this parameter is ignored for export
@@ -611,10 +611,10 @@ class Client:
 
     Parameters
     ----------
-    server : string or ServerConfig
+    server : str or ServerConfig
         Registered server ID or ServerConfig instance.
         Defaults to JSOC.
-    email : string or None
+    email : str or None
         Default email address used data export requests.
     verbose : bool
         Print export status messages to stdout (disabled by default).
@@ -868,7 +868,7 @@ class Client:
 
         Parameters
         ----------
-        regex : string or None
+        regex : str or None
             Regular expression, used to select a subset of the
             available series. If set to None, a list of all available
             series is returned.
@@ -925,7 +925,7 @@ class Client:
 
         Parameters
         ----------
-        ds : string
+        ds : str
             Name of the data series.
 
         Returns
@@ -957,7 +957,7 @@ class Client:
 
         Parameters
         ----------
-        ds : string
+        ds : str
             Name of the data series.
 
         Returns
@@ -975,7 +975,7 @@ class Client:
 
         Parameters
         ----------
-        ds : string
+        ds : str
             Name of the data series.
 
         Returns
@@ -1004,23 +1004,23 @@ class Client:
 
         Parameters
         ----------
-        ds : string
+        ds : str
             Record set query.
-        key : string, list of strings or None
+        key : str, List[str] or None
             List of requested keywords, optional. If set to None
             (default), no keyword results will be returned, except
             when pkeys is True.
-        seg : string, list of strings or None
+        seg : str, List[str] or None
             List of requested segments, optional. If set to None
             (default), no segment results will be returned.
-        link : string, list of strings or None
+        link : str, List[str] or None
             List of requested Links, optional. If set to None
             (default), no link results will be returned.
         convert_numeric : bool
             Convert keywords with numeric types from string to
             numbers. This may result in NaNs for invalid/missing
             values. Default is True.
-        skip_conversion : list of strings or None
+        skip_conversion : List[str] or None
             List of keywords names to be skipped when performing a
             numeric conversion. Default is None.
         pkeys : bool
@@ -1113,7 +1113,7 @@ class Client:
 
         Parameters
         ----------
-        email : string
+        email : str
             Email address to be checked.
 
         Returns
@@ -1158,12 +1158,12 @@ class Client:
 
         Parameters
         ----------
-        ds : string
+        ds : str
             Data export record set query.
-        method : string
+        method : str
             Export method. Supported methods are: 'url_quick', 'url',
             'url-tar', 'ftp' and 'ftp-tar'. Default is 'url_quick'.
-        protocol : string
+        protocol : str
             Export protocol. Supported protocols are: 'as-is', 'fits',
             'jpg', 'mpg' and 'mp4'. Default is 'as-is'.
         protocol_args : dict
@@ -1171,7 +1171,7 @@ class Client:
             'mp4'. Valid arguments are: 'ct', 'scaling', 'min', 'max'
             and 'size'. See the JSOC data export webpage for more
             details.
-        filenamefmt : string, None or False
+        filenamefmt : str, None or bool
             Custom filename format string for exported files. This is
             ignored for 'url_quick'/'as-is' data exports. If set to
             None (default), the format string will be generated using
@@ -1183,12 +1183,12 @@ class Client:
             values, the first n records of the record set are returned,
             for negative values the last abs(n) records. If set to None
             (default), no limit is applied.
-        email : string or None
+        email : str or None
             Registered email address. If email is None (default), the
             current default email address is used, which in this case
             has to be set before calling export() by using the
             :attr:`Client.email` attribute.
-        requestor : string, None or False
+        requestor : str, None or bool
             Export user ID. Default is None, in which case the user
             name is determined from the email address. If set to False,
             the requestor argument will be omitted in the export
@@ -1232,7 +1232,7 @@ class Client:
 
         Parameters
         ----------
-        requestid : string
+        requestid : str
             Export request ID.
 
         Returns
