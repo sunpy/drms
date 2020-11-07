@@ -1,28 +1,23 @@
-from __future__ import absolute_import, division, print_function
+"""
+==============================================
+Print all HMI series and prime keys with notes
+==============================================
+
+This example shows how to find and display the HMI series names, prime keys and corresponding notes.
+"""
 import textwrap
-import example_helpers
+
 import drms
 
-
-# Set to True, to list additional information
-full_output = False
-
+###############################################################################
+# Make the basic query.
 # Create DRMS JSON client, use debug=True to see the query URLs
-c = drms.Client()
+client = drms.Client()
 
 # Get all available HMI series
-s = c.series(r'hmi\.', full=full_output)
+hmi_series = client.series(r'hmi\.', full=True)
 
-if not full_output:
-    # Print only the series names
-    for name in s:
-        print(name)
-else:
-    # Print series names, pkeys and notes
-    for i in s.index:
-        print('Series:', s.name[i])
-        if c.server.url_show_series_wrapper is None:
-            # JSOC's show_series wrapper currently does not support primekeys
-            print(' Pkeys:', ', '.join(s.primekeys[i]))
-        print(' Notes:', ('\n' + 8*' ').join(textwrap.wrap(s.note[i])))
-        print()
+# Print series names, prime-keys (pkeys) and notes
+for series in hmi_series.index:
+    print('Series:', hmi_series.name[series])
+    print(' Notes:', (f'\n{8 * " "}').join(textwrap.wrap(hmi_series.note[series])))

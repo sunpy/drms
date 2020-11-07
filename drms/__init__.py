@@ -1,56 +1,35 @@
-# Copyright (c) 2014-2019 Kolja Glogowski and others.
-# See AUTHORS.txt for a list of contributors.
-#
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation
-# files (the "Software"), to deal in the Software without
-# restriction, including without limitation the rights to use,
-# copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following
-# conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-# OTHER DEALINGS IN THE SOFTWARE.
-
 """
+drms
+====
+
 Access HMI, AIA and MDI data with Python
-
-The latest release is avaiable at https://github.com/sunpy/drms .
 """
 
-from __future__ import absolute_import, division, print_function
+import os
 
-from . import config, error, json, client, utils
-from .error import *
-from .client import *
-from .utils import *
-from .json import const
+from .client import *  # NOQA
+from .config import *  # NOQA
+from .exceptions import *  # NOQA
+from .json import *  # NOQA
+from .utils import *  # NOQA
+from .version import version as __version__  # NOQA
 
-# Keep the following three lines like this, so that versioneer does not add
-# them again when running "python versioneer.py setup".
-from ._version import get_versions
-__version__ = get_versions()['version']
-del get_versions
 
-__all__ = ['const']
-__all__ += error.__all__
-__all__ += client.__all__
-__all__ += utils.__all__
+def _get_bibtex():
+    import textwrap
 
-# We imported all public classes and functions from submodules. The submodule
-# symbols themselves are now removed to keep the package namespace cleaner.
-del config
-del error
-del json
-del utils
-del client
+    # Set the bibtex entry to the article referenced in CITATION.rst
+    citation_file = os.path.join(os.path.dirname(__file__), 'CITATION.rst')
+
+    # Explicitly specify UTF-8 encoding in case the system's default encoding is problematic
+    with open(citation_file, encoding='utf-8') as citation:
+        # Extract the first bibtex block:
+        ref = citation.read().partition('.. code:: bibtex\n\n')[2]
+        lines = ref.split('\n')
+        # Only read the lines which are indented
+        lines = lines[: [line.startswith('    ') for line in lines].index(False)]
+        ref = textwrap.dedent('\n'.join(lines))
+    return ref
+
+
+__citation__ = __bibtex__ = _get_bibtex()
