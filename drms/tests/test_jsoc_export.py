@@ -62,6 +62,61 @@ def test_export_fits_basic(jsoc_client_export):
 @pytest.mark.jsoc
 @pytest.mark.export
 @pytest.mark.remote_data
+def test_export_process(jsoc_client_export):
+    # TODO: check that this has actually done the export/processing properly?
+    # NOTE: processing exports seem to fail silently on the server side if
+    # the correct names/arguments are not passed. Not clear how to check
+    # that this has not happened.
+    process = {'im_patch': {
+        't_ref': '2015-10-17T04:33:30.000',
+        't': 0,
+        'r': 0,
+        'c': 0,
+        'locunits': 'arcsec',
+        'boxunits': 'arcsec',
+        'x': -517.2,
+        'y': -246,
+        'width': 345.6,
+        'height': 345.6,
+    }}
+    req = jsoc_client_export.export(
+        'aia.lev1_euv_12s[2015-10-17T04:33:30.000/1m@12s][171]{image}',
+        method='url',
+        protocol='fits',
+        process=process,
+        requestor=False,
+    )
+
+    assert isinstance(req, drms.ExportRequest)
+    assert req.wait(timeout=60)
+    assert req.has_succeeded()
+    assert req.protocol == 'fits'
+
+    for record in req.urls.record:
+        record = record.lower()
+        assert record.startswith('aia.lev1_euv_12s_mod')
+
+    for filename in req.urls.filename:
+        assert filename.endswith('image.fits')
+
+    for url in req.urls.url:
+        assert url.endswith('image.fits')
+
+
+@pytest.mark.jsoc
+@pytest.mark.export
+@pytest.mark.remote_data
+def test_export_invalid_process(jsoc_client_export):
+    with pytest.raises(ValueError, match='foobar is not one of the allowed processing options'):
+        jsoc_client_export.export(
+            'aia.lev1_euv_12s[2015-10-17T04:33:30.000/1m@12s][171]{image}',
+            process={'foobar': {}}
+        )
+
+
+@pytest.mark.jsoc
+@pytest.mark.export
+@pytest.mark.remote_data
 def test_export_email(jsoc_client):
     with pytest.raises(ValueError):
         jsoc_client.export('hmi.v_45s[2016.04.01_TAI/1d@6h]{Dopplergram}')
