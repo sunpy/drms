@@ -62,7 +62,7 @@ def test_export_fits_basic(jsoc_client_export):
 @pytest.mark.jsoc
 @pytest.mark.export
 @pytest.mark.remote_data
-def test_export_process(jsoc_client_export):
+def test_export_im_patch(jsoc_client_export):
     # TODO: check that this has actually done the export/processing properly?
     # NOTE: processing exports seem to fail silently on the server side if
     # the correct names/arguments are not passed. Not clear how to check
@@ -101,6 +101,38 @@ def test_export_process(jsoc_client_export):
 
     for url in req.urls.url:
         assert url.endswith('image.fits')
+
+
+@pytest.mark.jsoc
+@pytest.mark.export
+@pytest.mark.remote_data
+def test_export_rebin(jsoc_client_export):
+    # TODO: check that this has actually done the export/processing properly?
+    # NOTE: processing exports seem to fail silently on the server side if
+    # the correct names/arguments are not passed. Not clear how to check
+    # that this has not happened.
+    req = jsoc_client_export.export(
+        'hmi.M_720s[2020-10-17_22:12:00_TAI/24m]{magnetogram}',
+        method='url',
+        protocol='fits',
+        process={'rebin': {'method': 'boxcar', 'scale': 0.25}},
+        requestor=False,
+    )
+
+    assert isinstance(req, drms.ExportRequest)
+    assert req.wait(timeout=60)
+    assert req.has_succeeded()
+    assert req.protocol == 'fits'
+
+    for record in req.urls.record:
+        record = record.lower()
+        assert record.startswith('hmi.M_720s')
+
+    for filename in req.urls.filename:
+        assert filename.endswith('magnetogram.fits')
+
+    for url in req.urls.url:
+        assert url.endswith('magnetogram.fits')
 
 
 @pytest.mark.jsoc
