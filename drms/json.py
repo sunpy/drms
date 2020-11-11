@@ -403,7 +403,7 @@ class HttpJsonClient:
             d['filenamefmt'] = filenamefmt
 
         n = int(n) if n is not None else 0
-        d['process=n'] = '%d' % n
+        d['process=n'] = f'{n}'
         if process is not None:
             allowed_processes = [
                 'im_patch',
