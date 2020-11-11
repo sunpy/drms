@@ -1192,7 +1192,10 @@ class Client:
         process : `dict`, None
             Dictionary of processing commands. Each entry is also a `dict`
             containing all of the applicable options for that processing
-            command.
+            command. Note that only the name of the process, and not the
+            arguments, are validated by `~drms`. In the case of invalid
+            or malformed processing arguments, JSOC may still return
+            an unprocessed image without the export request failing.
         requestor : str, None or bool
             Export user ID. Default is None, in which case the user
             name is determined from the email address. If set to False,
