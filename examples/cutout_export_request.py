@@ -38,7 +38,8 @@ print(f'Data export query:\n  {qstr}\n')
 # We request a 345.6 arcsecond cutout (on both sides) centered on the coordinate (-517.2, -246) arcseconds as defined in the helioprojective frame of SDO at time ``t_ref``.
 # The ``t`` controls whether tracking is disabled (``1``) or enabled (``0``).
 # ``r`` controls the use of sub-pixel registration.
-# ``c`` controls whether off-limb pixels are filled with NaNs.  
+# ``c`` controls whether off-limb pixels are filled with NaNs.
+# For additional details about ``im_patch``, see the `documentation <http://jsoc.stanford.edu/doxygen_html/group__im__patch.html>`_.
 process = {'im_patch': {
     't_ref': '2015-10-17T04:33:30.000',
     't': 0,
