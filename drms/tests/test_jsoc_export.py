@@ -126,7 +126,7 @@ def test_export_rebin(jsoc_client_export):
 
     for record in req.urls.record:
         record = record.lower()
-        assert record.startswith('hmi.M_720s')
+        assert record.startswith('hmi.m_720s_mod')
 
     for filename in req.urls.filename:
         assert filename.endswith('magnetogram.fits')
