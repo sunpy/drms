@@ -19,6 +19,6 @@ Deprecations and Removals
 Support for Processing Keywords
 --------------------------------
 
-- :meth:`drms.client.Client.export()` now accepts a ``process`` keyword argument
+- :meth:`drms.client.Client.export` now accepts a ``process`` keyword argument
 - This allows users to specify additional server-side processing options such as image cutouts
 - See the "Processing" section of the `JSOC Data Export page <http://jsoc.stanford.edu/ajax/exportdata.html>`__ for more information.
