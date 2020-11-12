@@ -1193,7 +1193,7 @@ class Client:
             Dictionary of processing commands. Each entry is also a `dict`
             containing all of the applicable options for that processing
             command. Note that only the name of the process, and not the
-            arguments, are validated by `~drms`. In the case of invalid
+            arguments, are validated by the `~drms.client.Client`. In the case of invalid
             or malformed processing arguments, JSOC may still return
             an unprocessed image without the export request failing.
         requestor : str, None or bool
