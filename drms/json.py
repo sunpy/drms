@@ -284,17 +284,7 @@ class HttpJsonClient:
         req = self._json_request(self._server.url_check_address + query)
         return req.data
 
-    def exp_request(
-        self,
-        ds,
-        notify,
-        method='url_quick',
-        protocol='as-is',
-        protocol_args=None,
-        filenamefmt=None,
-        n=None,
-        requestor=None,
-    ):
+    def exp_request(self, *args, **kwargs):
         """
         Request data export.
 
@@ -317,6 +307,10 @@ class HttpJsonClient:
         filenamefmt : str, None
             Custom filename format string for exported files. This is
             ignored for 'url_quick'/'as-is' data exports.
+        process : `dict`, None
+            Dictionary of processing commands. Each entry is also a `dict`
+            containing all of the applicable options for that processing
+            command.
         n : int or None
             Limits the number of records requested. For positive
             values, the first n records of the record set are returned,
@@ -334,6 +328,21 @@ class HttpJsonClient:
             Dictionary containing the server response to the export
             request.
         """
+        req = self._json_request(self._exp_request_url(*args, **kwargs))
+        return req.data
+
+    def _exp_request_url(
+        self,
+        ds,
+        notify,
+        method='url_quick',
+        protocol='as-is',
+        protocol_args=None,
+        filenamefmt=None,
+        n=None,
+        process=None,
+        requestor=None,
+    ):
         method = method.lower()
         method_list = ['url_quick', 'url', 'url-tar', 'ftp', 'ftp-tar']
         if method not in method_list:
@@ -393,18 +402,34 @@ class HttpJsonClient:
         if filenamefmt is not None:
             d['filenamefmt'] = filenamefmt
 
-        if n is not None:
-            n = int(n)
-            d['process=n'] = f'{int(n)}'
+        n = int(n) if n is not None else 0
+        d['process=n'] = f'{n}'
+        if process is not None:
+            allowed_processes = [
+                'im_patch',
+                'resize',
+                'rebin',
+                'aia_scale_aialev1',
+                'aia_scale_orig',
+                'aia_scale_other',
+                'Maproj',
+                'HmiB2ptr',
+            ]
+            process_strings = {}
+            for p, opts in process.items():
+                if p not in allowed_processes:
+                    raise ValueError(f'{p} is not one of the allowed processing options: {allowed_processes}')
+                process_strings[p] = ','.join([f'{k}={v}' for k, v in opts.items()])
+            processes = '|'.join([f'{k},{v}' for k, v in process_strings.items()])
+            d['process=n'] = f'{d["process=n"]}|{processes}'
 
         if requestor is None:
             d['requestor'] = notify.split('@')[0]
         elif requestor is not False:
             d['requestor'] = requestor
 
-        query = f'?{urlencode(d)}'
-        req = self._json_request(self._server.url_jsoc_fetch + query)
-        return req.data
+        query = '?' + urlencode(d)
+        return self._server.url_jsoc_fetch + query
 
     def exp_status(self, requestid):
         """
