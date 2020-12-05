@@ -8,6 +8,7 @@ export request.
 
 Note that there is no "Request URL" for method 'url_quick'.
 """
+import os
 
 import drms
 
@@ -18,7 +19,8 @@ client = drms.Client(verbose=True)
 
 # This example requires a registered export email address. You can register
 # JSOC exports at: http://jsoc.stanford.edu/ajax/register_email.html
-email = 'nabil.freij@gmail.com'
+# You must supply your own email.
+email = os.environ["JSOC_EMAIL"]
 
 ###############################################################################
 # Construct the DRMS query string: "Series[timespan][wavelength]"

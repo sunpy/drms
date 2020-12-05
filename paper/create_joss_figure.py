@@ -1,8 +1,7 @@
 """
 This example creates the figure shown in the JOSS paper.
 """
-
-import os.path
+import os
 
 import matplotlib.pyplot as plt
 import pandas
@@ -33,7 +32,8 @@ def read_fits_data(fname):
 #
 # You will be asked for your registered email address during execution of
 # this example.
-email = 'nabil.freij@gmail.com'
+# You must supply your own email.
+email = os.environ["JSOC_EMAIL"]
 
 # Should the plots been shown and/or saved?
 save_plots = True

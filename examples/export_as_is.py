@@ -22,7 +22,8 @@ client = drms.Client(verbose=True)
 
 # This example requires a registered export email address. You can register
 # JSOC exports at: http://jsoc.stanford.edu/ajax/register_email.html
-email = 'nabil.freij@gmail.com'
+# You must supply your own email.
+email = os.environ["JSOC_EMAIL"]
 
 # Download directory
 out_dir = os.path.join('downloads')
