@@ -68,7 +68,7 @@ def to_datetime(tstr, force=False):
     if force or s.str.endswith('_TAI').any():
         s = s.str.replace('_TAI', "")
         s = s.str.replace('_', ' ')
-        s = s.str.replace('.', '-', n=2)
+        s = s.str.replace('.', '-', regex=True, n=2)
     res = _pd_to_datetime_coerce(s)
     res = res.dt.tz_localize(None)
     return res.iloc[0] if (len(res) == 1) and np.isscalar(tstr) else res
