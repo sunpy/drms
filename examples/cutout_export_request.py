@@ -28,7 +28,7 @@ if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
 ###############################################################################
-# Construct the DRMS query string: "Series[harpnum][timespan]{data segments}"
+# Construct the DRMS query string: "Series[timespan][wavelength]{data segments}"
 
 qstr = 'aia.lev1_euv_12s[2015-10-17T04:33:30.000/1m@12s][171]{image}'
 print(f'Data export query:\n  {qstr}\n')
