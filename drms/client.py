@@ -682,7 +682,7 @@ class Client:
             if si.keywords.loc[k].is_time:
                 pkfmt_list.append(f'{{{k}:A}}')
             else:
-                pkfmt_list.append(f'{k}')
+                pkfmt_list.append(f'{{{k}}}')
 
         if pkfmt_list:
             return '{}.{}.{{segment}}'.format(si.name, '.'.join(pkfmt_list))

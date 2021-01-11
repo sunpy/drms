@@ -368,24 +368,24 @@ class HttpJsonClient:
             method = 'url'
 
         if protocol in img_protocol_list:
-            d = {'ct': 'grey.sao', 'scaling': 'MINMAX', 'size': 1}
+            extra_keys = {'ct': 'grey.sao', 'scaling': 'MINMAX', 'size': 1}
             if protocol_args is not None:
                 for k, v in protocol_args.items():
                     if k.lower() == 'ct':
-                        d['ct'] = v
+                        extra_keys['ct'] = v
                     elif k == 'scaling':
-                        d[k] = v
+                        extra_keys[k] = v
                     elif k == 'size':
-                        d[k] = int(v)
+                        extra_keys[k] = int(v)
                     elif k in ['min', 'max']:
-                        d[k] = float(v)
+                        extra_keys[k] = float(v)
                     else:
                         raise ValueError(f'Unknown protocol argument: {k}')
-            protocol += ',CT={ct},scaling={scaling},size={size}'.format(**d)
-            if 'min' in d:
-                protocol += f',min={d["min"]:g}'
-            if 'max' in d:
-                protocol += f',max={d["max"]:g}'
+            protocol += ',CT={ct},scaling={scaling},size={size}'.format(**extra_keys)
+            if 'min' in extra_keys:
+                protocol += f',min={extra_keys["min"]:g}'
+            if 'max' in extra_keys:
+                protocol += f',max={extra_keys["max"]:g}'
         else:
             if protocol_args is not None:
                 raise ValueError(f'protocol_args not supported for protocol {protocol}')
