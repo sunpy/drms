@@ -848,6 +848,8 @@ class Client:
     @email.setter
     def email(self, value):
         if value is not None and not self.check_email(value):
+            if len(value) == 0:
+                raise ValueError('Email address is not specified by a.jsoc.Notify')
             raise ValueError('Email address is invalid or not registered')
         self._email = value
 
