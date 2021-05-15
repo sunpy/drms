@@ -2,17 +2,29 @@
 drms
 ====
 
-Access HMI, AIA and MDI data with Python
+The drms library provides an easy-to-use interface for accessing HMI, AIA and MDI data with Python.
+It uses the publicly accessible JSOC DRMS server by default, but can also be used with local NetDRMS sites.
+More information, including a detailed tutorial, is available in the Documentation.
+
+* Homepage: https://github.com/sunpy/drms
+* Documentation: https://docs.sunpy.org/projects/drms/en/stable/
 """
 
 import os
+import sys
 
-from .client import *  # NOQA
-from .config import *  # NOQA
-from .exceptions import *  # NOQA
-from .json import *  # NOQA
-from .utils import *  # NOQA
-from .version import version as __version__  # NOQA
+# Enforce Python version check during package import.
+# Must be done before any drms imports
+__minimum_python_version__ = "3.7"
+
+class UnsupportedPythonError(Exception):
+    """Running on an unsupported version of Python."""
+
+
+if sys.version_info < tuple(int(val) for val in __minimum_python_version__.split('.')):
+    # This has to be .format to keep backwards compatibly.
+    raise UnsupportedPythonError(
+        "sunpy does not support Python < {}".format(__minimum_python_version__))
 
 
 def _get_bibtex():
@@ -31,5 +43,12 @@ def _get_bibtex():
         ref = textwrap.dedent('\n'.join(lines))
     return ref
 
-
 __citation__ = __bibtex__ = _get_bibtex()
+
+from .version import version as __version__
+# DRMS imports to collapse the namespace
+from .client import *
+from .config import *
+from .exceptions import *
+from .json import *
+from .utils import *

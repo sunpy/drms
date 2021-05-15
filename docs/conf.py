@@ -112,7 +112,7 @@ graphviz_dot_args = [
 ]
 
 # -- Sphinx Gallery ------------------------------------------------------------
-from sphinx_gallery.sorting import ExampleTitleSortKey  # NOQA
+from sphinx_gallery.sorting import ExampleTitleSortKey
 
 sphinx_gallery_conf = {
     'backreferences_dir': os.path.join('generated', 'modules'),
