@@ -5,8 +5,11 @@ schedules:
     displayName: At 00:00 on Sunday
     branches:
       include:
-      - master
+      - main
     always: true
+
+pr:
+  autoCancel: true
 
 resources:
   repositories:
@@ -30,9 +33,6 @@ trigger:
     - '*pre*'
     - '*post*'
 
-pr:
-  autoCancel: true
-
 stages:
   - stage: FirstPhaseTests
     displayName: Core Tests
@@ -43,14 +43,11 @@ stages:
         submodules: false
         coverage: codecov
         toxdeps: tox-pypi-filter
-        posargs: -n=1
-
         envs:
           - linux: codestyle
             name: style_check
             pytest: false
             libraries: {}
-
           - linux: py38
 
   - stage: SecondPhaseTests
@@ -63,21 +60,12 @@ stages:
         submodules: false
         coverage: codecov
         toxdeps: tox-pypi-filter
-        posargs: -n=1
-
         libraries:
           apt:
             - graphviz
-
         envs:
           - macos: py37
-
           - windows: py39
-
-          - linux: build_docs
-            posargs: " "
-            pytest: false
-
           - linux: py38-online
 
   - stage: ThirdPhaseTests
@@ -90,13 +78,11 @@ stages:
         submodules: false
         coverage: codecov
         toxdeps: tox-pypi-filter
-        posargs: -n=1
-
         envs:
           - linux: py38-sunpy
 
-  # On branches which aren't master, and not Pull Requests, build the wheels but only upload them on tags
-  - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), or(ne(variables['Build.SourceBranchName'], 'master'), eq(variables['Build.Reason'], 'Schedule'), eq(variables['Build.Reason'], 'Manual'))) }}:
+  # On branches which aren't main, and not Pull Requests, build the wheels but only upload them on tags
+  - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), or(ne(variables['Build.SourceBranchName'], 'main'), eq(variables['Build.Reason'], 'Schedule'), eq(variables['Build.Reason'], 'Manual'))) }}:
     - stage: Release
       dependsOn: SecondPhaseTests
       jobs:

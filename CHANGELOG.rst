@@ -1,5 +1,14 @@
-Drms v0.6.1 (2021-01-23)
-========================
+0.6.2 (2021-05-15)
+==================
+
+Trivial
+-------
+
+- Tidy up of internal code that has no user facing changes.
+
+
+0.6.1 (2021-01-23)
+==================
 
 Bug Fixes
 ---------
@@ -7,8 +16,8 @@ Bug Fixes
 - Fixed issue with downloads not having the primekeys substituted with their correct values in downloaded filenames. (`#52 <https://github.com/sunpy/drms/pull/52>`__)
 
 
-drms v0.6.0 (2020-11-01)
-========================
+0.6.0 (2020-11-01)
+==================
 
 Improved Documentation
 ----------------------
