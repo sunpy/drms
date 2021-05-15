@@ -1,3 +1,12 @@
+0.6.2 (2021-05-15)
+==================
+
+Trivial
+-------
+
+- Tidy up of internal code that has no user facing changes.
+
+
 0.6.1 (2021-01-23)
 ==================
 
