@@ -37,7 +37,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
-    'sunpy.util.sphinx.changelog',
+    'sphinx_changelog',
 ]
 numpydoc_show_class_members = False
 
@@ -123,7 +123,8 @@ sphinx_gallery_conf = {
     # Comes from the theme.
     'default_thumb_file': os.path.join(html_static_path[0], 'img', 'sunpy_icon_128x128.png'),
     'abort_on_example_error': False,
-    'plot_gallery': 'True',
+    'only_warn_on_example_error': True,
+    'plot_gallery': True,
     'remove_config_comments': True,
     'doc_module': ('sunpy'),
 }
