@@ -1,3 +1,5 @@
+ci:
+  autofix_prs: false
 repos:
   # The warnings/errors we check for here are:
   # E101 - mix of tabs and spaces
