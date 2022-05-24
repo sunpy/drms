@@ -101,7 +101,7 @@ except ImportError:
     html_theme = "default"
 
 # JSOC email os env
-os.environ["JSOC_EMAIL"] = "jsoc@cadair.com"
+os.environ["JSOC_EMAIL"] = "nabil.freij@gmail.com"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
