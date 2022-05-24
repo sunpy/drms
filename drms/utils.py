@@ -3,15 +3,15 @@ import re
 import numpy as np
 import pandas as pd
 
-__all__ = ['to_datetime']
+__all__ = ["to_datetime"]
 
 
 def _pd_to_datetime_coerce(arg):
-    return pd.to_datetime(arg, errors='coerce')
+    return pd.to_datetime(arg, errors="coerce")
 
 
 def _pd_to_numeric_coerce(arg):
-    return pd.to_numeric(arg, errors='coerce')
+    return pd.to_numeric(arg, errors="coerce")
 
 
 def _split_arg(arg):
@@ -19,7 +19,7 @@ def _split_arg(arg):
     Split a comma-separated string into a list.
     """
     if isinstance(arg, str):
-        arg = [it for it in re.split(r'[\s,]+', arg) if it]
+        arg = [it for it in re.split(r"[\s,]+", arg) if it]
     return arg
 
 
@@ -27,7 +27,7 @@ def _extract_series_name(ds):
     """
     Extract series name from record set.
     """
-    m = re.match(r'^\s*([\w\.]+).*$', ds)
+    m = re.match(r"^\s*([\w\.]+).*$", ds)
     return m.group(1) if m is not None else None
 
 
@@ -65,10 +65,10 @@ def to_datetime(tstr, force=False):
         Pandas series or a single Timestamp object.
     """
     s = pd.Series(tstr, dtype=object).astype(str)
-    if force or s.str.endswith('_TAI').any():
-        s = s.str.replace('_TAI', "")
-        s = s.str.replace('_', ' ')
-        s = s.str.replace('.', '-', regex=True, n=2)
+    if force or s.str.endswith("_TAI").any():
+        s = s.str.replace("_TAI", "")
+        s = s.str.replace("_", " ")
+        s = s.str.replace(".", "-", regex=True, n=2)
     res = _pd_to_datetime_coerce(s)
     res = res.dt.tz_localize(None)
     return res.iloc[0] if (len(res) == 1) and np.isscalar(tstr) else res

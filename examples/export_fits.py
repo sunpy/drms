@@ -27,10 +27,10 @@ email = os.environ["JSOC_EMAIL"]
 
 # Use 'as-is' instead of 'fits', if record keywords are not needed in the
 # FITS header. This greatly reduces the server load!
-export_protocol = 'fits'
+export_protocol = "fits"
 
 # Download directory
-out_dir = os.path.join('downloads')
+out_dir = os.path.join("downloads")
 
 # Create download directory if it does not exist yet.
 if not os.path.exists(out_dir):
@@ -39,18 +39,18 @@ if not os.path.exists(out_dir):
 ###############################################################################
 # Construct the DRMS query string: "Series[harpnum][timespan]{data segments}"
 
-qstr = 'hmi.sharp_720s[4864][2014.11.30_00:00:00_TAI/1d@8h]{continuum, magnetogram, field}'
-print(f'Data export query:\n  {qstr}\n')
+qstr = "hmi.sharp_720s[4864][2014.11.30_00:00:00_TAI/1d@8h]{continuum, magnetogram, field}"
+print(f"Data export query:\n  {qstr}\n")
 
 # Submit export request using the 'fits' protocol
-print('Submitting export request...')
-result = client.export(qstr, method='url', protocol=export_protocol, email=email)
+print("Submitting export request...")
+result = client.export(qstr, method="url", protocol=export_protocol, email=email)
 
 # Print request URL.
-print(f'\nRequest URL: {result.request_url}')
-print(f'{int(len(result.urls))} file(s) available for download.\n')
+print(f"\nRequest URL: {result.request_url}")
+print(f"{int(len(result.urls))} file(s) available for download.\n")
 
 # Download selected files.
 result.download(out_dir)
-print('Download finished.')
+print("Download finished.")
 print(f'\nDownload directory:\n  "{os.path.abspath(out_dir)}"\n')

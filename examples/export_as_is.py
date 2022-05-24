@@ -26,7 +26,7 @@ client = drms.Client(verbose=True)
 email = os.environ["JSOC_EMAIL"]
 
 # Download directory
-out_dir = os.path.join('downloads')
+out_dir = os.path.join("downloads")
 
 # Create download directory if it does not exist yet.
 if not os.path.exists(out_dir):
@@ -35,15 +35,15 @@ if not os.path.exists(out_dir):
 ###############################################################################
 # Construct the DRMS query string: "Series[harpnum][timespan]{data segments}"
 
-qstr = 'hmi.sharp_720s[7451][2020.09.27_00:00:00_TAI]{continuum, magnetogram, field}'
-print(f'Data export query:\n  {qstr}\n')
+qstr = "hmi.sharp_720s[7451][2020.09.27_00:00:00_TAI]{continuum, magnetogram, field}"
+print(f"Data export query:\n  {qstr}\n")
 
 # Submit export request, defaults to method='url_quick' and protocol='as-is'
-print('Submitting export request...')
+print("Submitting export request...")
 result = client.export(qstr, email=email)
-print(f'{int(len(result.urls))} file(s) available for download.\n')
+print(f"{int(len(result.urls))} file(s) available for download.\n")
 
 # Download selected files.
 result.download(out_dir)
-print('Download finished.')
+print("Download finished.")
 print(f'\nDownload directory:\n  "{os.path.abspath(out_dir)}"\n')

@@ -5,7 +5,7 @@ from urllib.request import urlopen
 from .config import ServerConfig, _server_configs
 from .utils import _split_arg
 
-__all__ = ['const', 'HttpJsonRequest', 'HttpJsonClient']
+__all__ = ["const", "HttpJsonRequest", "HttpJsonClient"]
 
 
 class JsocInfoConstants:
@@ -38,17 +38,17 @@ class JsocInfoConstants:
         = ``'*archive*'``
     """
 
-    all = '**ALL**'
-    none = '**NONE**'
-    recdir = '*recdir*'
-    dirmtime = '*dirmtime*'
-    logdir = '*logdir*'
-    recnum = '*recnum*'
-    sunum = '*sunum*'
-    size = '*size*'
-    online = '*online*'
-    retain = '*retain*'
-    archive = '*archive*'
+    all = "**ALL**"
+    none = "**NONE**"
+    recdir = "*recdir*"
+    dirmtime = "*dirmtime*"
+    logdir = "*logdir*"
+    recnum = "*recnum*"
+    sunum = "*sunum*"
+    size = "*size*"
+    online = "*online*"
+    retain = "*retain*"
+    archive = "*archive*"
 
 
 const = JsocInfoConstants()
@@ -68,7 +68,7 @@ class HttpJsonRequest:
         self._data = None
 
     def __repr__(self):
-        return f'<HttpJsonRequest: {self.url}>'
+        return f"<HttpJsonRequest: {self.url}>"
 
     @property
     def url(self):
@@ -100,7 +100,7 @@ class HttpJsonClient:
         Enable or disable debug mode (default is disabled).
     """
 
-    def __init__(self, server='jsoc', debug=False):
+    def __init__(self, server="jsoc", debug=False):
         if isinstance(server, ServerConfig):
             self._server = server
         else:
@@ -108,7 +108,7 @@ class HttpJsonClient:
         self.debug = debug
 
     def __repr__(self):
-        return f'<HttpJsonClient: {self._server.name}>'
+        return f"<HttpJsonClient: {self._server.name}>"
 
     def _json_request(self, url):
         if self.debug:
@@ -140,9 +140,9 @@ class HttpJsonClient:
         -------
         result : dict
         """
-        query = '?' if ds_filter is not None else ""
+        query = "?" if ds_filter is not None else ""
         if ds_filter is not None:
-            query += urlencode({'filter': ds_filter})
+            query += urlencode({"filter": ds_filter})
         req = self._json_request(self._server.url_show_series + query)
         return req.data
 
@@ -168,12 +168,12 @@ class HttpJsonClient:
         -------
         result : dict
         """
-        query_args = {'dbhost': self._server.show_series_wrapper_dbhost}
+        query_args = {"dbhost": self._server.show_series_wrapper_dbhost}
         if ds_filter is not None:
-            query_args['filter'] = ds_filter
+            query_args["filter"] = ds_filter
         if info:
-            query_args['info'] = '1'
-        query = f'?{urlencode(query_args)}'
+            query_args["info"] = "1"
+        query = f"?{urlencode(query_args)}"
         req = self._json_request(self._server.url_show_series_wrapper + query)
         return req.data
 
@@ -243,21 +243,21 @@ class HttpJsonClient:
             Dictionary containing the requested record set information.
         """
         if key is None and seg is None and link is None:
-            raise ValueError('At least one key, seg or link must be specified')
-        d = {'op': 'rs_list', 'ds': ds}
+            raise ValueError("At least one key, seg or link must be specified")
+        d = {"op": "rs_list", "ds": ds}
         if key is not None:
-            d['key'] = ','.join(_split_arg(key))
+            d["key"] = ",".join(_split_arg(key))
         if seg is not None:
-            d['seg'] = ','.join(_split_arg(seg))
+            d["seg"] = ",".join(_split_arg(seg))
         if link is not None:
-            d['link'] = ','.join(_split_arg(link))
+            d["link"] = ",".join(_split_arg(link))
         if recinfo:
-            d['R'] = '1'
+            d["R"] = "1"
         if n is not None:
-            d['n'] = f'{int(int(n))}'
+            d["n"] = f"{int(int(n))}"
         if uid is not None:
-            d['userhandle'] = uid
-        query = f'?{urlencode(d)}'
+            d["userhandle"] = uid
+        query = f"?{urlencode(d)}"
         req = self._json_request(self._server.url_jsoc_info + query)
         return req.data
 
@@ -280,7 +280,7 @@ class HttpJsonClient:
             - 4: Email address has neither been validated nor registered
             - -2: Not a valid email address
         """
-        query = '?' + urlencode({'address': quote_plus(email), 'checkonly': '1'})
+        query = "?" + urlencode({"address": quote_plus(email), "checkonly": "1"})
         req = self._json_request(self._server.url_check_address + query)
         return req.data
 
@@ -335,8 +335,8 @@ class HttpJsonClient:
         self,
         ds,
         notify,
-        method='url_quick',
-        protocol='as-is',
+        method="url_quick",
+        protocol="as-is",
         protocol_args=None,
         filenamefmt=None,
         n=None,
@@ -344,91 +344,91 @@ class HttpJsonClient:
         requestor=None,
     ):
         method = method.lower()
-        method_list = ['url_quick', 'url', 'url-tar', 'ftp', 'ftp-tar']
+        method_list = ["url_quick", "url", "url-tar", "ftp", "ftp-tar"]
         if method not in method_list:
             raise ValueError(
-                'Method {} is not supported, valid methods are: {}'.format(
-                    method, ', '.join(str(s) for s in method_list)
+                "Method {} is not supported, valid methods are: {}".format(
+                    method, ", ".join(str(s) for s in method_list)
                 )
             )
 
         protocol = protocol.lower()
-        img_protocol_list = ['jpg', 'mpg', 'mp4']
-        protocol_list = ['as-is', 'fits'] + img_protocol_list
+        img_protocol_list = ["jpg", "mpg", "mp4"]
+        protocol_list = ["as-is", "fits"] + img_protocol_list
         if protocol not in protocol_list:
             raise ValueError(
-                'Protocol {} is not supported, valid protocols are: {}'.format(
-                    protocol, ', '.join(str(s) for s in protocol_list)
+                "Protocol {} is not supported, valid protocols are: {}".format(
+                    protocol, ", ".join(str(s) for s in protocol_list)
                 )
             )
 
         # method "url_quick" is meant to be used with "as-is", change method
         # to "url" if protocol is not "as-is"
-        if method == 'url_quick' and protocol != 'as-is':
-            method = 'url'
+        if method == "url_quick" and protocol != "as-is":
+            method = "url"
 
         if protocol in img_protocol_list:
-            extra_keys = {'ct': 'grey.sao', 'scaling': 'MINMAX', 'size': 1}
+            extra_keys = {"ct": "grey.sao", "scaling": "MINMAX", "size": 1}
             if protocol_args is not None:
                 for k, v in protocol_args.items():
-                    if k.lower() == 'ct':
-                        extra_keys['ct'] = v
-                    elif k == 'scaling':
+                    if k.lower() == "ct":
+                        extra_keys["ct"] = v
+                    elif k == "scaling":
                         extra_keys[k] = v
-                    elif k == 'size':
+                    elif k == "size":
                         extra_keys[k] = int(v)
-                    elif k in ['min', 'max']:
+                    elif k in ["min", "max"]:
                         extra_keys[k] = float(v)
                     else:
-                        raise ValueError(f'Unknown protocol argument: {k}')
-            protocol += ',CT={ct},scaling={scaling},size={size}'.format(**extra_keys)
-            if 'min' in extra_keys:
+                        raise ValueError(f"Unknown protocol argument: {k}")
+            protocol += ",CT={ct},scaling={scaling},size={size}".format(**extra_keys)
+            if "min" in extra_keys:
                 protocol += f',min={extra_keys["min"]:g}'
-            if 'max' in extra_keys:
+            if "max" in extra_keys:
                 protocol += f',max={extra_keys["max"]:g}'
         else:
             if protocol_args is not None:
-                raise ValueError(f'protocol_args not supported for protocol {protocol}')
+                raise ValueError(f"protocol_args not supported for protocol {protocol}")
 
         d = {
-            'op': 'exp_request',
-            'format': 'json',
-            'ds': ds,
-            'notify': notify,
-            'method': method,
-            'protocol': protocol,
+            "op": "exp_request",
+            "format": "json",
+            "ds": ds,
+            "notify": notify,
+            "method": method,
+            "protocol": protocol,
         }
 
         if filenamefmt is not None:
-            d['filenamefmt'] = filenamefmt
+            d["filenamefmt"] = filenamefmt
 
         n = int(n) if n is not None else 0
-        d['process=n'] = f'{n}'
+        d["process=n"] = f"{n}"
         if process is not None:
             allowed_processes = [
-                'im_patch',
-                'resize',
-                'rebin',
-                'aia_scale_aialev1',
-                'aia_scale_orig',
-                'aia_scale_other',
-                'Maproj',
-                'HmiB2ptr',
+                "im_patch",
+                "resize",
+                "rebin",
+                "aia_scale_aialev1",
+                "aia_scale_orig",
+                "aia_scale_other",
+                "Maproj",
+                "HmiB2ptr",
             ]
             process_strings = {}
             for p, opts in process.items():
                 if p not in allowed_processes:
-                    raise ValueError(f'{p} is not one of the allowed processing options: {allowed_processes}')
-                process_strings[p] = ','.join([f'{k}={v}' for k, v in opts.items()])
-            processes = '|'.join([f'{k},{v}' for k, v in process_strings.items()])
-            d['process=n'] = f'{d["process=n"]}|{processes}'
+                    raise ValueError(f"{p} is not one of the allowed processing options: {allowed_processes}")
+                process_strings[p] = ",".join([f"{k}={v}" for k, v in opts.items()])
+            processes = "|".join([f"{k},{v}" for k, v in process_strings.items()])
+            d["process=n"] = f'{d["process=n"]}|{processes}'
 
         if requestor is None:
-            d['requestor'] = notify.split('@')[0]
+            d["requestor"] = notify.split("@")[0]
         elif requestor is not False:
-            d['requestor'] = requestor
+            d["requestor"] = requestor
 
-        query = '?' + urlencode(d)
+        query = "?" + urlencode(d)
         return self._server.url_jsoc_fetch + query
 
     def exp_status(self, requestid):

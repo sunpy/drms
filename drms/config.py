@@ -1,6 +1,6 @@
 from urllib.parse import urljoin
 
-__all__ = ['ServerConfig', 'register_server']
+__all__ = ["ServerConfig", "register_server"]
 
 
 class ServerConfig:
@@ -39,22 +39,22 @@ class ServerConfig:
     """
 
     _valid_keys = [
-        'name',
-        'cgi_baseurl',
-        'cgi_show_series',
-        'cgi_jsoc_info',
-        'cgi_jsoc_fetch',
-        'cgi_check_address',
-        'cgi_show_series_wrapper',
-        'show_series_wrapper_dbhost',
-        'url_show_series',
-        'url_jsoc_info',
-        'url_jsoc_fetch',
-        'url_check_address',
-        'url_show_series_wrapper',
-        'encoding',
-        'http_download_baseurl',
-        'ftp_download_baseurl',
+        "name",
+        "cgi_baseurl",
+        "cgi_show_series",
+        "cgi_jsoc_info",
+        "cgi_jsoc_fetch",
+        "cgi_check_address",
+        "cgi_show_series_wrapper",
+        "show_series_wrapper_dbhost",
+        "url_show_series",
+        "url_jsoc_info",
+        "url_jsoc_fetch",
+        "url_check_address",
+        "url_show_series_wrapper",
+        "encoding",
+        "http_download_baseurl",
+        "ftp_download_baseurl",
     ]
 
     def __init__(self, config=None, **kwargs):
@@ -63,22 +63,22 @@ class ServerConfig:
 
         for k in d:
             if k not in self._valid_keys:
-                raise ValueError(f'Invalid server config key: {k}')
+                raise ValueError(f"Invalid server config key: {k}")
 
-        if 'name' not in d:
+        if "name" not in d:
             raise ValueError('Server config entry "name" is missing')
 
         # encoding defaults to latin1
-        if 'encoding' not in d:
-            d['encoding'] = 'latin1'
+        if "encoding" not in d:
+            d["encoding"] = "latin1"
 
         # Generate URL entries from CGI entries, if cgi_baseurl exists and
         # the specific URL entry is not already set.
-        if 'cgi_baseurl' in d:
-            cgi_baseurl = d['cgi_baseurl']
-            cgi_keys = [k for k in self._valid_keys if k.startswith('cgi') and k != 'cgi_baseurl']
+        if "cgi_baseurl" in d:
+            cgi_baseurl = d["cgi_baseurl"]
+            cgi_keys = [k for k in self._valid_keys if k.startswith("cgi") and k != "cgi_baseurl"]
             for k in cgi_keys:
-                url_key = f'url{k[3:]}'
+                url_key = f"url{k[3:]}"
                 cgi_value = d.get(k)
                 if d.get(url_key) is None and cgi_value is not None:
                     d[url_key] = urljoin(cgi_baseurl, cgi_value)
@@ -98,7 +98,7 @@ class ServerConfig:
     def __setattr__(self, name, value):
         if name in self._valid_keys:
             if not isinstance(value, str):
-                raise ValueError(f'{name} config value must be a string')
+                raise ValueError(f"{name} config value must be a string")
             self._d[name] = value
         else:
             object.__setattr__(self, name, value)
@@ -113,18 +113,18 @@ class ServerConfig:
         """
         Check if an operation is supported by the server.
         """
-        if op == 'series':
+        if op == "series":
             return (self.cgi_show_series is not None) or (self.cgi_show_series_wrapper is not None)
-        elif op == 'info':
+        elif op == "info":
             return self.cgi_jsoc_info is not None
-        elif op == 'query':
+        elif op == "query":
             return self.cgi_jsoc_info is not None
-        elif op == 'email':
+        elif op == "email":
             return self.cgi_check_address is not None
-        elif op == 'export':
+        elif op == "export":
             return (self.cgi_jsoc_info is not None) and (self.cgi_jsoc_fetch is not None)
         else:
-            raise ValueError(f'Unknown operation: {op!r}')
+            raise ValueError(f"Unknown operation: {op!r}")
 
 
 def register_server(config):
@@ -134,7 +134,7 @@ def register_server(config):
     global _server_configs
     name = config.name.lower()
     if name in _server_configs:
-        raise RuntimeError(f'ServerConfig {name} already registered')
+        raise RuntimeError(f"ServerConfig {name} already registered")
     _server_configs[config.name.lower()] = config
 
 
@@ -144,25 +144,25 @@ _server_configs = {}
 # Register public JSOC DRMS server.
 register_server(
     ServerConfig(
-        name='JSOC',
-        cgi_baseurl='http://jsoc.stanford.edu/cgi-bin/ajax/',
-        cgi_show_series='show_series',
-        cgi_jsoc_info='jsoc_info',
-        cgi_jsoc_fetch='jsoc_fetch',
-        cgi_check_address='checkAddress.sh',
-        cgi_show_series_wrapper='showextseries',
-        show_series_wrapper_dbhost='hmidb2',
-        http_download_baseurl='http://jsoc.stanford.edu/',
-        ftp_download_baseurl='ftp://pail.stanford.edu/export/',
+        name="JSOC",
+        cgi_baseurl="http://jsoc.stanford.edu/cgi-bin/ajax/",
+        cgi_show_series="show_series",
+        cgi_jsoc_info="jsoc_info",
+        cgi_jsoc_fetch="jsoc_fetch",
+        cgi_check_address="checkAddress.sh",
+        cgi_show_series_wrapper="showextseries",
+        show_series_wrapper_dbhost="hmidb2",
+        http_download_baseurl="http://jsoc.stanford.edu/",
+        ftp_download_baseurl="ftp://pail.stanford.edu/export/",
     )
 )
 
 # Register KIS DRMS server.
 register_server(
     ServerConfig(
-        name='KIS',
-        cgi_baseurl='http://drms.leibniz-kis.de/cgi-bin/',
-        cgi_show_series='show_series',
-        cgi_jsoc_info='jsoc_info',
+        name="KIS",
+        cgi_baseurl="http://drms.leibniz-kis.de/cgi-bin/",
+        cgi_show_series="show_series",
+        cgi_jsoc_info="jsoc_info",
     )
 )

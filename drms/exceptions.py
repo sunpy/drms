@@ -1,8 +1,8 @@
 __all__ = [
-    'DrmsError',
-    'DrmsQueryError',
-    'DrmsExportError',
-    'DrmsOperationNotSupported',
+    "DrmsError",
+    "DrmsQueryError",
+    "DrmsExportError",
+    "DrmsOperationNotSupported",
 ]
 
 

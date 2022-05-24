@@ -15,9 +15,9 @@ import drms
 client = drms.Client()
 
 # Get all available HMI series
-hmi_series = client.series(r'hmi\.', full=True)
+hmi_series = client.series(r"hmi\.", full=True)
 
 # Print series names, prime-keys (pkeys) and notes
 for series in hmi_series.index:
-    print('Series:', hmi_series.name[series])
-    print(' Notes:', (f'\n{8 * " "}').join(textwrap.wrap(hmi_series.note[series])))
+    print("Series:", hmi_series.name[series])
+    print(" Notes:", (f'\n{8 * " "}').join(textwrap.wrap(hmi_series.note[series])))

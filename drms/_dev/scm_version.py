@@ -5,8 +5,8 @@ import os.path
 try:
     from setuptools_scm import get_version
 
-    version = get_version(root=os.path.join('..', '..'), relative_to=__file__)
+    version = get_version(root=os.path.join("..", ".."), relative_to=__file__)
 except ImportError:
-    raise ImportError('setuptools_scm not installed')
+    raise ImportError("setuptools_scm not installed")
 except Exception as e:
-    raise ValueError(f'setuptools_scm broken with {e}')
+    raise ValueError(f"setuptools_scm broken with {e}")

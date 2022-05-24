@@ -29,7 +29,7 @@ client = drms.Client(verbose=True)
 email = os.environ["JSOC_EMAIL"]
 
 # Download directory
-out_dir = 'downloads'
+out_dir = "downloads"
 
 # Create download directory if it does not exist yet.
 if not os.path.exists(out_dir):
@@ -38,18 +38,18 @@ if not os.path.exists(out_dir):
 ###############################################################################
 # Construct the DRMS query string: "Series[Carrington rotation][Carrington longitude]{data segments}"
 
-qstr = 'hmi.rdvflows_fd15_frame[2150][360]{Ux, Uy}'
-print(f'Data export query:\n  {qstr}\n')
+qstr = "hmi.rdvflows_fd15_frame[2150][360]{Ux, Uy}"
+print(f"Data export query:\n  {qstr}\n")
 
 # Submit export request using the 'url-tar' method, protocol default: 'as-is'
-print('Submitting export request...')
-result = client.export(qstr, method='url-tar', email=email)
+print("Submitting export request...")
+result = client.export(qstr, method="url-tar", email=email)
 
 # Print request URL.
-print(f'\nRequest URL: {result.request_url}')
-print(f'{len(result.urls)} file(s) available for download.\n')
+print(f"\nRequest URL: {result.request_url}")
+print(f"{len(result.urls)} file(s) available for download.\n")
 
 # Download selected files.
 dr = result.download(out_dir)
-print('Download finished.')
+print("Download finished.")
 print(f'\nDownloaded file:\n  "{dr.download[0]}"\n')

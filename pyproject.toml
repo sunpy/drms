@@ -1,11 +1,32 @@
 [build-system]
 requires = [
-         "setuptools",
-         "setuptools_scm",
-         "wheel",
-         "oldest-supported-numpy",
-         ]
+  "setuptools>=56,!=61.0.0",
+  "setuptools_scm[toml]>=6.2",
+  "wheel",
+  "oldest-supported-numpy",
+]
 build-backend = 'setuptools.build_meta'
+
+[tool.black]
+line-length = 120
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs
+    | \.git
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+    | docs
+    | .history
+  )/
+)
+'''
 
 [ tool.gilesbot ]
   [ tool.gilesbot.pull_requests ]
