@@ -137,10 +137,15 @@ It is also possible to submit an export request on the webpage and then use the 
 .. warning::
     Please replace the email below with your own registered email.
 
+.. testsetup::
+
+    import os
+    email_address = os.environ["JSOC_EMAIL"]
+
 First, we start again with importing the ``drms`` library and creating a `~drms.client.Client` instance::
 
     >>> import drms
-    >>> client = drms.Client(email='nabil.freij@gmail.com', verbose=True)  # doctest: +REMOTE_DATA
+    >>> client = drms.Client(email=email_address, verbose=True)  # doctest: +REMOTE_DATA
 
 In this case we also provide an email address (which needs to be already registered at JSOC) and turn on status messages by enabling the ``verbose`` flag.
 
