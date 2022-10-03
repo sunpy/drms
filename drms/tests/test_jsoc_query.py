@@ -98,4 +98,4 @@ def test_query_invalid_series(jsoc_client):
 def test_query_hexadecimal_strings():
     # Exercise the part of client.py that deals with hexadecimal strings
     c = drms.Client()
-    c.query('hmi.v_45s[2014.01.01_00:00:35_TAI-2014.01.01_01:00:35_TAI]', key='**ALL**')
+    c.query("hmi.v_45s[2014.01.01_00:00:35_TAI-2014.01.01_01:00:35_TAI]", key="**ALL**")
