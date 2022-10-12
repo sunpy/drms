@@ -646,11 +646,12 @@ class Client:
             # pandas apparently does not support hexadecimal strings, so
             # we need a special treatment for integer strings that start
             # with '0x', like QUALITY. The following to_numeric call is
-            # still neccessary as the results are still Python objects.
+            # still necessary as the results are still Python objects.
             if k in int_keys and kdf[k].dtype is np.dtype(object):
                 idx = kdf[k].str.startswith("0x")
                 if idx.any():
-                    kdf.loc[idx, k] = kdf.loc[idx, k].map(lambda x: int(x, base=16))
+                    k_idx = kdf.columns.get_loc(k)
+                    kdf[kdf.columns[k_idx]] = kdf[kdf.columns[k_idx]].apply(int, base=16)
             if k in num_keys:
                 kdf[k] = _pd_to_numeric_coerce(kdf[k])
 
