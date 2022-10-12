@@ -12,7 +12,7 @@ import os
 from drms import __version__
 
 project = "drms"
-copyright = "2021, The SunPy Developers"
+copyright = "2022, The SunPy Developers"
 author = "The SunPy Developers"
 
 # The full version, including alpha/beta/rc tags

@@ -66,7 +66,7 @@ class HttpJsonRequest:
         try:
             self._http = urlopen(url)
         except HTTPError as e:
-            msg = f"Failed to open URL: {e.url} with {e.code}:{e.msg}"
+            msg = f"Failed to open URL: {e.url} with {e.code} - {e.msg}"
             raise IOError(msg)
         self._data_str = None
         self._data = None
