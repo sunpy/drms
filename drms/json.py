@@ -1,6 +1,6 @@
 import json as _json
 from urllib.parse import urlencode, quote_plus
-from urllib.request import urlopen
+from urllib.request import HTTPError, urlopen
 
 from .config import ServerConfig, _server_configs
 from .utils import _split_arg
@@ -63,7 +63,11 @@ class HttpJsonRequest:
 
     def __init__(self, url, encoding):
         self._encoding = encoding
-        self._http = urlopen(url)
+        try:
+            self._http = urlopen(url)
+        except HTTPError as e:
+            e.msg = f"Failed to open URL: {e.url} with {e.code} - {e.msg}"
+            raise e
         self._data_str = None
         self._data = None
 

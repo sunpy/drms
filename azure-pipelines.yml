@@ -67,6 +67,8 @@ stages:
           - macos: py38
           - windows: py39
           - linux: py38-online
+          - linux: build_docs
+            pytest: false
 
   - stage: ThirdPhaseTests
     displayName: Stage 3 Tests

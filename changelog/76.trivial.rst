@@ -1,0 +1,1 @@
+Updated the init of `drms.json.HttpJsonRequest` to raise a nicer message if the URL fails to open.

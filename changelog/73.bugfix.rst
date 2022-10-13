@@ -1,1 +1,1 @@
-Prevent pandas version 1.5.0 being installed to avoid an indexing bug that should be fixed in pandas 1.5.1.
+Updated indexing in a function to prevent FutureWarnings from pandas.
