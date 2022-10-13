@@ -1,3 +1,18 @@
+0.6.3 (2022-10-13)
+==================
+
+Bug Fixes
+---------
+
+- Updated indexing in a function to prevent FutureWarnings from pandas. (`#73 <https://github.com/sunpy/drms/pull/73>`__)
+
+
+Trivial/Internal Changes
+------------------------
+
+- Updated the init of `drms.json.HttpJsonRequest` to raise a nicer message if the URL fails to open. (`#76 <https://github.com/sunpy/drms/pull/76>`__)
+
+
 0.6.2 (2021-05-15)
 ==================
 
