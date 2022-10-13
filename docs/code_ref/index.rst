@@ -4,6 +4,8 @@
 API Reference
 *************
 
+.. automodapi:: drms
+
 .. automodapi:: drms.client
 
 .. automodapi:: drms.config

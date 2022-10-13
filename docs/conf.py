@@ -1,10 +1,4 @@
-#
 # Configuration file for the Sphinx documentation builder.
-#
-# This file does only contain a selection of the most common options. For a
-# full list see the documentation:
-# http://www.sphinx-doc.org/en/master/config
-
 
 # -- Project information -----------------------------------------------------
 
@@ -67,27 +61,13 @@ nitpick_ignore = [
     # See https://github.com/numpy/numpy/issues/10039
 ]
 
-# Example configuration for intersphinx: refer to the Python standard library.
+# -- Options for intersphinx extension -----------------------------------------
 intersphinx_mapping = {
-    "python": (
-        "https://docs.python.org/3/",
-        (None, "http://data.astropy.org/intersphinx/python3.inv"),
-    ),
-    "pandas": ("http://pandas.pydata.org/pandas-docs/stable/", None),
-    "numpy": (
-        "https://docs.scipy.org/doc/numpy/",
-        (None, "http://data.astropy.org/intersphinx/numpy.inv"),
-    ),
-    "scipy": (
-        "https://docs.scipy.org/doc/scipy/reference/",
-        (None, "http://data.astropy.org/intersphinx/scipy.inv"),
-    ),
-    "matplotlib": (
-        "https://matplotlib.org/",
-        (None, "http://data.astropy.org/intersphinx/matplotlib.inv"),
-    ),
-    "astropy": ("http://docs.astropy.org/en/stable/", None),
-    "sunpy": ("https://docs.sunpy.org/en/stable/", None),
+    "python": ("https://docs.python.org/3/"),
+    "numpy": ("https://numpy.org/doc/stable/"),
+    "astropy": ("https://docs.astropy.org/en/stable/"),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/"),
+    "sunpy": ("https://docs.sunpy.org/en/stable/"),
 }
 
 # -- Options for HTML output -------------------------------------------------
