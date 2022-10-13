@@ -20,43 +20,20 @@ More information, including a detailed tutorial, is available in the `Documentat
 
 Getting Help
 ------------
+For more information or to ask questions about ``drms``, check out:
 
-This is a SunPy-affiliated package. For more information or to ask questions
-about drms or SunPy, check out:
-
--  `drms Documentation`_
--  `SunPy Matrix Channel`_
--  `SunPy mailing list`_
+-  `drms Documentation <https://docs.sunpy.org/projects/drms/en/latest/>`__
 
 .. _drms Documentation: https://docs.sunpy.org/projects/drms/en/latest/
-.. _SunPy Matrix Channel: https://riot.im/app/#/room/#sunpy:matrix.org
 
 Contributing
 ------------
-
-If you would like to get involved, start by joining the `SunPy mailing list`_ and check out the `Developers Guide`_ section of the SunPy docs.
-Stop by our chat room `#sunpy:matrix.org`_ if you have any questions.
-Help is always welcome so let us know what you like to work on, or check out the `issues page`_ for the list of known outstanding items.
-
-For more information on contributing to SunPy and to DRMS, please read our `Newcomers guide`_.
-
-.. _SunPy mailing list: https://groups.google.com/forum/#!forum/sunpy
-.. _Developers Guide: https://docs.sunpy.org/en/latest/dev_guide/index.html
-.. _`#sunpy:matrix.org`: https://app.element.io/#/room/#sunpy:openastronomy.org
-.. _issues page: https://github.com/sunpy/drms/issues
-.. _Newcomers guide: https://docs.sunpy.org/en/latest/dev_guide/newcomers.html
-
-Code of Conduct (CoC)
----------------------
-
-When you are interacting with the SunPy community you are asked to follow our `code of conduct`_.
-
-.. _code of conduct: https://docs.sunpy.org/en/latest/code_of_conduct.html
+If you would like to get involved, start by joining the `SunPy Chat`_ and read our `Newcomers' guide <https://docs.sunpy.org/en/latest/dev_guide/newcomers.html>`__.
+Help is always welcome so let us know what you like to work on, or check out the `issues page <https://github.com/sunpy/drms/issues>`__ for a list of known outstanding items.
 
 Citation
 --------
-
-If you use ``drms`` in your work, please consider citing our `paper`_.
+If you use ``drms`` in your work, please cite our `paper <https://doi.org/10.21105/joss.01614>`__.
 
 .. code :: bibtex
 
@@ -73,9 +50,13 @@ If you use ``drms`` in your work, please consider citing our `paper`_.
       journal = {Journal of Open Source Software}
     }
 
-.. _paper: https://doi.org/10.21105/joss.01614
+Code of Conduct (CoC)
+---------------------
+
+When you are interacting with the SunPy community you are asked to follow our `code of conduct <https://docs.sunpy.org/en/latest/code_of_conduct.html>`__.
 
 Acknowledgements
 ----------------
-
 Kolja Glogowski has received funding from the European Research Council under the European Union's Seventh Framework Programme (FP/2007-2013) / ERC Grant Agreement no. 307117.
+
+.. _SunPy Chat: https://openastronomy.element.io/#/room/#sunpy:openastronomy.org
