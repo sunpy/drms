@@ -66,9 +66,6 @@ stages:
         envs:
           - macos: py38
           - windows: py39
-          - linux: py38-online
-          - linux: build_docs
-            pytest: false
 
   - stage: ThirdPhaseTests
     displayName: Stage 3 Tests
@@ -82,6 +79,9 @@ stages:
         toxdeps: tox-pypi-filter
         envs:
           - linux: py39-sunpy
+          - linux: py38-online
+          - linux: build_docs
+            pytest: false
 
   # On branches which aren't main, and not Pull Requests, build the wheels but only upload them on tags
   - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), or(ne(variables['Build.SourceBranchName'], 'main'), eq(variables['Build.Reason'], 'Schedule'), eq(variables['Build.Reason'], 'Manual'))) }}:
