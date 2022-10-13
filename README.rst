@@ -5,7 +5,7 @@ drms
 `Docs <https://docs.sunpy.org/projects/drms/>`__ |
 `Tutorial <https://docs.sunpy.org/projects/drms/en/latest/tutorial.html>`__ |
 `Github <https://github.com/sunpy/drms>`__ |
-`PyPI <https://pypi.python.org/pypi/drms>`__
+`PyPI <https://pypi.org/project/drms/>`__
 
 |JOSS| |Zenodo|
 

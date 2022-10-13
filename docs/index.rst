@@ -3,7 +3,7 @@ drms documentation
 ******************
 
 :Github: https://github.com/sunpy/drms
-:PyPI: https://pypi.python.org/pypi/drms
+:PyPI: https://pypi.org/project/drms/
 
 Python library for accessing HMI, AIA and MDI data from the Joint Science Operations Center (JSOC) or other Data Record Management System (DRMS) servers.
 

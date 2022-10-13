@@ -63,11 +63,11 @@ nitpick_ignore = [
 
 # -- Options for intersphinx extension -----------------------------------------
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3/"),
-    "numpy": ("https://numpy.org/doc/stable/"),
-    "astropy": ("https://docs.astropy.org/en/stable/"),
-    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/"),
-    "sunpy": ("https://docs.sunpy.org/en/stable/"),
+    "python": ("https://docs.python.org/3/", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "astropy": ("https://docs.astropy.org/en/stable/", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
+    "sunpy": ("https://docs.sunpy.org/en/stable/", None),
 }
 
 # -- Options for HTML output -------------------------------------------------
