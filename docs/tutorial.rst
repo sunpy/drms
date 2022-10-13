@@ -81,7 +81,7 @@ JSOC time strings can be converted to a naive `~datetime.datetime` representatio
 
 .. code-block:: python
 
-    >>> timestamps = drms.to_datetime(k.T_REC)  # doctest: +REMOTE_DATA
+    >>> timestamps = drms.to_datetime(query.T_REC)  # doctest: +REMOTE_DATA
     >>> timestamps  # doctest: +REMOTE_DATA
     0   2016-04-01 00:00:00
     1   2016-04-01 06:00:00
@@ -96,7 +96,7 @@ If you need to convert timestamps between TAI and UTC, you can use `Astropy <htt
 .. code-block:: python
 
     >>> from astropy.time import Time
-    >>> start_time = Time(t[0], format='datetime', scale='tai')  # doctest: +REMOTE_DATA
+    >>> start_time = Time(timestamps[0], format='datetime', scale='tai')  # doctest: +REMOTE_DATA
     >>> start_time  # doctest: +REMOTE_DATA
     <Time object: scale='tai' format='datetime' value=2016-04-01 00:00:00>
     >>> start_time.utc  # doctest: +REMOTE_DATA
@@ -127,7 +127,7 @@ You can access these files, even if you do not have direct NFS access to the fil
 
 .. code-block:: python
 
-    >>> url = 'http://jsoc.stanford.edu' + s.Dopplergram[0]  # doctest: +REMOTE_DATA
+    >>> url = 'http://jsoc.stanford.edu' + segments.Dopplergram[0]  # doctest: +REMOTE_DATA
     >>> url  # doctest: +REMOTE_DATA
     'http://jsoc.stanford.edu/SUM58/D803708321/S00008/Dopplergram.fits'
 
@@ -199,7 +199,7 @@ Note that :meth:`drms.client.Client.export` performs an ``url_quick`` / ``as-is`
     >>> export_request  # doctest: +REMOTE_DATA
     <ExportRequest: id=None, status=0>
 
-    >>> r.data.filename  # doctest: +REMOTE_DATA
+    >>> export_request.data.filename  # doctest: +REMOTE_DATA
     0    /SUM58/D803708321/S00008/Dopplergram.fits
     1    /SUM41/D803708361/S00008/Dopplergram.fits
     2    /SUM71/D803720859/S00008/Dopplergram.fits

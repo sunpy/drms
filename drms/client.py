@@ -611,7 +611,7 @@ class Client:
 
     Parameters
     ----------
-    server : str or ServerConfig
+    server : str or drms.config.ServerConfig
         Registered server ID or ServerConfig instance.
         Defaults to JSOC.
     email : str or None
