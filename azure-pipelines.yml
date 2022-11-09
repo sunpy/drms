@@ -60,9 +60,6 @@ stages:
         submodules: false
         coverage: codecov
         toxdeps: tox-pypi-filter
-        libraries:
-          apt:
-            - graphviz
         envs:
           - macos: py38
           - windows: py39
@@ -77,9 +74,12 @@ stages:
         submodules: false
         coverage: codecov
         toxdeps: tox-pypi-filter
+        libraries:
+          apt:
+            - graphviz
         envs:
           - linux: py39-sunpy
-          - linux: py38-online
+          - linux: py311-online
           - linux: build_docs
             pytest: false
 
