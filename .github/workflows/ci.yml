@@ -40,7 +40,6 @@ jobs:
       envs: |
         - windows: py39
         - macos: py38
-        - linux: py38-oldestdeps
 
   docs:
     needs: [core]
