@@ -42,12 +42,8 @@ stages:
         default_python: '3.8'
         submodules: false
         coverage: codecov
-        toxdeps: tox-pypi-filter
+        toxdeps: "tox<4 tox-pypi-filter"
         envs:
-          - linux: codestyle
-            name: style_check
-            pytest: false
-            libraries: {}
           - linux: py310
 
   - stage: SecondPhaseTests
@@ -59,7 +55,7 @@ stages:
         default_python: '3.8'
         submodules: false
         coverage: codecov
-        toxdeps: tox-pypi-filter
+        toxdeps: "tox<4 tox-pypi-filter"
         envs:
           - macos: py38
           - windows: py39
@@ -73,7 +69,7 @@ stages:
         default_python: '3.8'
         submodules: false
         coverage: codecov
-        toxdeps: tox-pypi-filter
+        toxdeps: "tox<4 tox-pypi-filter"
         libraries:
           apt:
             - graphviz
