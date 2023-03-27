@@ -2,7 +2,7 @@
 drms
 ====
 
-The drms library provides an easy-to-use interface for accessing HMI, AIA and MDI data with Python.
+The ``drms`` library provides an easy-to-use interface for accessing HMI, AIA and MDI data with Python.
 It uses the publicly accessible JSOC DRMS server by default, but can also be used with local NetDRMS sites.
 More information, including a detailed tutorial, is available in the Documentation.
 
@@ -11,22 +11,6 @@ More information, including a detailed tutorial, is available in the Documentati
 """
 
 import os
-import sys
-
-# Enforce Python version check during package import.
-# Must be done before any drms imports
-__minimum_python_version__ = "3.7"
-
-
-class UnsupportedPythonError(Exception):
-    """
-    Running on an unsupported version of Python.
-    """
-
-
-if sys.version_info < tuple(int(val) for val in __minimum_python_version__.split(".")):
-    # This has to be .format to keep backwards compatibly.
-    raise UnsupportedPythonError(f"sunpy does not support Python < {__minimum_python_version__}")
 
 
 def _get_bibtex():
@@ -34,7 +18,6 @@ def _get_bibtex():
 
     # Set the bibtex entry to the article referenced in CITATION.rst
     citation_file = os.path.join(os.path.dirname(__file__), "CITATION.rst")
-
     # Explicitly specify UTF-8 encoding in case the system's default encoding is problematic
     with open(citation_file, encoding="utf-8") as citation:
         # Extract the first bibtex block:
@@ -48,4 +31,28 @@ def _get_bibtex():
 
 __citation__ = __bibtex__ = _get_bibtex()
 
-# DRMS imports to collapse the namespace
+from .client import Client, ExportRequest, SeriesInfo
+from .config import ServerConfig, register_server
+from .exceptions import DrmsError, DrmsExportError, DrmsOperationNotSupported, DrmsQueryError
+from .json import HttpJsonClient, HttpJsonRequest, const
+from .utils import to_datetime
+from .version import version as __version__
+
+__all__ = [
+    "__bibtex__",
+    "__citation__",
+    "__version__",
+    "Client",
+    "const",
+    "DrmsError",
+    "DrmsExportError",
+    "DrmsOperationNotSupported",
+    "DrmsQueryError",
+    "ExportRequest",
+    "HttpJsonClient",
+    "HttpJsonRequest",
+    "register_server",
+    "SeriesInfo",
+    "ServerConfig",
+    "to_datetime",
+]

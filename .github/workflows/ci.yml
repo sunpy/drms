@@ -24,7 +24,7 @@ jobs:
     with:
       submodules: false
       coverage: codecov
-      toxdeps: "'tox<4' tox-pypi-filter"
+      toxdeps: "tox tox-pypi-filter"
       posargs: -n auto
       envs: |
         - linux: py310
@@ -35,20 +35,19 @@ jobs:
     with:
       submodules: false
       coverage: codecov
-      toxdeps: "'tox<4' tox-pypi-filter"
+      toxdeps: "tox tox-pypi-filter"
       posargs: -n auto
       envs: |
         - windows: py39
-        - macos: py38
+        - macos: py39
 
   docs:
     needs: [core]
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@main
     with:
-      default_python: '3.8'
       submodules: false
       pytest: false
-      toxdeps: "'tox<4' tox-pypi-filter"
+      toxdeps: "tox tox-pypi-filter"
       cache-key: docs-${{ github.run_id }}
       libraries: |
         apt:
@@ -61,10 +60,9 @@ jobs:
     needs: [docs]
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@main
     with:
-      default_python: '3.8'
       submodules: false
       coverage: codecov
-      toxdeps: "'tox<4' tox-pypi-filter"
+      toxdeps: "tox tox-pypi-filter"
       posargs: -n 1 --dist loadgroup
       envs: |
         - linux: py311-online
