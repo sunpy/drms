@@ -33,6 +33,6 @@ def split_version(version):
 
 major, minor, bugfix = split_version(version)
 
-del split_version  # clean up namespace.
+del split_version
 
 release = "dev" not in version
