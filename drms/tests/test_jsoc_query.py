@@ -21,7 +21,7 @@ def test_query_basic(jsoc_client):
 @pytest.mark.remote_data
 def test_query_allmissing(jsoc_client):
     with pytest.raises(ValueError):
-        keys = jsoc_client.query("hmi.v_45s[2013.07.03_08:42_TAI/3m]")
+        jsoc_client.query("hmi.v_45s[2013.07.03_08:42_TAI/3m]")
 
 
 @pytest.mark.jsoc
@@ -84,14 +84,14 @@ def test_query_invalid_server():
     cfg = ServerConfig(name="TEST")
     c = drms.Client(server=cfg)
     with pytest.raises(DrmsOperationNotSupported):
-        keys = c.query("hmi.v_45s[2013.07.03_08:42_TAI/3m]", pkeys=True)
+        c.query("hmi.v_45s[2013.07.03_08:42_TAI/3m]", pkeys=True)
 
 
 @pytest.mark.jsoc
 @pytest.mark.remote_data
 def test_query_invalid_series(jsoc_client):
     with pytest.raises(DrmsQueryError):
-        keys = jsoc_client.query("foo", key="T_REC")
+        jsoc_client.query("foo", key="T_REC")
 
 
 @pytest.mark.remote_data

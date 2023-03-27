@@ -148,7 +148,7 @@ register_server(
         cgi_check_address="checkAddress.sh",
         cgi_show_series_wrapper="showextseries",
         show_series_wrapper_dbhost="hmidb2",
-    )
+    ),
 )
 
 # Register KIS DRMS server.
@@ -158,5 +158,5 @@ register_server(
         cgi_baseurl="http://drms.leibniz-kis.de/cgi-bin/",
         cgi_show_series="show_series",
         cgi_jsoc_info="jsoc_info",
-    )
+    ),
 )

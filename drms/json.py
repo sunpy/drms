@@ -352,18 +352,20 @@ class HttpJsonClient:
         if method not in method_list:
             raise ValueError(
                 "Method {} is not supported, valid methods are: {}".format(
-                    method, ", ".join(str(s) for s in method_list)
-                )
+                    method,
+                    ", ".join(str(s) for s in method_list),
+                ),
             )
 
         protocol = protocol.lower()
         img_protocol_list = ["jpg", "mpg", "mp4"]
-        protocol_list = ["as-is", "fits"] + img_protocol_list
+        protocol_list = ["as-is", "fits", *img_protocol_list]
         if protocol not in protocol_list:
             raise ValueError(
                 "Protocol {} is not supported, valid protocols are: {}".format(
-                    protocol, ", ".join(str(s) for s in protocol_list)
-                )
+                    protocol,
+                    ", ".join(str(s) for s in protocol_list),
+                ),
             )
 
         # method "url_quick" is meant to be used with "as-is", change method

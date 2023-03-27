@@ -65,4 +65,4 @@ def test_email_cmdopt_init(email):
 def test_query_invalid():
     cfg = ServerConfig(name="TEST")
     with pytest.raises(DrmsOperationNotSupported):
-        c = drms.Client(server=cfg, email="user@example.com")
+        drms.Client(server=cfg, email="user@example.com")

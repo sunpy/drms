@@ -31,7 +31,7 @@ qstr = "hmi.ic_720s[2015.01.01_00:00:00_TAI/10d@1d]{continuum}"
 print(f"Data export query:\n  {qstr}\n")
 print("Submitting export request...")
 result = client.export(qstr, email=email)
-print(f"len(r.urls) file(s) available for download.\n")
+print("len(r.urls) file(s) available for download.\n")
 
 # Print download URLs.
 for _, row in result.urls[["record", "url"]].iterrows():

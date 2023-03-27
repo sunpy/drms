@@ -82,7 +82,7 @@ def test_export_im_patch(jsoc_client_export):
             "y": -246,
             "width": 345.6,
             "height": 345.6,
-        }
+        },
     }
     req = jsoc_client_export.export(
         "aia.lev1_euv_12s[2015-10-17T04:33:30.000/1m@12s][171]{image}",
@@ -146,7 +146,8 @@ def test_export_rebin(jsoc_client_export):
 def test_export_invalid_process(jsoc_client_export):
     with pytest.raises(ValueError, match="foobar is not one of the allowed processing options"):
         jsoc_client_export.export(
-            "aia.lev1_euv_12s[2015-10-17T04:33:30.000/1m@12s][171]{image}", process={"foobar": {}}
+            "aia.lev1_euv_12s[2015-10-17T04:33:30.000/1m@12s][171]{image}",
+            process={"foobar": {}},
         )
 
 

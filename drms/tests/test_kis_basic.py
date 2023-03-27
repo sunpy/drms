@@ -28,7 +28,7 @@ def test_series_list_schemata(kis_client, schema):
 @pytest.mark.kis
 @pytest.mark.remote_data
 @pytest.mark.parametrize(
-    "series, pkeys, segments",
+    ("series", "pkeys", "segments"),
     [
         ("hmi.v_45s", ["T_REC", "CAMERA"], ["Dopplergram"]),
         ("hmi.m_720s", ["T_REC", "CAMERA"], ["magnetogram"]),

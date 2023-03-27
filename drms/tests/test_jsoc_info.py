@@ -4,7 +4,7 @@ import pytest
 @pytest.mark.jsoc
 @pytest.mark.remote_data
 @pytest.mark.parametrize(
-    "series, pkeys, segments",
+    ("series", "pkeys", "segments"),
     [
         ("hmi.v_45s", ["T_REC", "CAMERA"], ["Dopplergram"]),
         ("hmi.m_720s", ["T_REC", "CAMERA"], ["magnetogram"]),
@@ -24,7 +24,7 @@ def test_series_info_basic(jsoc_client, series, pkeys, segments):
 @pytest.mark.jsoc
 @pytest.mark.remote_data
 @pytest.mark.parametrize(
-    "series, pkeys",
+    ("series", "pkeys"),
     [
         ("hmi.v_45s", ["T_REC", "CAMERA"]),
         ("hmi.m_720s", ["T_REC", "CAMERA"]),

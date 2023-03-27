@@ -132,7 +132,7 @@ class ExportRequest:
     _status_code_ok = 0
     _status_code_notfound = 6
     _status_codes_pending = [1, 2, _status_code_notfound]
-    _status_codes_ok_or_pending = [_status_code_ok] + _status_codes_pending
+    _status_codes_ok_or_pending = [_status_code_ok, *_status_codes_pending]
 
     def __init__(self, d, client):
         self._client = client
@@ -795,7 +795,7 @@ class Client:
             except ValueError:
                 msg = f"{ct} is not a valid color table, "
                 msg += "available color tables: {}".format(
-                    ", ".join([str(s) for s in Client._export_color_table_names])
+                    ", ".join([str(s) for s in Client._export_color_table_names]),
                 )
                 raise ValueError(msg)
             protocol_args[ct_key] = Client._export_color_table_names[i]

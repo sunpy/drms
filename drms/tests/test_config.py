@@ -101,7 +101,7 @@ def test_config_kis():
 
 
 @pytest.mark.parametrize(
-    "server_name, operation, expected",
+    ("server_name", "operation", "expected"),
     [
         ("jsoc", "series", True),
         ("jsoc", "info", True),
@@ -121,7 +121,7 @@ def test_supported(server_name, operation, expected):
 
 
 @pytest.mark.parametrize(
-    "server_name, operation",
+    ("server_name", "operation"),
     [("jsoc", "bar"), ("kis", "foo")],
 )
 def test_supported_invalid_operation(server_name, operation):
@@ -132,21 +132,21 @@ def test_supported_invalid_operation(server_name, operation):
 
 def test_create_config_invalid_key():
     with pytest.raises(ValueError):
-        cfg = ServerConfig(foo="bar")
+        ServerConfig(foo="bar")
 
 
 def test_getset_attr():
     cfg = ServerConfig(name="TEST")
-    assert getattr(cfg, "name") == "TEST"
-    assert getattr(cfg, "__dict__") == {"_d": {"encoding": "latin1", "name": "TEST"}}
+    assert cfg.name == "TEST"
+    assert cfg.__dict__ == {"_d": {"encoding": "latin1", "name": "TEST"}}
     with pytest.raises(AttributeError):
-        getattr(cfg, "foo")
-    setattr(cfg, "name", "NewTest")
-    assert getattr(cfg, "name") == "NewTest"
+        cfg.foo
+    cfg.name = "NewTest"
+    assert cfg.name == "NewTest"
     with pytest.raises(ValueError):
-        setattr(cfg, "name", 123)
-    setattr(cfg, "__sizeof__", 127)
-    assert getattr(cfg, "__sizeof__") == 127
+        cfg.name = 123
+    cfg.__sizeof__ = 127
+    assert cfg.__sizeof__ == 127
 
 
 def test_to_dict():
@@ -163,4 +163,4 @@ def test_inbuilt_dir():
     assert isinstance(list_attr, list)
     assert set(dir(object)).issubset(set(list_attr))
     assert set(valid_keys).issubset(set(list_attr))
-    assert set(list(cfg.__dict__.keys())).issubset(set(list_attr))
+    assert set(cfg.__dict__.keys()).issubset(set(list_attr))

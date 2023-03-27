@@ -36,7 +36,6 @@ extensions = [
 numpydoc_show_class_members = False
 
 # Add any paths that contain templates here, relative to this directory.
-# templates_path = ['_templates']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -86,7 +85,6 @@ os.environ["JSOC_EMAIL"] = "jsoc@sunpy.org"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
 
 # Render inheritance diagrams in SVG
 graphviz_output_format = "svg"

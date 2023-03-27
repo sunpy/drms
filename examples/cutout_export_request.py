@@ -53,7 +53,7 @@ process = {
         "y": -246,
         "width": 345.6,
         "height": 345.6,
-    }
+    },
 }
 
 # Submit export request using the 'fits' protocol
