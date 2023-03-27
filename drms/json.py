@@ -300,7 +300,7 @@ class HttpJsonClient:
             Registered email address.
         method : str
             Export method. Supported methods are: 'url_quick', 'url',
-            'url-tar', 'ftp' and 'ftp-tar'. Default is 'url_quick'.
+            and 'url-tar'. Default is 'url_quick'.
         protocol : str
             Export protocol. Supported protocols are: 'as-is', 'fits',
             'jpg', 'mpg' and 'mp4'. Default is 'as-is'.
@@ -348,7 +348,7 @@ class HttpJsonClient:
         requestor=None,
     ):
         method = method.lower()
-        method_list = ["url_quick", "url", "url-tar", "ftp", "ftp-tar"]
+        method_list = ["url_quick", "url", "url-tar"]
         if method not in method_list:
             raise ValueError(
                 "Method {} is not supported, valid methods are: {}".format(

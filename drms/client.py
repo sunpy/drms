@@ -212,13 +212,6 @@ class ExportRequest:
         else:
             res["fpath"] = [f"{data_dir}/{filename}" for filename in res.filename]
 
-        if self.method.startswith("url"):
-            baseurl = self._client._server.http_download_baseurl
-        elif self.method.startswith("ftp"):
-            baseurl = self._client._server.ftp_download_baseurl
-        else:
-            raise RuntimeError(f"Download is not supported for export method {self.method}")
-
         # Generate download URLs.
         urls = []
         for fp in res.fpath:
@@ -328,7 +321,6 @@ class ExportRequest:
         (string) URL of the export request.
         """
         data_dir = self.dir
-        http_baseurl = self._client._server.http_download_baseurl
         if data_dir is None or http_baseurl is None:
             return None
         if data_dir.startswith("/"):
@@ -509,8 +501,8 @@ class ExportRequest:
         Note: Downloading data segments that are directories, e.g. data
         segments from series like "hmi.rdVflows_fd15_frame", is
         currently not supported. In order to download data from series
-        like this, you need to use the export methods 'url-tar' or
-        'ftp-tar' when submitting the data export request.
+        like this, you need to use the export method 'url-tar'
+        when submitting the data export request.
 
         Parameters
         ----------
@@ -520,14 +512,14 @@ class ExportRequest:
             Index (or indices) of the file(s) to be downloaded. If set
             to None (the default), all files of the export request are
             downloaded. Note that this parameter is ignored for export
-            methods 'url-tar' and 'ftp-tar', where only a single tar
-            file is available for download.
+            method 'url-tar', where only a single tar file is available
+            for download.
         fname_from_rec : bool or None
             If True, local filenames are generated from record names.
             If set to False, the original filenames are used. If set to
             None (default), local filenames are generated only for
             export method 'url_quick'. Exceptions: For exports with
-            methods 'url-tar' and 'ftp-tar', no filename will be
+            method 'url-tar', no filename will be
             generated. This also applies to movie files from exports
             with protocols 'mpg' or 'mp4', where the original filename
             is used locally.
@@ -1161,8 +1153,8 @@ class Client:
         ds : str
             Data export record set query.
         method : str
-            Export method. Supported methods are: 'url_quick', 'url',
-            'url-tar', 'ftp' and 'ftp-tar'. Default is 'url_quick'.
+            Export method. Supported methods are: 'url_quick', 'url'
+            and 'url-tar'. Default is 'url_quick'.
         protocol : str
             Export protocol. Supported protocols are: 'as-is', 'fits',
             'jpg', 'mpg' and 'mp4'. Default is 'as-is'.

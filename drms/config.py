@@ -26,8 +26,6 @@ class ServerConfig:
         url_check_address
         url_show_series_wrapper
         encoding
-        http_download_baseurl
-        ftp_download_baseurl
 
     Parameters
     ----------
@@ -53,8 +51,6 @@ class ServerConfig:
         "url_check_address",
         "url_show_series_wrapper",
         "encoding",
-        "http_download_baseurl",
-        "ftp_download_baseurl",
     ]
 
     def __init__(self, config=None, **kwargs):
@@ -152,8 +148,6 @@ register_server(
         cgi_check_address="checkAddress.sh",
         cgi_show_series_wrapper="showextseries",
         show_series_wrapper_dbhost="hmidb2",
-        http_download_baseurl="http://jsoc.stanford.edu/",
-        ftp_download_baseurl="ftp://pail.stanford.edu/export/",
     )
 )
 
