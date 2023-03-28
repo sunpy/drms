@@ -25,7 +25,7 @@ def test_email_invalid_check(email):
 @pytest.mark.parametrize("email", invalid_emails)
 def test_email_invalid_set(email):
     c = drms.Client("jsoc")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="7"):
         c.email = email
 
 
@@ -33,7 +33,7 @@ def test_email_invalid_set(email):
 @pytest.mark.remote_data
 @pytest.mark.parametrize("email", invalid_emails)
 def test_email_invalid_init(email):
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="8"):
         drms.Client("jsoc", email=email)
 
 

@@ -1,6 +1,6 @@
-******************
-drms documentation
-******************
+**********************
+``drms`` documentation
+**********************
 
 :Github: https://github.com/sunpy/drms
 :PyPI: https://pypi.org/project/drms/
@@ -12,7 +12,7 @@ Python library for accessing HMI, AIA and MDI data from the Joint Science Operat
 
    intro
    tutorial
+   api
    generated/gallery/index
-   code_ref/index
    citation
    whatsnew/index

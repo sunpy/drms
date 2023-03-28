@@ -20,7 +20,7 @@ def test_create_config_basic():
 
 
 def test_create_config_missing_name():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="2"):
         ServerConfig()
 
 
@@ -126,12 +126,12 @@ def test_supported(server_name, operation, expected):
 )
 def test_supported_invalid_operation(server_name, operation):
     cfg = _server_configs[server_name]
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="3"):
         cfg.check_supported(operation)
 
 
 def test_create_config_invalid_key():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="4"):
         ServerConfig(foo="bar")
 
 
@@ -139,11 +139,11 @@ def test_getset_attr():
     cfg = ServerConfig(name="TEST")
     assert cfg.name == "TEST"
     assert cfg.__dict__ == {"_d": {"encoding": "latin1", "name": "TEST"}}
-    with pytest.raises(AttributeError):
-        cfg.foo
+    with pytest.raises(AttributeError, match="6"):
+        _ = cfg.foo
     cfg.name = "NewTest"
     assert cfg.name == "NewTest"
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="5"):
         cfg.name = 123
     cfg.__sizeof__ = 127
     assert cfg.__sizeof__ == 127

@@ -3,32 +3,33 @@
 Exporting data with cutout requests
 ===================================
 
-This example shows how to submit a data export request with a cutout request using the ``im_patch`` command.
+This example shows how to submit a data export request with a cutout request using ``im_patch``.
 """
 
 import os
+from pathlib import Path
 
 import drms
 
 ###############################################################################
-# Create DRMS client, uses the JSOC baseurl by default, set debug=True to see the DRMS query URLs.
+# First we will create a `drms.Client`, using the JSOC baseurl.
 
-client = drms.Client(verbose=True)
-
-# This example requires a registered export email address. You can register
-# JSOC exports at: http://jsoc.stanford.edu/ajax/register_email.html
-# You must supply your own email.
-email = os.environ["JSOC_EMAIL"]
-
-# Download directory
-out_dir = os.path.join("downloads")
-
-# Create download directory if it does not exist yet.
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
+client = drms.Client()
 
 ###############################################################################
-# Construct the DRMS query string: "Series[timespan][wavelength]{data segments}"
+# This example requires a registered export email address You can register
+# JSOC exports at: http://jsoc.stanford.edu/ajax/register_email.html
+# You must supply your own email.
+
+email = os.environ["JSOC_EMAIL"]
+
+# Create download directory if it does not exist yet.
+out_dir = Path("downloads")
+if not out_dir.exists():
+    Path(out_dir).mkdir(parents=True)
+
+###############################################################################
+# Construct the DRMS query string: ``"Series[timespan][wavelength]{data segments}"``
 
 qstr = "aia.lev1_euv_12s[2015-10-17T04:33:30.000/1m@12s][171]{image}"
 print(f"Data export query:\n  {qstr}\n")
@@ -74,4 +75,4 @@ print(f"{int(len(result.urls))} file(s) available for download.\n")
 result.wait()
 result.download(out_dir)
 print("Download finished.")
-print(f'\nDownload directory:\n  "{os.path.abspath(out_dir)}"\n')
+print(f'\nDownload directory:\n  "{out_dir.resolve()}"\n')

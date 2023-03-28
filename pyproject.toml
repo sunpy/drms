@@ -121,6 +121,10 @@ extend-ignore = [
     "F405", # `html_theme_options` may be undefined, or defined from star imports: `sunpy_sphinx_theme.conf`
     "A001", # Variable `copyright` is shadowing a python builtin
 ]
+"drms/client.py" = ["A003"] # Class attribute `id` and `dir` is shadowing a python builtin
+"drms/json.py" = ["A003"] # Class attribute `all` is shadowing a python builtin
+"examples/plot_hmi_modes.py" = ["E741"] # Ambiguous variable name: `l`
+
 
 [ tool.gilesbot ]
   [ tool.gilesbot.pull_requests ]

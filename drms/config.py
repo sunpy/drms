@@ -88,8 +88,7 @@ class ServerConfig:
     def __getattr__(self, name):
         if name in self._valid_keys:
             return self._d.get(name)
-        else:
-            return object.__getattribute__(self, name)
+        return object.__getattribute__(self, name)
 
     def __setattr__(self, name, value):
         if name in self._valid_keys:
@@ -111,16 +110,15 @@ class ServerConfig:
         """
         if op == "series":
             return (self.cgi_show_series is not None) or (self.cgi_show_series_wrapper is not None)
-        elif op == "info":
+        if op == "info":
             return self.cgi_jsoc_info is not None
-        elif op == "query":
+        if op == "query":
             return self.cgi_jsoc_info is not None
-        elif op == "email":
+        if op == "email":
             return self.cgi_check_address is not None
-        elif op == "export":
+        if op == "export":
             return (self.cgi_jsoc_info is not None) and (self.cgi_jsoc_fetch is not None)
-        else:
-            raise ValueError(f"Unknown operation: {op!r}")
+        raise ValueError(f"Unknown operation: {op!r}")
 
 
 def register_server(config):

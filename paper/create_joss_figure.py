@@ -69,7 +69,7 @@ kwlist = [
 ]
 
 # Create DRMS client, use debug=True to see the query URLs.
-c = drms.Client(verbose=True)
+c = drms.Client()
 
 print("Querying metadata...")
 kw = c.query(f"{series}[{int(sharpnum)}]", key=kwlist, rec_index=True)

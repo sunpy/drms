@@ -9,15 +9,14 @@ the corresponding "Request URL" and downloads the available files.
 Note that you can also use RequestIDs from export requests, that were
 submitted using the JSOC website.
 """
-
-import os
+from pathlib import Path
 
 import drms
 
 ###############################################################################
-# Create DRMS client, uses the JSOC baseurl by default, set debug=True to see the DRMS query URLs.
+# First we will create a `drms.Client`, using the JSOC baseurl.
 
-client = drms.Client(verbose=True)
+client = drms.Client()
 
 # Export request ID
 request_id = "JSOC_20201101_198"
@@ -31,11 +30,11 @@ print(f"\nRequest URL: {result.request_url}")
 print(f"{int(len(result.urls))} file(s) available for download.\n")
 
 # Create download directory if it does not exist yet.
-out_dir = os.path.join("downloads", request_id)
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
+out_dir = Path("downloads") / request_id
+if not out_dir.exists():
+    Path(out_dir).mkdir(parents=True)
 
 # Download all available files.
 result.download(out_dir)
 print("Download finished.")
-print(f"\nDownload directory:\n  {os.path.abspath(out_dir)}\n")
+print(f"\nDownload directory:\n  {Path.resolve(out_dir)}\n")

@@ -19,7 +19,7 @@ def _split_arg(arg):
     Split a comma-separated string into a list.
     """
     if isinstance(arg, str):
-        arg = [it for it in re.split(r"[\s,]+", arg) if it]
+        return [it for it in re.split(r"[\s,]+", arg) if it]
     return arg
 
 

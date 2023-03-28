@@ -6,10 +6,13 @@ try:
         from ._dev.scm_version import version
     except ImportError:
         from ._version import version
-except Exception:
+except Exception:  # NOQA
     import warnings
 
-    warnings.warn(f'could not determine {__name__.split(".")[0]} package version; this indicates a broken installation')
+    warnings.warn(
+        f'could not determine {__name__.split(".")[0]} package version; this indicates a broken installation',
+        stacklevel=3,
+    )
     del warnings
 
     version = "0.0.0"
@@ -25,7 +28,7 @@ def split_version(version):
         for j, piece in enumerate(LooseVersion(version).version[:3]):
             pieces[j] = int(piece)
 
-    except Exception:
+    except Exception:  # NOQA
         pass
 
     return pieces

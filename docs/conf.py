@@ -4,9 +4,12 @@
 
 import os
 from drms import __version__
+from pathlib import Path
+from sphinx_gallery.sorting import ExampleTitleSortKey
+from sunpy_sphinx_theme.conf import *  # NOQA
 
 project = "drms"
-copyright = "2022, The SunPy Developers"
+copyright = "2023, The SunPy Developers"
 author = "The SunPy Developers"
 
 # The full version, including alpha/beta/rc tags
@@ -70,25 +73,8 @@ intersphinx_mapping = {
 }
 
 # -- Options for HTML output -------------------------------------------------
-
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-
-try:
-    from sunpy_sphinx_theme.conf import *
-except ImportError:
-    html_theme = "default"
-
-# JSOC email os env
 os.environ["JSOC_EMAIL"] = "jsoc@sunpy.org"
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-
-# Render inheritance diagrams in SVG
 graphviz_output_format = "svg"
-
 graphviz_dot_args = [
     "-Nfontsize=10",
     "-Nfontname=Helvetica Neue, Helvetica, Arial, sans-serif",
@@ -99,16 +85,14 @@ graphviz_dot_args = [
 ]
 
 # -- Sphinx Gallery ------------------------------------------------------------
-from sphinx_gallery.sorting import ExampleTitleSortKey
-
 sphinx_gallery_conf = {
-    "backreferences_dir": os.path.join("generated", "modules"),
+    "backreferences_dir": Path("generated") / "modules",
     "filename_pattern": "^((?!skip_).)*$",
-    "examples_dirs": os.path.join("..", "examples"),
+    "examples_dirs": Path("..") / "examples",
     "within_subsection_order": ExampleTitleSortKey,
-    "gallery_dirs": os.path.join("generated", "gallery"),
+    "gallery_dirs": Path("generated") / "gallery",
     # Comes from the theme.
-    "default_thumb_file": os.path.join(html_static_path[0], "img", "sunpy_icon_128x128.png"),
+    "default_thumb_file": Path(html_static_path[0]) / "img" / "sunpy_icon_128x128.png",
     "abort_on_example_error": False,
     "only_warn_on_example_error": True,
     "plot_gallery": True,

@@ -10,16 +10,6 @@ def helper(args, name, expected):
     assert getattr(args, name) == expected
 
 
-def test_debug():
-    helper(["--debug"], "debug", True)
-    helper([], "debug", False)
-
-
-def test_verbose():
-    helper(["--verbose"], "verbose", True)
-    helper([], "verbose", False)
-
-
 def test_version():
     with pytest.raises(SystemExit):
         helper(["--version"], "version", True)

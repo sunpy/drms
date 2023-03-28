@@ -9,17 +9,23 @@ More information, including a detailed tutorial, is available in the Documentati
 * Homepage: https://github.com/sunpy/drms
 * Documentation: https://docs.sunpy.org/projects/drms/en/stable/
 """
+from pathlib import Path
 
-import os
+from .client import Client, ExportRequest, SeriesInfo
+from .config import ServerConfig, register_server
+from .exceptions import DrmsError, DrmsExportError, DrmsOperationNotSupported, DrmsQueryError
+from .json import HttpJsonClient, HttpJsonRequest, JsocInfoConstants
+from .utils import to_datetime
+from .version import version as __version__
 
 
 def _get_bibtex():
     import textwrap
 
     # Set the bibtex entry to the article referenced in CITATION.rst
-    citation_file = os.path.join(os.path.dirname(__file__), "CITATION.rst")
+    citation_file = Path(__file__).parent / "CITATION.rst"
     # Explicitly specify UTF-8 encoding in case the system's default encoding is problematic
-    with open(citation_file, encoding="utf-8") as citation:
+    with citation_file.open(encoding="utf-8") as citation:
         # Extract the first bibtex block:
         ref = citation.read().partition(".. code:: bibtex\n\n")[2]
         lines = ref.split("\n")
@@ -31,19 +37,11 @@ def _get_bibtex():
 
 __citation__ = __bibtex__ = _get_bibtex()
 
-from .client import Client, ExportRequest, SeriesInfo
-from .config import ServerConfig, register_server
-from .exceptions import DrmsError, DrmsExportError, DrmsOperationNotSupported, DrmsQueryError
-from .json import HttpJsonClient, HttpJsonRequest, const
-from .utils import to_datetime
-from .version import version as __version__
-
 __all__ = [
     "__bibtex__",
     "__citation__",
     "__version__",
     "Client",
-    "const",
     "DrmsError",
     "DrmsExportError",
     "DrmsOperationNotSupported",
@@ -51,6 +49,7 @@ __all__ = [
     "ExportRequest",
     "HttpJsonClient",
     "HttpJsonRequest",
+    "JsocInfoConstants",
     "register_server",
     "SeriesInfo",
     "ServerConfig",

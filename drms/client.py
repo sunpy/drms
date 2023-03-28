@@ -1,6 +1,8 @@
 import os
 import re
 import time
+import logging
+from pathlib import Path
 from collections import OrderedDict
 from urllib.error import URLError, HTTPError
 from urllib.parse import urljoin
@@ -117,8 +119,7 @@ class SeriesInfo:
     def __repr__(self):
         if self.name is None:
             return "<SeriesInfo>"
-        else:
-            return f"<SeriesInfo: {self.name}>"
+        return f"<SeriesInfo: {self.name}>"
 
 
 class ExportRequest:
@@ -154,8 +155,6 @@ class ExportRequest:
     def _parse_data(d):
         keys = ["record", "filename"]
         res = None if d is None else [(di.get(keys[0]), di.get(keys[1])) for di in d]
-        if not res:
-            res = None  # workaround for older pandas versions
         res = pd.DataFrame(res, columns=keys)
         return res
 
@@ -212,6 +211,13 @@ class ExportRequest:
         else:
             res["fpath"] = [f"{data_dir}/{filename}" for filename in res.filename]
 
+        if self.method.startswith("url"):
+            baseurl = self._client._server.http_download_baseurl
+        elif self.method.startswith("ftp"):
+            baseurl = self._client._server.ftp_download_baseurl
+        else:
+            raise RuntimeError(f"Download is not supported for export method {self.method}")
+
         # Generate download URLs.
         urls = []
         for fp in res.fpath:
@@ -232,7 +238,7 @@ class ExportRequest:
         """
         i = 1
         new_fname = fname
-        while os.path.exists(new_fname):
+        while Path(new_fname).exists():
             new_fname = f"{fname}.{int(i)}"
             i += 1
         return new_fname
@@ -321,6 +327,7 @@ class ExportRequest:
         (string) URL of the export request.
         """
         data_dir = self.dir
+        http_baseurl = self._client._server.http_download_baseurl
         if data_dir is None or http_baseurl is None:
             return None
         if data_dir.startswith("/"):
@@ -407,7 +414,7 @@ class ExportRequest:
             return False
         return self._status not in self._status_codes_ok_or_pending
 
-    def wait(self, timeout=None, sleep=5, retries_notfound=5, verbose=None):
+    def wait(self, timeout=None, sleep=5, retries_notfound=5):
         """
         Wait for the server to process the export request. This method
         continuously updates the request status until the server signals that
@@ -428,10 +435,6 @@ class ExportRequest:
             request is registered on the server, so a value too low
             might cause an exception to be raised, even if the request
             is valid and will eventually show up on the server.
-        verbose : bool or None
-            Set to True if status messages should be printed to stdout.
-            If set to None (default), the :attr:`Client.verbose` flag
-            of the associated client instance is used instead.
 
         Returns
         -------
@@ -445,8 +448,6 @@ class ExportRequest:
         if sleep is not None:
             sleep = float(sleep)
         retries_notfound = int(retries_notfound)
-        if verbose is None:
-            verbose = self._client.verbose
 
         # We are done, if the request has already finished.
         if self.has_finished(skip_update=True):
@@ -454,9 +455,8 @@ class ExportRequest:
             return True
 
         while True:
-            if verbose:
-                idstr = str(None) if self._requestid is None else (f"{self._requestid}")
-                print(f"Export request pending. [id={idstr}, status={self._status}]")
+            idstr = str(None) if self._requestid is None else (f"{self._requestid}")
+            logging.info(f"Export request pending. [id={idstr}, status={self._status}]")
 
             # Use the user-provided sleep value or the server's wait value.
             # In case neither is available, wait for 5 seconds.
@@ -472,22 +472,20 @@ class ExportRequest:
                 if t_start + timeout + wait_secs - time.time() < 0:
                     return False
 
-            if verbose:
-                print(f"Waiting for {int(round(wait_secs))} seconds...")
+            logging.info(f"Waiting for {int(round(wait_secs))} seconds...")
             time.sleep(wait_secs)
 
             if self.has_finished():
                 self._raise_on_error()
                 return True
-            elif self._status == self._status_code_notfound:
+            if self._status == self._status_code_notfound:
                 # Raise exception, if no retries are left.
                 if retries_notfound <= 0:
                     self._raise_on_error(notfound_ok=False)
-                if verbose:
-                    print(f"Request not found on server, {retries_notfound} retries left.")
+                logging.info(f"Request not found on server, {retries_notfound} retries left.")
                 retries_notfound -= 1
 
-    def download(self, directory, index=None, fname_from_rec=None, verbose=None):
+    def download(self, directory, index=None, fname_from_rec=None):
         """
         Download data files.
 
@@ -523,10 +521,6 @@ class ExportRequest:
             generated. This also applies to movie files from exports
             with protocols 'mpg' or 'mp4', where the original filename
             is used locally.
-        verbose : bool or None
-            Set to True if status messages should be printed to stdout.
-            If set to None (default), the :attr:`Client.verbose` flag
-            of the associated client instance is used instead.
 
         Returns
         -------
@@ -535,8 +529,8 @@ class ExportRequest:
             local location of each downloaded file (DataFrame columns:
             'record', 'url' and 'download').
         """
-        out_dir = os.path.abspath(directory)
-        if not os.path.isdir(out_dir):
+        out_dir = Path(directory).absolute()
+        if not out_dir.is_dir():
             raise OSError(f"Download directory {out_dir} does not exist")
 
         if np.isscalar(index):
@@ -544,11 +538,8 @@ class ExportRequest:
         elif index is not None:
             index = list(index)
 
-        if verbose is None:
-            verbose = self._client.verbose
-
         # Wait until the export request has finished.
-        self.wait(verbose=verbose)
+        self.wait()
 
         if fname_from_rec is None:
             # For 'url_quick', generate local filenames from record strings.
@@ -572,24 +563,21 @@ class ExportRequest:
             else:
                 filename = di.filename
 
-            fpath = os.path.join(out_dir, filename)
+            fpath = Path(out_dir) / filename
             fpath_new = self._next_available_filename(fpath)
             fpath_tmp = self._next_available_filename(f"{fpath_new}.part")
-            if verbose:
-                print(f"Downloading file {int(i + 1)} of {int(ndata)}...")
-                print(f"    record: {di.record}")
-                print(f"  filename: {di.filename}")
+            logging.info(f"Downloading file {int(i + 1)} of {int(ndata)}...")
+            logging.info(f"    record: {di.record}")
+            logging.info(f"  filename: {di.filename}")
             try:
                 urlretrieve(di.url, fpath_tmp)
             except (HTTPError, URLError):
                 fpath_new = None
-                if verbose:
-                    print("  -> Error: Could not download file")
+                logging.info("  -> Error: Could not download file")
             else:
                 fpath_new = self._next_available_filename(fpath)
-                os.rename(fpath_tmp, fpath_new)
-                if verbose:
-                    print(f"  -> {os.path.relpath(fpath_new)}")
+                Path(fpath_tmp).rename(fpath_new)
+                logging.info(f"  -> {os.path.relpath(fpath_new)}")
             downloads.append(fpath_new)
 
         res = data[["record", "url"]].copy()
@@ -608,16 +596,11 @@ class Client:
         Defaults to JSOC.
     email : str or None
         Default email address used data export requests.
-    verbose : bool
-        Print export status messages to stdout (disabled by default).
-    debug : bool
-        Print debug output (disabled by default).
     """
 
-    def __init__(self, server="jsoc", email=None, verbose=False, debug=False):
-        self._json = HttpJsonClient(server=server, debug=debug)
+    def __init__(self, server="jsoc", email=None):
+        self._json = HttpJsonClient(server=server)
         self._info_cache = {}
-        self.verbose = verbose  # use property for convertion to bool
         self.email = email  # use property for email validation
 
     def __repr__(self):
@@ -666,7 +649,7 @@ class Client:
         """
         try:
             si = self.info(sname)
-        except Exception:
+        except Exception:  # NOQA
             # Cannot generate filename format for unknown series.
             return None
 
@@ -679,8 +662,7 @@ class Client:
 
         if pkfmt_list:
             return "{}.{}.{{segment}}".format(si.name, ".".join(pkfmt_list))
-        else:
-            return str(si.name) + ".{recnum:%lld}.{segment}"
+        return str(si.name) + ".{recnum:%lld}.{segment}"
 
     # Some regular expressions used to parse export request queries.
     _re_export_recset = re.compile(r"^\s*([\w\.]+)\s*(\[.*\])?\s*(?:\{([\w\s\.,]*)\})?\s*$")
@@ -716,7 +698,7 @@ class Client:
         # make them suitable for filenames.
         try:
             si = self.info(sname)
-        except Exception:
+        except Exception:  # NOQA
             # Cannot generate filename for unknown series.
             return None
 
@@ -792,12 +774,12 @@ class Client:
             ll = [s.lower() for s in Client._export_color_table_names]
             try:
                 i = ll.index(ct.lower())
-            except ValueError:
+            except ValueError as e:
                 msg = f"{ct} is not a valid color table, "
                 msg += "available color tables: {}".format(
                     ", ".join([str(s) for s in Client._export_color_table_names]),
                 )
-                raise ValueError(msg)
+                raise ValueError(msg) from e
             protocol_args[ct_key] = Client._export_color_table_names[i]
 
         scaling = protocol_args.get("scaling")
@@ -805,10 +787,10 @@ class Client:
             ll = [s.lower() for s in Client._export_scaling_names]
             try:
                 i = ll.index(scaling.lower())
-            except ValueError:
+            except ValueError as e:
                 msg = f"{scaling} is not a valid scaling type,"
                 msg += "available scaling types: {}".format(", ".join([str(s) for s in Client._export_scaling_names]))
-                raise ValueError(msg)
+                raise ValueError(msg) from e
             protocol_args["scaling"] = Client._export_scaling_names[i]
 
     @property
@@ -841,17 +823,6 @@ class Client:
         if value is not None and not self.check_email(value):
             raise ValueError("Email address is invalid or not registered")
         self._email = value
-
-    @property
-    def verbose(self):
-        """
-        (bool) Enable/disable export status output.
-        """
-        return self._verbose
-
-    @verbose.setter
-    def verbose(self, value):
-        self._verbose = bool(value)
 
     def series(self, regex=None, full=False):
         """
@@ -890,25 +861,22 @@ class Client:
                     return pd.DataFrame(columns=keys)
                 recs = [(it["name"], _split_arg(it["primekeys"]), it["note"]) for it in d["names"]]
                 return pd.DataFrame(recs, columns=keys)
-            else:
-                if not d["names"]:
-                    return []
-                return [it["name"] for it in d["names"]]
-        else:
-            # Use show_series_wrapper instead of the regular version.
-            d = self._json.show_series_wrapper(regex, info=full)
-            if full:
-                keys = ("name", "note")
-                if not d["seriesList"]:
-                    return pd.DataFrame(columns=keys)
-                recs = []
-                for it in d["seriesList"]:
-                    name, info = tuple(it.items())[0]
-                    note = info.get("description", "")
-                    recs.append((name, note))
-                return pd.DataFrame(recs, columns=keys)
-            else:
-                return d["seriesList"]
+            if not d["names"]:
+                return []
+            return [it["name"] for it in d["names"]]
+        # Use show_series_wrapper instead of the regular version.
+        d = self._json.show_series_wrapper(regex, info=full)
+        if full:
+            keys = ("name", "note")
+            if not d["seriesList"]:
+                return pd.DataFrame(columns=keys)
+            recs = []
+            for it in d["seriesList"]:
+                name, info = tuple(it.items())[0]
+                note = info.get("description", "")
+                recs.append((name, note))
+            return pd.DataFrame(recs, columns=keys)
+        return d["seriesList"]
 
     def info(self, ds):
         """
@@ -1089,10 +1057,9 @@ class Client:
 
         if len(res) == 0:
             return None
-        elif len(res) == 1:
+        if len(res) == 1:
             return res[0]
-        else:
-            return tuple(res)
+        return tuple(res)
 
     def check_email(self, email):
         """

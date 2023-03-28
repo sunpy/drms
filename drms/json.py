@@ -1,41 +1,43 @@
 import json as _json
+import logging
+from enum import StrEnum
 from urllib.parse import urlencode, quote_plus
 from urllib.request import HTTPError, urlopen
 
 from .config import ServerConfig, _server_configs
 from .utils import _split_arg
 
-__all__ = ["const", "HttpJsonRequest", "HttpJsonClient"]
+__all__ = ["JsocInfoConstants", "HttpJsonRequest", "HttpJsonClient"]
 
 
-class JsocInfoConstants:
+class JsocInfoConstants(StrEnum):
     """
     Constants for DRMS queries.
 
     Attributes
     ----------
     all
-        = ``'**ALL**'``
+        ``'**ALL**'``
     none
-        = ``'**NONE**'``
+        ``'**NONE**'``
     recdir
-        = ``'*recdir*'``
+        ``'*recdir*'``
     dirmtime
-        = ``'*dirmtime*'``
+        ``'*dirmtime*'``
     logdir
-        = ``'*logdir*'``
+        ``'*logdir*'``
     recnum
-        = ``'*recnum*'``
+        ``'*recnum*'``
     sunum
-        = ``'*sunum*'``
+        ``'*sunum*'``
     size
-        = ``'*size*'``
+        ``'*size*'``
     online
-        = ``'*online*'``
+        ``'*online*'``
     retain
-        = ``'*retain*'``
+        ``'*retain*'``
     archive
-        = ``'*archive*'``
+        ``'*archive*'``
     """
 
     all = "**ALL**"
@@ -49,9 +51,6 @@ class JsocInfoConstants:
     online = "*online*"
     retain = "*retain*"
     archive = "*archive*"
-
-
-const = JsocInfoConstants()
 
 
 class HttpJsonRequest:
@@ -100,36 +99,24 @@ class HttpJsonClient:
     server : str or drms.config.ServerConfig
         Registered server ID or ServerConfig instance.
         Defaults to JSOC.
-    debug : bool
-        Enable or disable debug mode (default is disabled).
     """
 
-    def __init__(self, server="jsoc", debug=False):
+    def __init__(self, server="jsoc"):
         if isinstance(server, ServerConfig):
             self._server = server
         else:
             self._server = _server_configs[server.lower()]
-        self.debug = debug
 
     def __repr__(self):
         return f"<HttpJsonClient: {self._server.name}>"
 
     def _json_request(self, url):
-        if self.debug:
-            print(url)
+        logging.info(url)
         return HttpJsonRequest(url, self._server.encoding)
 
     @property
     def server(self):
         return self._server
-
-    @property
-    def debug(self):
-        return self._debug
-
-    @debug.setter
-    def debug(self, value):
-        self._debug = True if value else False
 
     def show_series(self, ds_filter=None):
         """
