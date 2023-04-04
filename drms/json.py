@@ -1,6 +1,6 @@
 import json as _json
 import logging
-from enum import StrEnum
+from enum import Enum
 from urllib.parse import urlencode, quote_plus
 from urllib.request import HTTPError, urlopen
 
@@ -10,7 +10,7 @@ from .utils import _split_arg
 __all__ = ["JsocInfoConstants", "HttpJsonRequest", "HttpJsonClient"]
 
 
-class JsocInfoConstants(StrEnum):
+class JsocInfoConstants(Enum):
     """
     Constants for DRMS queries.
 

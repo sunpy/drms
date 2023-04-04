@@ -15,7 +15,7 @@ import drms
 ###############################################################################
 # First we will create a `drms.Client`, using the JSOC baseurl.
 
-client = drms.Client(debug=True)
+client = drms.Client()
 
 # This example requires a registered export email address. You can register
 # JSOC exports at: http://jsoc.stanford.edu/ajax/register_email.html

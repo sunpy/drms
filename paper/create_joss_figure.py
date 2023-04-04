@@ -68,7 +68,7 @@ kwlist = [
     "CRVAL2",
 ]
 
-# Create DRMS client, use debug=True to see the query URLs.
+# Create DRMS client
 c = drms.Client()
 
 print("Querying metadata...")

@@ -11,7 +11,7 @@ def _pd_to_datetime_coerce(arg):
 
 
 def _pd_to_numeric_coerce(arg):
-    return pd.to_numeric(arg, format="mixed", errors="coerce")
+    return pd.to_numeric(arg, errors="coerce")
 
 
 def _split_arg(arg):
@@ -68,7 +68,7 @@ def to_datetime(tstr, force=False):
     if force or date.str.endswith("_TAI").any():
         date = date.str.replace("_TAI", "")
         date = date.str.replace("_", " ")
-        date = date.str.replace(".", "-", n=2)
+        date = date.str.replace(".", "-", n=2, regex=False)
     res = _pd_to_datetime_coerce(date)
     res = res.dt.tz_localize(None)
     return res.iloc[0] if (len(res) == 1) and np.isscalar(tstr) else res

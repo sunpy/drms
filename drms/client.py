@@ -801,17 +801,6 @@ class Client:
         return self._json.server
 
     @property
-    def debug(self):
-        """
-        (bool) Enable/disable debug output.
-        """
-        return self._json.debug
-
-    @debug.setter
-    def debug(self, value):
-        self._json.debug = value
-
-    @property
     def email(self):
         """
         (string) Default email address used for data export requests.

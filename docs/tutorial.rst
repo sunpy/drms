@@ -160,16 +160,16 @@ It is also possible to submit an export request on the webpage and then use the 
 .. code-block:: python
 
     >>> import os
-    >>> email_address = os.environ["JSOC_EMAIL"]
+    >>> email_address = os.environ["JSOC_EMAIL"]  # doctest: +REMOTE_DATA
 
 First, we start again with importing the ``drms`` library and creating a `~drms.client.Client` instance:
 
 .. code-block:: python
 
     >>> import drms
-    >>> client = drms.Client(email=email_address, )  # doctest: +REMOTE_DATA
+    >>> client = drms.Client(email=email_address)  # doctest: +REMOTE_DATA
 
-In this case we also provide an email address (which needs to be already registered at JSOC) and turn on status messages by enabling the ``verbose`` flag.
+In this case we also provide an email address (which needs to be already registered at JSOC).
 
 We now create a download directory for our downloads, in case it does not exist yet:
 

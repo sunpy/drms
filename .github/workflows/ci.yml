@@ -39,8 +39,8 @@ jobs:
       posargs: -n auto
       envs: |
         - windows: py39
-        - macos: py39
-        - linux: py310-oldestdeps
+        - macos: py310
+        - linux: py39-oldestdeps
 
   docs:
     needs: [core]

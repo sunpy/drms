@@ -25,7 +25,7 @@ qstr = "hmi.synoptic_mr_720s[2150]"
 # Send request to the DRMS server
 print("Querying keyword data...\n -> {qstr}")
 segname = "synopMr"
-results, filenames = client.query(qstr, key=drms.const.all, seg=segname)
+results, filenames = client.query(qstr, key=drms.JsocInfoConstants.all, seg=segname)
 print(f" -> {len(results)} lines retrieved.")
 
 # Use only the first line of the query result
