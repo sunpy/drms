@@ -27,7 +27,7 @@ jobs:
       toxdeps: "tox tox-pypi-filter"
       posargs: -n auto
       envs: |
-        - linux: py310
+        - linux: py311
 
   test:
     needs: [core]
@@ -40,6 +40,7 @@ jobs:
       envs: |
         - windows: py39
         - macos: py39
+        - linux: py310-oldestdeps
 
   docs:
     needs: [core]
