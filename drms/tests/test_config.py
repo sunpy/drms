@@ -20,7 +20,7 @@ def test_create_config_basic():
 
 
 def test_create_config_missing_name():
-    with pytest.raises(ValueError, match="2"):
+    with pytest.raises(ValueError, match='Server config entry "name" is missing'):
         ServerConfig()
 
 
@@ -67,6 +67,8 @@ def test_config_jsoc():
     assert isinstance(cfg.cgi_check_address, str)
     assert isinstance(cfg.cgi_show_series_wrapper, str)
     assert isinstance(cfg.show_series_wrapper_dbhost, str)
+    assert cfg.http_download_baseurl.startswith("http://")
+    assert cfg.ftp_download_baseurl.startswith("ftp://")
 
     baseurl = cfg.cgi_baseurl
     assert baseurl.startswith("http://")
@@ -90,6 +92,8 @@ def test_config_kis():
     assert cfg.cgi_check_address is None
     assert cfg.cgi_show_series_wrapper is None
     assert cfg.show_series_wrapper_dbhost is None
+    assert cfg.http_download_baseurl is None
+    assert cfg.ftp_download_baseurl is None
 
     baseurl = cfg.cgi_baseurl
     assert baseurl.startswith("http://")
@@ -126,12 +130,12 @@ def test_supported(server_name, operation, expected):
 )
 def test_supported_invalid_operation(server_name, operation):
     cfg = _server_configs[server_name]
-    with pytest.raises(ValueError, match="3"):
+    with pytest.raises(ValueError, match="Unknown operation:"):
         cfg.check_supported(operation)
 
 
 def test_create_config_invalid_key():
-    with pytest.raises(ValueError, match="4"):
+    with pytest.raises(ValueError, match="Invalid server config key: foo"):
         ServerConfig(foo="bar")
 
 
@@ -139,11 +143,11 @@ def test_getset_attr():
     cfg = ServerConfig(name="TEST")
     assert cfg.name == "TEST"
     assert cfg.__dict__ == {"_d": {"encoding": "latin1", "name": "TEST"}}
-    with pytest.raises(AttributeError, match="6"):
+    with pytest.raises(AttributeError, match="'ServerConfig' object has no attribute 'foo'"):
         _ = cfg.foo
     cfg.name = "NewTest"
     assert cfg.name == "NewTest"
-    with pytest.raises(ValueError, match="5"):
+    with pytest.raises(ValueError, match="name config value must be a string"):
         cfg.name = 123
     cfg.__sizeof__ = 127
     assert cfg.__sizeof__ == 127
