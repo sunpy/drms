@@ -7,7 +7,7 @@ __all__ = ["to_datetime"]
 
 
 def _pd_to_datetime_coerce(arg):
-    return pd.to_datetime(arg, errors="coerce")
+    return pd.to_datetime(arg, errors="coerce", format="mixed", dayfirst=False)
 
 
 def _pd_to_numeric_coerce(arg):
