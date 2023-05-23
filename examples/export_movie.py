@@ -1,14 +1,14 @@
 """
-=================
-Exporting a movie
-=================
+================= Exporting a movie =================
 
 This example shows how to export movies from image data, using the 'mp4'
 protocol.
 
 The 'mp4' protocol accepts additional protocol arguments, like color
 table, color scaling or pixel binning. For a list of available color
-tables, see http://jsoc.stanford.edu/ajax/exportdata.html and select the
+tables, see
+http://jsoc.stanford.edu/ajax/exportdata.html
+and select the
 MP4 protocol.
 """
 

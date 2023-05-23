@@ -1,9 +1,9 @@
 """
-=========================================
-Downloading and plotting a HMI lightcurve
-=========================================
+========================================= Downloading and plotting a HMI
+lightcurve =========================================
 
-This example shows how to download HMI data from JSOC and make a lightcurve plot.
+This example shows how to download HMI data from JSOC and make a
+lightcurve plot.
 """
 
 import matplotlib.pyplot as plt

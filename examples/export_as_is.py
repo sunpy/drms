@@ -1,10 +1,8 @@
 """
-=========================
-Exporting data as 'as-is'
-=========================
+========================= Exporting data as 'as-is' =========================
 
-This example shows how to submit an 'url_quick' / 'as-is' data export request
-to JSOC and how to download the requested files.
+This example shows how to submit an 'url_quick' / 'as-is' data export
+request to JSOC and how to download the requested files.
 
 The export protocol 'as-is', should be preferred over other protocols,
 because it minimizes the server load. The only reason to use

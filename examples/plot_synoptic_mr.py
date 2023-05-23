@@ -1,9 +1,9 @@
 """
-============================================
-Downloading and plotting a HMI synoptic data
-============================================
+============================================ Downloading and plotting a HMI
+synoptic data ============================================
 
-This example shows how to download HMI synoptic data from JSOC and make a plot.
+This example shows how to download HMI synoptic data from JSOC and make
+a plot.
 """
 
 import matplotlib.pyplot as plt
