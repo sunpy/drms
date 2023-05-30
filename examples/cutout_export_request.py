@@ -1,6 +1,5 @@
 """
-===================================
-Exporting data with cutout requests
+=================================== Exporting data with cutout requests
 ===================================
 
 This example shows how to submit a data export request with a cutout request using the ``im_patch`` command.

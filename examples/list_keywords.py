@@ -1,6 +1,5 @@
 """
-==================================
-List all keywords for a HMI series
+================================== List all keywords for a HMI series
 ==================================
 
 This example shows how to display the keywords for a HMI series.

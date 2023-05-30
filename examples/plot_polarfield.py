@@ -1,9 +1,9 @@
 """
-================================================
-Downloading and plotting a HMI polar field data
-================================================
+================================================ Downloading and plotting a HMI
+polar field data ================================================
 
-This example shows how to download HMI polar field data from JSOC and make a plot.
+This example shows how to download HMI polar field data from JSOC and
+make a plot.
 """
 
 import matplotlib.pyplot as plt

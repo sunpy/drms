@@ -1,9 +1,9 @@
 """
-=============================================
-Downloading and plotting solar modes with HMI
-=============================================
+============================================= Downloading and plotting solar
+modes with HMI =============================================
 
-This example shows how to download HMI data from JSOC and make a plot of the solar modes.
+This example shows how to download HMI data from JSOC and make a plot of
+the solar modes.
 """
 
 import matplotlib.pyplot as plt

@@ -1,7 +1,5 @@
 """
-======================
-Exporting data as fits
-======================
+====================== Exporting data as fits ======================
 
 This example shows how to submit a data export request using the 'fits'
 protocol and how to download the requested files.
