@@ -1,9 +1,9 @@
 """
-=========================================
-Downloading and plotting a AIA lightcurve
-=========================================
+========================================= Downloading and plotting a AIA
+lightcurve =========================================
 
-This example shows how to download AIA data from JSOC and make a lightcurve plot.
+This example shows how to download AIA data from JSOC and make a
+lightcurve plot.
 """
 
 import matplotlib.pyplot as plt

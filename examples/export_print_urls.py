@@ -1,10 +1,9 @@
 """
-==============================
-Getting the urls of a download
+============================== Getting the urls of a download
 ==============================
 
-This example prints the download URLs for files returned from an 'as-is' data
-export request.
+This example prints the download URLs for files returned from an 'as-is'
+data export request.
 
 Note that there is no "Request URL" for method 'url_quick'.
 """

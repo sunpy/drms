@@ -1,10 +1,10 @@
 """
-====================================
-Downloading data as a tar collection
+==================================== Downloading data as a tar collection
 ====================================
 
-This example shows how to submit a data export request using the 'url-tar'
-method, which provides a single TAR archive containing all requested files.
+This example shows how to submit a data export request using the 'url-
+tar' method, which provides a single TAR archive containing all
+requested files.
 
 Here we use this method to download data from the
 'hmi.rdvflows_fd15_frame' series, which stores directories of text files
