@@ -2,12 +2,17 @@ import re
 
 import numpy as np
 import pandas as pd
+from packaging.version import Version
 
 __all__ = ["to_datetime"]
 
+PD_VERSION = Version(pd.__version__)
+
 
 def _pd_to_datetime_coerce(arg):
-    return pd.to_datetime(arg, errors="coerce", format="mixed", dayfirst=False)
+    if PD_VERSION >= Version("2.0.0"):
+        return pd.to_datetime(arg, errors="coerce", format="mixed", dayfirst=False)
+    return pd.to_datetime(arg, errors="coerce")
 
 
 def _pd_to_numeric_coerce(arg):
@@ -64,11 +69,15 @@ def to_datetime(tstr, force=False):
     result : pandas.Series or pandas.Timestamp
         Pandas series or a single Timestamp object.
     """
-    s = pd.Series(tstr, dtype=object).astype(str)
-    if force or s.str.endswith("_TAI").any():
-        s = s.str.replace("_TAI", "")
-        s = s.str.replace("_", " ")
-        s = s.str.replace(".", "-", regex=True, n=2)
-    res = _pd_to_datetime_coerce(s)
+    date = pd.Series(tstr, dtype=object).astype(str)
+    if force or date.str.endswith("_TAI").any():
+        date = date.str.replace("_TAI", "")
+        date = date.str.replace("_", " ")
+        if PD_VERSION >= Version("2.0.0"):
+            regex = False
+        else:
+            regex = True
+        date = date.str.replace(".", "-", regex=regex, n=2)
+    res = _pd_to_datetime_coerce(date)
     res = res.dt.tz_localize(None)
     return res.iloc[0] if (len(res) == 1) and np.isscalar(tstr) else res
