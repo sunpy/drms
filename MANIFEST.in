@@ -1,3 +1,3 @@
-paper
+prune paper
 # This subpackage is only used in development checkouts and should not be included in built tarballs
 prune drms/_dev
