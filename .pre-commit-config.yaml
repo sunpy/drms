@@ -1,17 +1,17 @@
 repos:
-  - repo: https://github.com/PyCQA/docformatter
-    rev: v1.6.0
+  - repo: https://github.com/myint/docformatter
+    rev: v1.7.2
     hooks:
       - id: docformatter
         args: [--in-place, --pre-summary-newline, --make-summary-multi]
-  - repo: https://github.com/PyCQA/autoflake
-    rev: v2.0.2
+  - repo: https://github.com/myint/autoflake
+    rev: v2.1.1
     hooks:
       - id: autoflake
         args: ['--in-place', '--remove-all-unused-imports', '--remove-unused-variable']
         exclude: ".*(.fits|.fts|.fit|.txt|tca.*|extern.*|.rst|.md|docs/conf.py)$"
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.0.260'
+    rev: 'v0.0.272'
     hooks:
       - id: ruff
         args: ['--fix']
@@ -38,6 +38,11 @@ repos:
         exclude: ".*(.fits|.fts|.fit|.txt|.csv)$"
       - id: check-yaml
       - id: debug-statements
-
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.4
+    hooks:
+      - id: codespell
+        additional_dependencies:
+          - tomli
 ci:
   autofix_prs: false

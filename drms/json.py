@@ -40,7 +40,7 @@ class JsocInfoConstants(Enum):
         ``'*archive*'``
     """
 
-    all = "**ALL**"
+    all = "**ALL**"  # NOQA: A003
     none = "**NONE**"
     recdir = "*recdir*"
     dirmtime = "*dirmtime*"
@@ -101,7 +101,7 @@ class HttpJsonClient:
         Defaults to JSOC.
     """
 
-    def __init__(self, server="jsoc"):
+    def __init__(self, *, server="jsoc"):
         if isinstance(server, ServerConfig):
             self._server = server
         else:
@@ -118,7 +118,7 @@ class HttpJsonClient:
     def server(self):
         return self._server
 
-    def show_series(self, ds_filter=None):
+    def show_series(self, *, ds_filter=None):
         """
         List available data series.
 
@@ -137,7 +137,7 @@ class HttpJsonClient:
         req = self._json_request(self._server.url_show_series + query)
         return req.data
 
-    def show_series_wrapper(self, ds_filter=None, info=False):
+    def show_series_wrapper(self, *, ds_filter=None, info=False):
         """
         List available data series.
 
@@ -198,13 +198,13 @@ class HttpJsonClient:
         Returns
         -------
         result : dict
-            Dictionary containg 'count', 'status' and 'runtime'.
+            Dictionary containing 'count', 'status' and 'runtime'.
         """
         query = f'?{urlencode({"op": "rs_summary", "ds": ds})}'
         req = self._json_request(self._server.url_jsoc_info + query)
         return req.data
 
-    def rs_list(self, ds, key=None, seg=None, link=None, recinfo=False, n=None, uid=None):
+    def rs_list(self, ds, *, key=None, seg=None, link=None, recinfo=False, n=None, uid=None):
         """
         Get detailed information about a record set.
 
@@ -326,6 +326,7 @@ class HttpJsonClient:
         self,
         ds,
         notify,
+        *,
         method="url_quick",
         protocol="as-is",
         protocol_args=None,

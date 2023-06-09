@@ -3,8 +3,8 @@ import pytest
 import drms
 
 
-@pytest.mark.kis
-@pytest.mark.remote_data
+@pytest.mark.kis()
+@pytest.mark.remote_data()
 def test_series_list_all(kis_client):
     slist = kis_client.series()
     assert isinstance(slist, list)
@@ -14,8 +14,8 @@ def test_series_list_all(kis_client):
     assert "mdi.fd_v" in (s.lower() for s in slist)
 
 
-@pytest.mark.kis
-@pytest.mark.remote_data
+@pytest.mark.kis()
+@pytest.mark.remote_data()
 @pytest.mark.parametrize("schema", ["hmi", "mdi"])
 def test_series_list_schemata(kis_client, schema):
     regex = rf"{schema}\."
@@ -25,8 +25,8 @@ def test_series_list_schemata(kis_client, schema):
         assert sname.startswith(f"{schema}.")
 
 
-@pytest.mark.kis
-@pytest.mark.remote_data
+@pytest.mark.kis()
+@pytest.mark.remote_data()
 @pytest.mark.parametrize(
     ("series", "pkeys", "segments"),
     [
@@ -45,8 +45,8 @@ def test_series_info_basic(kis_client, series, pkeys, segments):
         assert s in si.segments.index
 
 
-@pytest.mark.kis
-@pytest.mark.remote_data
+@pytest.mark.kis()
+@pytest.mark.remote_data()
 def test_query_basic(kis_client):
     keys, segs = kis_client.query("hmi.v_45s[2013.07.03_08:42_TAI/3m]", key="T_REC, CRLT_OBS", seg="Dopplergram")
     assert len(keys) == 4
@@ -57,15 +57,15 @@ def test_query_basic(kis_client):
     assert ((keys.CRLT_OBS - 3.14159).abs() < 0.0001).all()
 
 
-@pytest.mark.kis
-@pytest.mark.remote_data
+@pytest.mark.kis()
+@pytest.mark.remote_data()
 def test_not_supported_email(kis_client):
     with pytest.raises(drms.DrmsOperationNotSupported):
         kis_client.email = "name@example.com"
 
 
-@pytest.mark.kis
-@pytest.mark.remote_data
+@pytest.mark.kis()
+@pytest.mark.remote_data()
 def test_not_supported_export(kis_client):
     with pytest.raises(drms.DrmsOperationNotSupported):
         kis_client.export("hmi.v_45s[2010.05.01_TAI]")

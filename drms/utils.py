@@ -31,7 +31,7 @@ def _extract_series_name(ds):
     return m.group(1) if m is not None else None
 
 
-def to_datetime(tstr, force=False):
+def to_datetime(tstr, *, force=False):
     """
     Parse JSOC time strings.
 
@@ -42,7 +42,7 @@ def to_datetime(tstr, force=False):
 
     The current implementation only tries to convert typical HMI time
     strings, with a format like "%Y.%m.%d_%H:%M:%S_TAI", to an ISO time
-    string, that is then parsed by pandas. Note that "_TAI", aswell as
+    string, that is then parsed by pandas. Note that "_TAI", as well as
     other timezone indentifiers like "Z", will not be taken into
     account, so the result will be a naive timestamp without any
     associated timezone.

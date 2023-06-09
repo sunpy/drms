@@ -1,12 +1,12 @@
 # NOTE: First try _dev.scm_version if it exists and setuptools_scm is installed
-# This file is not included in drms wheels/tarballs, so otherwise it will
+# This file is not included in muse wheels/tarballs, so otherwise it will
 # fall back on the generated _version module.
 try:
     try:
         from ._dev.scm_version import version
     except ImportError:
         from ._version import version
-except Exception:  # NOQA
+except Exception:  # NOQA: BLE001
     import warnings
 
     warnings.warn(
@@ -14,28 +14,10 @@ except Exception:  # NOQA
         stacklevel=3,
     )
     del warnings
-
     version = "0.0.0"
 
+from packaging.version import parse as _parse
 
-# We use LooseVersion to define major, minor, micro, but ignore any suffixes.
-def split_version(version):
-    pieces = [0, 0, 0]
-
-    try:
-        from distutils.version import LooseVersion
-
-        for j, piece in enumerate(LooseVersion(version).version[:3]):
-            pieces[j] = int(piece)
-
-    except Exception:  # NOQA
-        pass
-
-    return pieces
-
-
-major, minor, bugfix = split_version(version)
-
-del split_version
-
-release = "dev" not in version
+_version = _parse(version)
+major, minor, bugfix = [*_version.release, 0][:3]
+release = not _version.is_devrelease

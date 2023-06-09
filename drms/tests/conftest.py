@@ -16,7 +16,7 @@ def pytest_addoption(parser):
 
 class lazily_cached:
     """
-    Lazily evaluted function call with cached result.
+    Lazily evaluated function call with cached result.
     """
 
     def __init__(self, f, *args, **kwargs):
@@ -62,7 +62,7 @@ def pytest_runtest_setup(item):
             pytest.skip("No email address specified; use the --email option to enable export tests")
 
 
-@pytest.fixture
+@pytest.fixture()
 def email(request):
     """
     Email address from --email command line option.
@@ -70,7 +70,7 @@ def email(request):
     return request.config.getoption("--email")
 
 
-@pytest.fixture
+@pytest.fixture()
 def jsoc_client():
     """
     Client fixture for JSOC online tests, does not use email.
@@ -78,7 +78,7 @@ def jsoc_client():
     return drms.Client("jsoc")
 
 
-@pytest.fixture
+@pytest.fixture()
 def jsoc_client_export(email):
     """
     Client fixture for JSOC online tests, uses email if specified.
@@ -86,7 +86,7 @@ def jsoc_client_export(email):
     return drms.Client("jsoc", email=email)
 
 
-@pytest.fixture
+@pytest.fixture()
 def kis_client():
     """
     Client fixture for KIS online tests.

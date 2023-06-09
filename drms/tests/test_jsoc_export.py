@@ -3,9 +3,9 @@ import pytest
 import drms
 
 
-@pytest.mark.jsoc
-@pytest.mark.export
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.export()
+@pytest.mark.remote_data()
 @pytest.mark.parametrize("method", ["url_quick", "url"])
 def test_export_asis_basic(jsoc_client_export, method):
     r = jsoc_client_export.export(
@@ -33,9 +33,9 @@ def test_export_asis_basic(jsoc_client_export, method):
         assert url.endswith("mean.fits") or url.endswith("power.fits")
 
 
-@pytest.mark.jsoc
-@pytest.mark.export
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.export()
+@pytest.mark.remote_data()
 def test_export_fits_basic(jsoc_client_export):
     r = jsoc_client_export.export(
         "hmi.sharp_720s[4864][2014.11.30_00:00_TAI]{continuum, magnetogram}",
@@ -62,9 +62,9 @@ def test_export_fits_basic(jsoc_client_export):
         assert url.endswith("continuum.fits") or url.endswith("magnetogram.fits")
 
 
-@pytest.mark.jsoc
-@pytest.mark.export
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.export()
+@pytest.mark.remote_data()
 def test_export_im_patch(jsoc_client_export):
     # TODO: check that this has actually done the export/processing properly?
     # NOTE: processing exports seem to fail silently on the server side if
@@ -108,9 +108,9 @@ def test_export_im_patch(jsoc_client_export):
         assert url.endswith("image.fits")
 
 
-@pytest.mark.jsoc
-@pytest.mark.export
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.export()
+@pytest.mark.remote_data()
 def test_export_rebin(jsoc_client_export):
     # TODO: check that this has actually done the export/processing properly?
     # NOTE: processing exports seem to fail silently on the server side if
@@ -140,9 +140,9 @@ def test_export_rebin(jsoc_client_export):
         assert url.endswith("magnetogram.fits")
 
 
-@pytest.mark.jsoc
-@pytest.mark.export
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.export()
+@pytest.mark.remote_data()
 def test_export_invalid_process(jsoc_client_export):
     with pytest.raises(ValueError, match="foobar is not one of the allowed processing options"):
         jsoc_client_export.export(
@@ -151,9 +151,9 @@ def test_export_invalid_process(jsoc_client_export):
         )
 
 
-@pytest.mark.jsoc
-@pytest.mark.export
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.export()
+@pytest.mark.remote_data()
 def test_export_email(jsoc_client):
     with pytest.raises(ValueError, match="9"):
         jsoc_client.export("hmi.v_45s[2016.04.01_TAI/1d@6h]{Dopplergram}")

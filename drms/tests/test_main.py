@@ -12,7 +12,7 @@ def helper(args, name, expected):
 
 def test_version():
     with pytest.raises(SystemExit):
-        helper(["--version"], "version", True)
+        helper(["--version"], "version", expected=True)
 
 
 def test_server():

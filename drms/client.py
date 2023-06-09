@@ -50,7 +50,7 @@ class SeriesInfo:
         Tape group.
     """
 
-    def __init__(self, d, name=None):
+    def __init__(self, d, *, name=None):
         self._d = d
         self.name = name
         self.retention = self._d.get("retention")
@@ -158,7 +158,7 @@ class ExportRequest:
         res = pd.DataFrame(res, columns=keys)
         return res
 
-    def _update_status(self, d=None):
+    def _update_status(self, *, d=None):
         if d is None and self._requestid is not None:
             d = self._client._json.exp_status(self._requestid)
         self._d = d
@@ -173,7 +173,7 @@ class ExportRequest:
             # Use None if the requestid is empty (url_quick + as-is)
             self._requestid = None
 
-    def _raise_on_error(self, notfound_ok=True):
+    def _raise_on_error(self, *, notfound_ok=True):
         if self._status in self._status_codes_ok_or_pending:
             if self._status != self._status_code_notfound or notfound_ok:
                 return  # request has not failed (yet)
@@ -234,7 +234,7 @@ class ExportRequest:
     @staticmethod
     def _next_available_filename(fname):
         """
-        Find next available filename, append a number if neccessary.
+        Find next available filename, append a number if necessary.
         """
         i = 1
         new_fname = fname
@@ -244,7 +244,7 @@ class ExportRequest:
         return new_fname
 
     @property
-    def id(self):
+    def id(self):  # NOQA: A003
         """
         (string) Request ID.
         """
@@ -272,7 +272,7 @@ class ExportRequest:
         return self._d.get("protocol")
 
     @property
-    def dir(self):
+    def dir(self):  # NOQA: A003
         """
         (string) Common directory of the requested files on the server.
         """
@@ -347,7 +347,7 @@ class ExportRequest:
             self._download_urls_cache = self._generate_download_urls()
         return self._download_urls_cache
 
-    def has_finished(self, skip_update=False):
+    def has_finished(self, *, skip_update=False):
         """
         Check if the export request has finished.
 
@@ -372,7 +372,7 @@ class ExportRequest:
             pending = self._status in self._status_codes_pending
         return not pending
 
-    def has_succeeded(self, skip_update=False):
+    def has_succeeded(self, *, skip_update=False):
         """
         Check if the export request has finished successfully.
 
@@ -393,7 +393,7 @@ class ExportRequest:
             return False
         return self._status == self._status_code_ok
 
-    def has_failed(self, skip_update=False):
+    def has_failed(self, *, skip_update=False):
         """
         Check if the export request has finished unsuccessfully.
 
@@ -414,7 +414,7 @@ class ExportRequest:
             return False
         return self._status not in self._status_codes_ok_or_pending
 
-    def wait(self, timeout=None, sleep=5, retries_notfound=5):
+    def wait(self, *, timeout=None, sleep=5, retries_notfound=5):
         """
         Wait for the server to process the export request. This method
         continuously updates the request status until the server signals that
@@ -440,7 +440,7 @@ class ExportRequest:
         -------
         result : bool
             True if the request succeeded or False if a timeout
-            occured. In case of an error an exception is raised.
+            occurred. In case of an error an exception is raised.
         """
         if timeout is not None:
             t_start = time.time()
@@ -485,7 +485,7 @@ class ExportRequest:
                 logging.info(f"Request not found on server, {retries_notfound} retries left.")
                 retries_notfound -= 1
 
-    def download(self, directory, index=None, fname_from_rec=None):
+    def download(self, directory, *, index=None, fname_from_rec=None):
         """
         Download data files.
 
@@ -598,7 +598,7 @@ class Client:
         Default email address used data export requests.
     """
 
-    def __init__(self, server="jsoc", email=None):
+    def __init__(self, *, server="jsoc", email=None):
         self._json = HttpJsonClient(server=server)
         self._info_cache = {}
         self.email = email  # use property for email validation
@@ -606,7 +606,7 @@ class Client:
     def __repr__(self):
         return f"<Client: {self._server.name}>"
 
-    def _convert_numeric_keywords(self, ds, kdf, skip_conversion=None):
+    def _convert_numeric_keywords(self, ds, kdf, *, skip_conversion=None):
         si = self.info(ds)
         int_keys = list(si.keywords[si.keywords.is_integer].index)
         num_keys = list(si.keywords[si.keywords.is_numeric].index)
@@ -631,7 +631,7 @@ class Client:
                 kdf[k] = _pd_to_numeric_coerce(kdf[k])
 
     @staticmethod
-    def _raise_query_error(d, status=None):
+    def _raise_query_error(d, *, status=None):
         """
         Raises a DrmsQueryError, using the json error message from d.
         """
@@ -649,8 +649,9 @@ class Client:
         """
         try:
             si = self.info(sname)
-        except Exception:  # NOQA
+        except Exception as e:  # NOQA: BLE001
             # Cannot generate filename format for unknown series.
+            logging.warning(f"Cannot generate filename format for unknown series '{sname}' with {e}")
             return None
 
         pkfmt_list = []
@@ -686,7 +687,7 @@ class Client:
             segs = Client._re_export_recset_slist.split(segs)
         return sname, pkeys, segs
 
-    def _filename_from_export_record(self, rs, old_fname=None):
+    def _filename_from_export_record(self, rs, *, old_fname=None):
         """
         Generate a filename from an export request record.
         """
@@ -698,8 +699,9 @@ class Client:
         # make them suitable for filenames.
         try:
             si = self.info(sname)
-        except Exception:  # NOQA
+        except Exception as e:  # NOQA: BLE001
             # Cannot generate filename for unknown series.
+            logging.warning(f"Cannot generate filename format for unknown series '{sname}' with {e}")
             return None
 
         if pkeys is not None:
@@ -813,7 +815,7 @@ class Client:
             raise ValueError("Email address is invalid or not registered")
         self._email = value
 
-    def series(self, regex=None, full=False):
+    def series(self, *, regex=None, full=False):
         """
         List available data series.
 
@@ -937,6 +939,7 @@ class Client:
     def query(
         self,
         ds,
+        *,
         key=None,
         seg=None,
         link=None,
@@ -1078,6 +1081,7 @@ class Client:
     def export(
         self,
         ds,
+        *,
         method="url_quick",
         protocol="as-is",
         protocol_args=None,

@@ -1,8 +1,8 @@
 import pytest
 
 
-@pytest.mark.jsoc
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.remote_data()
 @pytest.mark.parametrize(
     ("series", "pkeys", "segments"),
     [
@@ -21,8 +21,8 @@ def test_series_info_basic(jsoc_client, series, pkeys, segments):
         assert s in si.segments.index
 
 
-@pytest.mark.jsoc
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.remote_data()
 @pytest.mark.parametrize(
     ("series", "pkeys"),
     [
