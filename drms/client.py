@@ -626,7 +626,7 @@ class Client:
                 idx = kdf[k].str.startswith("0x")
                 if idx.any():
                     k_idx = kdf.columns.get_loc(k)
-                    kdf[kdf.columns[k_idx]] = kdf[kdf.columns[k_idx]].apply(int, base=16)
+                    kdf.loc[idx, kdf.columns[k_idx]] = kdf.loc[idx, kdf.columns[k_idx]].apply(int, base=16)
             if k in num_keys:
                 kdf[k] = _pd_to_numeric_coerce(kdf[k])
 
