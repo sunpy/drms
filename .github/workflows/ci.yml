@@ -85,7 +85,7 @@ jobs:
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish_pure_python.yml@main
     with:
       test_extras: 'dev'
-      test_command: 'pytest -p no:warnings --doctest-rst -m "not mpl_image_compare" --pyargs drms'
+      test_command: 'pytest -p no:warnings --doctest-rst --pyargs drms'
       submodules: false
     secrets:
       pypi_token: ${{ secrets.pypi_token }}
