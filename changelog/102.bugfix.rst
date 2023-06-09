@@ -1,1 +1,1 @@
-Modified :func:`drms.client._convert_numeric_keywords` to use a row-centric approach for handling hexadecimal strings.
+Modified :meth:`drms.client.Client._convert_numeric_keywords` to use a row-centric approach for handling hexadecimal strings.
