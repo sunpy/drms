@@ -1,4 +1,4 @@
-.. _drms_intro:
+.. _drms-introduction:
 
 ************
 Introduction

@@ -24,7 +24,7 @@ jobs:
     with:
       submodules: false
       coverage: codecov
-      toxdeps: "tox tox-pypi-filter"
+      toxdeps: "tox-pypi-filter"
       posargs: -n auto
       envs: |
         - linux: py311
@@ -35,7 +35,7 @@ jobs:
     with:
       submodules: false
       coverage: codecov
-      toxdeps: "tox tox-pypi-filter"
+      toxdeps: "tox-pypi-filter"
       posargs: -n auto
       envs: |
         - windows: py39
@@ -48,7 +48,7 @@ jobs:
     with:
       submodules: false
       pytest: false
-      toxdeps: "tox tox-pypi-filter"
+      toxdeps: "tox-pypi-filter"
       cache-key: docs-${{ github.run_id }}
       libraries: |
         apt:
@@ -63,7 +63,7 @@ jobs:
     with:
       submodules: false
       coverage: codecov
-      toxdeps: "tox tox-pypi-filter"
+      toxdeps: "tox-pypi-filter"
       posargs: -n 1 --dist loadgroup
       envs: |
         - linux: py311-online

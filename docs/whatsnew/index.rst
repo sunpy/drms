@@ -1,3 +1,5 @@
+.. _drms-release-history:
+
 ***************
 Release History
 ***************

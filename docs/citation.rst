@@ -1,3 +1,3 @@
-.. _citation:
+.. _drms-citation:
 
 .. include:: ../drms/CITATION.rst

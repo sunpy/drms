@@ -1,4 +1,4 @@
-.. _drms_tutorial:
+.. _drms-tutorial:
 
 ********
 Tutorial

@@ -1,4 +1,4 @@
-.. _reference:
+.. _drms-api-reference:
 
 *************
 API Reference
