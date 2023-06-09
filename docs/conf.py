@@ -23,7 +23,6 @@ is_development = ".dev" in __version__
 extensions = [
     "hoverxref.extension",
     "sphinx_copybutton",
-    "sphinx_design",
     "sphinx_automodapi.automodapi",
     "sphinx_automodapi.smart_resolver",
     "sphinx_changelog",
