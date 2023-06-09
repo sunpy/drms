@@ -1,3 +1,14 @@
+0.6.4 (2023-06-09)
+==================
+
+Bug Fixes
+---------
+
+- Modified :meth:`drms.client.Client._convert_numeric_keywords` to use a row-centric approach for handling hexadecimal strings. (`#102 <https://github.com/sunpy/drms/pull/102>`__)
+- Modified :meth:`drms.utils.to_datetime` to work with Pandas 2.0. (`#103 <https://github.com/sunpy/drms/pull/102>`__)
+- Fixed pandas 2.0.0 warning.  (`#97 <https://github.com/sunpy/drms/pull/97>`__)
+
+
 0.6.3 (2022-10-13)
 ==================
 
