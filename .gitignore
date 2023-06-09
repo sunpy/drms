@@ -208,7 +208,7 @@ docs/_build
 docs/api/
 docs/generated
 docs/whatsnew/latest_changelog.txt
-src/drms/_version.py
+drms/_version.py
 examples/**/*.asdf
 examples/**/*.csv
 examples/jsoc.stanford.edu/

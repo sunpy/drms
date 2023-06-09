@@ -24,5 +24,5 @@ ex_extras = dict([i for i in list(extras.items()) if i[0] not in exclude_keys])
 extras["all"] = list(chain.from_iterable(list(ex_extras.values())))
 setup(
     extras_require=extras,
-    use_scm_version={"write_to": os.path.join("src", "drms", "_version.py")},
+    use_scm_version={"write_to": os.path.join("drms", "_version.py")},
 )
