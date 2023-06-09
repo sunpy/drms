@@ -16,7 +16,7 @@ invalid_emails = [
 @pytest.mark.remote_data()
 @pytest.mark.parametrize("email", invalid_emails)
 def test_email_invalid_check(email):
-    c = drms.Client("jsoc")
+    c = drms.Client(server="jsoc")
     assert not c.check_email(email)
 
 
@@ -24,8 +24,8 @@ def test_email_invalid_check(email):
 @pytest.mark.remote_data()
 @pytest.mark.parametrize("email", invalid_emails)
 def test_email_invalid_set(email):
-    c = drms.Client("jsoc")
-    with pytest.raises(ValueError, match="7"):
+    c = drms.Client(server="jsoc")
+    with pytest.raises(ValueError, match="Email address is invalid or not registered"):
         c.email = email
 
 
@@ -33,15 +33,15 @@ def test_email_invalid_set(email):
 @pytest.mark.remote_data()
 @pytest.mark.parametrize("email", invalid_emails)
 def test_email_invalid_init(email):
-    with pytest.raises(ValueError, match="8"):
-        drms.Client("jsoc", email=email)
+    with pytest.raises(ValueError, match="Email address is invalid or not registered"):
+        drms.Client(server="jsoc", email=email)
 
 
 @pytest.mark.jsoc()
 @pytest.mark.export()
 @pytest.mark.remote_data()
 def test_email_cmdopt_check(email):
-    c = drms.Client("jsoc")
+    c = drms.Client(server="jsoc")
     assert c.check_email(email)
 
 
@@ -49,7 +49,7 @@ def test_email_cmdopt_check(email):
 @pytest.mark.export()
 @pytest.mark.remote_data()
 def test_email_cmdopt_set(email):
-    c = drms.Client("jsoc")
+    c = drms.Client(server="jsoc")
     c.email = email
     assert c.email == email
 
@@ -58,7 +58,7 @@ def test_email_cmdopt_set(email):
 @pytest.mark.export()
 @pytest.mark.remote_data()
 def test_email_cmdopt_init(email):
-    c = drms.Client("jsoc", email=email)
+    c = drms.Client(server="jsoc", email=email)
     assert c.email == email
 
 

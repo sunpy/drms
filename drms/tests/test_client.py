@@ -13,7 +13,7 @@ def test_client_init_defaults():
 
 @pytest.mark.parametrize("server_name", ["jsoc", "kis"])
 def test_client_registered_servers(server_name):
-    c = drms.Client(server_name)
+    c = drms.Client(server=server_name)
     assert isinstance(c._server, ServerConfig)
     assert c._server.name.lower() == server_name
     assert c.email is None

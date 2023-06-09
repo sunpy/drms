@@ -19,7 +19,7 @@ def test_series_list_all(kis_client):
 @pytest.mark.parametrize("schema", ["hmi", "mdi"])
 def test_series_list_schemata(kis_client, schema):
     regex = rf"{schema}\."
-    slist = kis_client.series(regex)
+    slist = kis_client.series(regex=regex)
     assert len(slist) > 0
     for sname in slist:
         assert sname.startswith(f"{schema}.")

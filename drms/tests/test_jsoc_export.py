@@ -155,5 +155,5 @@ def test_export_invalid_process(jsoc_client_export):
 @pytest.mark.export()
 @pytest.mark.remote_data()
 def test_export_email(jsoc_client):
-    with pytest.raises(ValueError, match="9"):
+    with pytest.raises(ValueError, match="The email argument is required, when no default email address was set."):
         jsoc_client.export("hmi.v_45s[2016.04.01_TAI/1d@6h]{Dopplergram}")

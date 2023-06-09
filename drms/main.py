@@ -7,9 +7,8 @@ def main():
     import drms
 
     args = parse_args(sys.argv[1:])
-
     # Create a Client instance
-    client = drms.Client(args.server, email=args.email)
+    client = drms.Client(server=args.server, email=args.email)
     logging.info(f"client: {client}")
 
 

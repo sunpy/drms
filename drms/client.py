@@ -140,7 +140,7 @@ class ExportRequest:
         self._requestid = None
         self._status = None
         self._download_urls_cache = None
-        self._update_status(d)
+        self._update_status(d=d)
 
     @classmethod
     def _create_from_id(cls, requestid, client):
@@ -389,7 +389,7 @@ class ExportRequest:
             True if the export request has finished successfully or
             False if the request failed or is still pending.
         """
-        if not self.has_finished(skip_update):
+        if not self.has_finished(skip_update=skip_update):
             return False
         return self._status == self._status_code_ok
 
@@ -410,7 +410,7 @@ class ExportRequest:
             True if the export request has finished unsuccessfully or
             False if the request has succeeded or is still pending.
         """
-        if not self.has_finished(skip_update):
+        if not self.has_finished(skip_update=skip_update):
             return False
         return self._status not in self._status_codes_ok_or_pending
 
@@ -842,7 +842,7 @@ class Client:
             raise DrmsOperationNotSupported("Server does not support series list access")
         if self._server.url_show_series_wrapper is None:
             # No wrapper CGI available, use the regular version.
-            d = self._json.show_series(regex)
+            d = self._json.show_series(ds_filter=regex)
             status = d.get("status")
             if status != 0:
                 self._raise_query_error(d)
@@ -856,7 +856,7 @@ class Client:
                 return []
             return [it["name"] for it in d["names"]]
         # Use show_series_wrapper instead of the regular version.
-        d = self._json.show_series_wrapper(regex, info=full)
+        d = self._json.show_series_wrapper(ds_filter=regex, info=full)
         if full:
             keys = ("name", "note")
             if not d["seriesList"]:
@@ -1007,7 +1007,7 @@ class Client:
             key = [k for k in key if k not in pk]
             key = pk + key
 
-        lres = self._json.rs_list(ds, key, seg, link, recinfo=rec_index, n=n)
+        lres = self._json.rs_list(ds, key=key, seg=seg, link=link, recinfo=rec_index, n=n)
         status = lres.get("status")
         if status != 0:
             self._raise_query_error(lres)
@@ -1021,7 +1021,7 @@ class Client:
             else:
                 res_key = pd.DataFrame()
             if convert_numeric:
-                self._convert_numeric_keywords(ds, res_key, skip_conversion)
+                self._convert_numeric_keywords(ds, res_key, skip_conversion=skip_conversion)
             res.append(res_key)
 
         if seg is not None:
@@ -1161,7 +1161,7 @@ class Client:
             raise DrmsOperationNotSupported("Server does not support export requests")
         if email is None:
             if self._email is None:
-                raise ValueError("The email argument is required, when no default email address was set")
+                raise ValueError("The email argument is required, when no default email address was set.")
             email = self._email
 
         if filenamefmt is None:

@@ -20,7 +20,7 @@ def test_query_basic(jsoc_client):
 @pytest.mark.jsoc()
 @pytest.mark.remote_data()
 def test_query_allmissing(jsoc_client):
-    with pytest.raises(ValueError, match="1"):
+    with pytest.raises(ValueError, match="At least one key, seg or link must be specified"):
         jsoc_client.query("hmi.v_45s[2013.07.03_08:42_TAI/3m]")
 
 

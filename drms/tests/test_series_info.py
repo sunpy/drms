@@ -137,4 +137,4 @@ def test_repr():
         "keywords": [],
     }
     assert repr(drms.SeriesInfo(info)) == "<SeriesInfo>"
-    assert repr(drms.SeriesInfo(info, "hmi")) == "<SeriesInfo: hmi>"
+    assert repr(drms.SeriesInfo(info, name="hmi")) == "<SeriesInfo: hmi>"

@@ -75,7 +75,7 @@ def jsoc_client():
     """
     Client fixture for JSOC online tests, does not use email.
     """
-    return drms.Client("jsoc")
+    return drms.Client(server="jsoc")
 
 
 @pytest.fixture()
@@ -83,7 +83,7 @@ def jsoc_client_export(email):
     """
     Client fixture for JSOC online tests, uses email if specified.
     """
-    return drms.Client("jsoc", email=email)
+    return drms.Client(server="jsoc", email=email)
 
 
 @pytest.fixture()
@@ -91,4 +91,4 @@ def kis_client():
     """
     Client fixture for KIS online tests.
     """
-    return drms.Client("kis")
+    return drms.Client(server="kis")
