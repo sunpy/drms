@@ -157,7 +157,7 @@ It is also possible to submit an export request on the webpage and then use the 
 .. code-block:: python
 
     >>> import os
-    >>> email_address = os.environ["JSOC_EMAIL"]
+    >>> email_address = os.environ["JSOC_EMAIL"]  # doctest: +REMOTE_DATA
 
 First, we start again with importing the ``drms`` library and creating a `~drms.client.Client` instance:
 

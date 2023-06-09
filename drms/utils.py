@@ -64,11 +64,11 @@ def to_datetime(tstr, force=False):
     result : pandas.Series or pandas.Timestamp
         Pandas series or a single Timestamp object.
     """
-    s = pd.Series(tstr, dtype=object).astype(str)
-    if force or s.str.endswith("_TAI").any():
-        s = s.str.replace("_TAI", "")
-        s = s.str.replace("_", " ")
-        s = s.str.replace(".", "-", regex=True, n=2)
-    res = _pd_to_datetime_coerce(s)
+    date = pd.Series(tstr, dtype=object).astype(str)
+    if force or date.str.endswith("_TAI").any():
+        date = date.str.replace("_TAI", "")
+        date = date.str.replace("_", " ")
+        date = date.str.replace(".", "-", n=2, regex=False)
+    res = _pd_to_datetime_coerce(date)
     res = res.dt.tz_localize(None)
     return res.iloc[0] if (len(res) == 1) and np.isscalar(tstr) else res
