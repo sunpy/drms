@@ -3,15 +3,13 @@ from urllib.request import urlopen
 
 import pytest
 
-import drms
-
 # Test URLs, used to check if a online site is reachable
 jsoc_testurl = "http://jsoc.stanford.edu/"
 kis_testurl = "http://drms.leibniz-kis.de/"
 
 
 def pytest_addoption(parser):
-    parser.addoption("--email", help="Export email address")
+    parser.addoption("--email", action="store", help="Export email address")
 
 
 class lazily_cached:
@@ -55,19 +53,16 @@ def pytest_runtest_setup(item):
         if not kis_reachable():
             pytest.skip("KIS is not reachable")
 
-    # Skip export tests if no email address was specified.
-    if item.get_closest_marker("export") is not None:
-        email = item.config.getoption("email")
-        if email is None:
-            pytest.skip("No email address specified; use the --email option to enable export tests")
-
 
 @pytest.fixture()
 def email(request):
     """
     Email address from --email command line option.
     """
-    return request.config.getoption("--email")
+    email = request.config.getoption("--email", None, skip=True)
+    if email is None:
+        pytest.skip("No email address specified; use the --email option to enable export tests")
+    return email
 
 
 @pytest.fixture()
@@ -75,7 +70,9 @@ def jsoc_client():
     """
     Client fixture for JSOC online tests, does not use email.
     """
-    return drms.Client(server="jsoc")
+    import drms
+
+    return drms.Client("jsoc")
 
 
 @pytest.fixture()
@@ -83,7 +80,9 @@ def jsoc_client_export(email):
     """
     Client fixture for JSOC online tests, uses email if specified.
     """
-    return drms.Client(server="jsoc", email=email)
+    import drms
+
+    return drms.Client("jsoc", email=email)
 
 
 @pytest.fixture()
@@ -91,4 +90,6 @@ def kis_client():
     """
     Client fixture for KIS online tests.
     """
-    return drms.Client(server="kis")
+    import drms
+
+    return drms.Client("kis")

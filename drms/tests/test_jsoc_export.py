@@ -4,7 +4,6 @@ import drms
 
 
 @pytest.mark.jsoc()
-@pytest.mark.export()
 @pytest.mark.remote_data()
 @pytest.mark.parametrize("method", ["url_quick", "url"])
 def test_export_asis_basic(jsoc_client_export, method):
@@ -34,7 +33,6 @@ def test_export_asis_basic(jsoc_client_export, method):
 
 
 @pytest.mark.jsoc()
-@pytest.mark.export()
 @pytest.mark.remote_data()
 def test_export_fits_basic(jsoc_client_export):
     r = jsoc_client_export.export(
@@ -63,7 +61,6 @@ def test_export_fits_basic(jsoc_client_export):
 
 
 @pytest.mark.jsoc()
-@pytest.mark.export()
 @pytest.mark.remote_data()
 def test_export_im_patch(jsoc_client_export):
     # TODO: check that this has actually done the export/processing properly?
@@ -109,7 +106,6 @@ def test_export_im_patch(jsoc_client_export):
 
 
 @pytest.mark.jsoc()
-@pytest.mark.export()
 @pytest.mark.remote_data()
 def test_export_rebin(jsoc_client_export):
     # TODO: check that this has actually done the export/processing properly?
@@ -141,7 +137,6 @@ def test_export_rebin(jsoc_client_export):
 
 
 @pytest.mark.jsoc()
-@pytest.mark.export()
 @pytest.mark.remote_data()
 def test_export_invalid_process(jsoc_client_export):
     with pytest.raises(ValueError, match="foobar is not one of the allowed processing options"):
@@ -152,7 +147,6 @@ def test_export_invalid_process(jsoc_client_export):
 
 
 @pytest.mark.jsoc()
-@pytest.mark.export()
 @pytest.mark.remote_data()
 def test_export_email(jsoc_client):
     with pytest.raises(ValueError, match="The email argument is required, when no default email address was set."):

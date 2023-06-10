@@ -69,12 +69,11 @@ jobs:
         - linux: py311-online
 
   publish:
+    # Build wheels when pushing to any branch
+    # publish_pure_python.yml will only publish if tagged ^v.*
     if: |
       (
-        github.event_name != 'pull_request' && (
-          github.ref_name != 'main' ||
-          github.event_name == 'workflow_dispatch'
-        )
+        github.event_name != 'pull_request'
       ) || (
         github.event_name == 'pull_request' &&
         contains(github.event.pull_request.labels.*.name, 'Run publish')

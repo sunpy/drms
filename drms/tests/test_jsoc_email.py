@@ -38,7 +38,6 @@ def test_email_invalid_init(email):
 
 
 @pytest.mark.jsoc()
-@pytest.mark.export()
 @pytest.mark.remote_data()
 def test_email_cmdopt_check(email):
     c = drms.Client(server="jsoc")
@@ -46,7 +45,6 @@ def test_email_cmdopt_check(email):
 
 
 @pytest.mark.jsoc()
-@pytest.mark.export()
 @pytest.mark.remote_data()
 def test_email_cmdopt_set(email):
     c = drms.Client(server="jsoc")
@@ -55,7 +53,6 @@ def test_email_cmdopt_set(email):
 
 
 @pytest.mark.jsoc()
-@pytest.mark.export()
 @pytest.mark.remote_data()
 def test_email_cmdopt_init(email):
     c = drms.Client(server="jsoc", email=email)
