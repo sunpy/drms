@@ -9,7 +9,7 @@ kis_testurl = "http://drms.leibniz-kis.de/"
 
 
 def pytest_addoption(parser):
-    parser.addoption("--email", help="Export email address")
+    parser.addoption("--email", action="store", help="Export email address")
 
 
 class lazily_cached:
@@ -55,7 +55,7 @@ def pytest_runtest_setup(item):
 
     # Skip export tests if no email address was specified.
     if item.get_closest_marker("export") is not None:
-        email = item.config.getoption("email")
+        email = item.config.getoption("email", None)
         if email is None:
             pytest.skip("No email address specified; use the --email option to enable export tests")
 
@@ -65,12 +65,7 @@ def email(request):
     """
     Email address from --email command line option.
     """
-    try:
-        getattr(request.config, "email")
-    except AttributeError:
-        pytest.skip("No email address specified; use the --email option to enable export tests")
-    email = request.config.getoption("--email")
-    return email
+    return request.config.getoption("--email", None)
 
 
 @pytest.fixture
