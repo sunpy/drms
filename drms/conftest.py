@@ -3,8 +3,6 @@ from urllib.request import urlopen
 
 import pytest
 
-import drms
-
 # Test URLs, used to check if a online site is reachable
 jsoc_testurl = "http://jsoc.stanford.edu/"
 kis_testurl = "http://drms.leibniz-kis.de/"
@@ -67,7 +65,12 @@ def email(request):
     """
     Email address from --email command line option.
     """
-    return request.config.getoption("--email")
+    try:
+        getattr(request.config, "email")
+    except AttributeError:
+        pytest.skip("No email address specified; use the --email option to enable export tests")
+    email = request.config.getoption("--email")
+    return email
 
 
 @pytest.fixture
@@ -75,6 +78,8 @@ def jsoc_client():
     """
     Client fixture for JSOC online tests, does not use email.
     """
+    import drms
+
     return drms.Client("jsoc")
 
 
@@ -83,6 +88,8 @@ def jsoc_client_export(email):
     """
     Client fixture for JSOC online tests, uses email if specified.
     """
+    import drms
+
     return drms.Client("jsoc", email=email)
 
 
@@ -91,4 +98,6 @@ def kis_client():
     """
     Client fixture for KIS online tests.
     """
+    import drms
+
     return drms.Client("kis")
