@@ -16,7 +16,7 @@ client = drms.Client()
 ###############################################################################
 # Get all available HMI series and print their names, prime keys and notes.
 
-hmi_series = client.series(r"hmi\.", full=True)
+hmi_series = client.series(regex=r"hmi\.", full=True)
 
 # Print series names, prime-keys (pkeys) and notes
 for series in hmi_series.index:

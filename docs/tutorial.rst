@@ -223,7 +223,7 @@ The following, for example, only downloads the first file of the request:
 
 .. code-block:: python
 
-    >>> export_request.download(out_dir, 0)  # doctest: +REMOTE_DATA
+    >>> export_request.download(out_dir, index=0)  # doctest: +REMOTE_DATA
     Downloading file 1 of 1...
         record: hmi.V_45s[2016.04.01_00:00:00_TAI][2]{Dopplergram}
       filename: Dopplergram.fits

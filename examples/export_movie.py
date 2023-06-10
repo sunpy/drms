@@ -59,6 +59,6 @@ print(f"\nRequest URL: {result.request_url}")
 print(f"{len(result.urls)} file(s) available for download.\n")
 
 # Download movie file only: index=0
-result.download(out_dir, 0)
+result.download(out_dir, index=0)
 print("Download finished.")
 print(f"\nDownload directory:\n  {out_dir.resolve()}\n")
