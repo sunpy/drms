@@ -53,19 +53,16 @@ def pytest_runtest_setup(item):
         if not kis_reachable():
             pytest.skip("KIS is not reachable")
 
-    # Skip export tests if no email address was specified.
-    if item.get_closest_marker("export") is not None:
-        email = item.config.getoption("email", None)
-        if email is None:
-            pytest.skip("No email address specified; use the --email option to enable export tests")
-
 
 @pytest.fixture
 def email(request):
     """
     Email address from --email command line option.
     """
-    return request.config.getoption("--email", None)
+    email = request.config.getoption("--email", None, skip=True)
+    if email is None:
+        pytest.skip("No email address specified; use the --email option to enable export tests")
+    return email
 
 
 @pytest.fixture
