@@ -1,3 +1,4 @@
+import os
 from urllib.error import URLError, HTTPError
 from urllib.request import urlopen
 
@@ -6,10 +7,6 @@ import pytest
 # Test URLs, used to check if a online site is reachable
 jsoc_testurl = "http://jsoc.stanford.edu/"
 kis_testurl = "http://drms.leibniz-kis.de/"
-
-
-def pytest_addoption(parser):
-    parser.addoption("--email", action="store", help="Export email address")
 
 
 class lazily_cached:
@@ -55,13 +52,13 @@ def pytest_runtest_setup(item):
 
 
 @pytest.fixture()
-def email(request):
+def email():
     """
-    Email address from --email command line option.
+    Email address for tests.
     """
-    email = request.config.getoption("--email", None, skip=True)
+    email = os.environ.get("JSOC_EMAIL", None)
     if email is None:
-        pytest.skip("No email address specified; use the --email option to enable export tests")
+        pytest.skip("No email address specified; use the JSOC_EMAIL environmental variable to enable export tests")
     return email
 
 
@@ -72,7 +69,7 @@ def jsoc_client():
     """
     import drms
 
-    return drms.Client("jsoc")
+    return drms.Client(server="jsoc")
 
 
 @pytest.fixture()
@@ -82,7 +79,7 @@ def jsoc_client_export(email):
     """
     import drms
 
-    return drms.Client("jsoc", email=email)
+    return drms.Client(server="jsoc", email=email)
 
 
 @pytest.fixture()
@@ -92,4 +89,4 @@ def kis_client():
     """
     import drms
 
-    return drms.Client("kis")
+    return drms.Client(server="kis")
