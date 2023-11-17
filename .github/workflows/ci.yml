@@ -48,8 +48,8 @@ jobs:
     with:
       submodules: false
       pytest: false
+      default_python: '3.9'
       toxdeps: "tox-pypi-filter"
-      cache-key: docs-${{ github.run_id }}
       libraries: |
         apt:
           - graphviz
@@ -67,6 +67,7 @@ jobs:
       posargs: -n 1 --dist loadgroup
       envs: |
         - linux: py311-online
+        - linux: py311-sunpy
 
   publish:
     # Build wheels when pushing to any branch
