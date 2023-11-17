@@ -13,31 +13,6 @@ __all__ = ["JsocInfoConstants", "HttpJsonRequest", "HttpJsonClient"]
 class JsocInfoConstants(Enum):
     """
     Constants for DRMS queries.
-
-    Attributes
-    ----------
-    all
-        ``'**ALL**'``
-    none
-        ``'**NONE**'``
-    recdir
-        ``'*recdir*'``
-    dirmtime
-        ``'*dirmtime*'``
-    logdir
-        ``'*logdir*'``
-    recnum
-        ``'*recnum*'``
-    sunum
-        ``'*sunum*'``
-    size
-        ``'*size*'``
-    online
-        ``'*online*'``
-    retain
-        ``'*retain*'``
-    archive
-        ``'*archive*'``
     """
 
     all = "**ALL**"  # NOQA: A003

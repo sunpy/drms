@@ -87,7 +87,7 @@ class ServerConfig:
         return f'<ServerConfig: {self._d.get("name")}>'
 
     def __dir__(self):
-        return dir(type(self)) + list(self.__dict__.keys()) + self._valid_keys
+        return dir(type(self)) + list(self.__dict__.keys()) + list(self._valid_keys)
 
     def __getattr__(self, name):
         if name in self._valid_keys:
