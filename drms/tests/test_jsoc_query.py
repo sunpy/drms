@@ -82,7 +82,7 @@ def test_query_recindex(jsoc_client):
 
 def test_query_invalid_server():
     cfg = ServerConfig(name="TEST")
-    c = drms.Client(server=cfg)
+    c = drms.Client(cfg)
     with pytest.raises(DrmsOperationNotSupported):
         c.query("hmi.v_45s[2013.07.03_08:42_TAI/3m]", pkeys=True)
 

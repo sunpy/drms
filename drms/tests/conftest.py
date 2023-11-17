@@ -69,7 +69,7 @@ def jsoc_client():
     """
     import drms
 
-    return drms.Client(server="jsoc")
+    return drms.Client("jsoc")
 
 
 @pytest.fixture()
@@ -79,7 +79,7 @@ def jsoc_client_export(email):
     """
     import drms
 
-    return drms.Client(server="jsoc", email=email)
+    return drms.Client("jsoc", email=email)
 
 
 @pytest.fixture()
@@ -89,4 +89,4 @@ def kis_client():
     """
     import drms
 
-    return drms.Client(server="kis")
+    return drms.Client("kis")

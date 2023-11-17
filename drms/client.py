@@ -597,8 +597,8 @@ class Client:
         Default email address used data export requests.
     """
 
-    def __init__(self, *, server="jsoc", email=None):
-        self._json = HttpJsonClient(server=server)
+    def __init__(self, server="jsoc", *, email=None):
+        self._json = HttpJsonClient(server)
         self._info_cache = {}
         self.email = email  # use property for email validation
 
@@ -814,13 +814,13 @@ class Client:
             raise ValueError("Email address is invalid or not registered")
         self._email = value
 
-    def series(self, *, regex=None, full=False):
+    def series(self, regex=None, *, full=False):
         """
         List available data series.
 
         Parameters
         ----------
-        regex : str or None
+        regex : str or None, optional
             Regular expression, used to select a subset of the
             available series. If set to None, a list of all available
             series is returned.

@@ -76,7 +76,7 @@ class HttpJsonClient:
         Defaults to JSOC.
     """
 
-    def __init__(self, *, server="jsoc"):
+    def __init__(self, server="jsoc"):
         if isinstance(server, ServerConfig):
             self._server = server
         else:
@@ -93,14 +93,15 @@ class HttpJsonClient:
     def server(self):
         return self._server
 
-    def show_series(self, *, ds_filter=None):
+    def show_series(self, ds_filter=None):
         """
         List available data series.
 
         Parameters
         ----------
-        ds_filter : str
+        ds_filter : str, None, optional
             Name filter regexp.
+            Default is None, which returns all available series.
 
         Returns
         -------
@@ -112,7 +113,7 @@ class HttpJsonClient:
         req = self._json_request(self._server.url_show_series + query)
         return req.data
 
-    def show_series_wrapper(self, *, ds_filter=None, info=False):
+    def show_series_wrapper(self, ds_filter=None, *, info=False):
         """
         List available data series.
 
@@ -123,8 +124,9 @@ class HttpJsonClient:
 
         Parameters
         ----------
-        ds_filter : str
+        ds_filter : str, None, optional
             Name filter regexp.
+            Default is None, which returns all available series.
         info : bool
             If False (default), the result only contains series names.
             If set to True, the result includes a description for each

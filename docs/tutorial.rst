@@ -224,11 +224,8 @@ The following, for example, only downloads the first file of the request:
 .. code-block:: python
 
     >>> export_request.download(out_dir, index=0)  # doctest: +REMOTE_DATA
-    Downloading file 1 of 1...
-        record: hmi.V_45s[2016.04.01_00:00:00_TAI][2]{Dopplergram}
-      filename: Dopplergram.fits
-      -> downloads/hmi.v_45s.20160401_000000_TAI.2.Dopplergram.fits
-    ...
+                                                  record                                                url                                           download
+    0  hmi.V_45s[2016.04.01_00:00:00_TAI][2]{Dopplerg...  http://jsoc.stanford.edu/SUM58/D803708321/S000...  ...
 
 Being a direct ``as-is`` export, there are no keyword data written to any FITS headers.
 If you need keyword data added to the headers, you have to use the ``fits`` export protocol instead, which is described below.
