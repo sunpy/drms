@@ -13,7 +13,6 @@ from drms.utils import _extract_series_name, _pd_to_datetime_coerce, _pd_to_nume
         ("aa, bb, cc", ["aa", "bb", "cc"]),
         (" aa,bb,  cc, dd", ["aa", "bb", "cc", "dd"]),
         ("aa,\tbb,cc, dd ", ["aa", "bb", "cc", "dd"]),
-        ("aa,\tbb,cc, dd ", ["aa", "bb", "cc", "dd"]),
         ([], []),
         (["a", "b", "c"], ["a", "b", "c"]),
         (("a", "b", "c"), ["a", "b", "c"]),

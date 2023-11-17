@@ -48,7 +48,7 @@ def to_datetime(tstr, *, force=False):
     The current implementation only tries to convert typical HMI time
     strings, with a format like "%Y.%m.%d_%H:%M:%S_TAI", to an ISO time
     string, that is then parsed by pandas. Note that "_TAI", as well as
-    other timezone indentifiers like "Z", will not be taken into
+    other timezone identifiers like "Z", will not be taken into
     account, so the result will be a naive timestamp without any
     associated timezone.
 

@@ -108,7 +108,7 @@ docstring-quotes = "double"
 
 [tool.codespell]
 skip = "*.asdf,*.fits,*.fts,*.header,*.json,*.xsh,*cache*,*egg*,*extern*,.git,.idea,.tox,_build,*truncated,*.svg,.asv_env,.history"
-ignore-words-list = "sav,"
+ignore-words-list = "sav,requestor"
 
 [ tool.gilesbot ]
   [ tool.gilesbot.pull_requests ]

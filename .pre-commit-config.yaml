@@ -11,10 +11,10 @@ repos:
         args: ['--in-place', '--remove-all-unused-imports', '--remove-unused-variable']
         exclude: ".*(.fits|.fts|.fit|.txt|tca.*|extern.*|.rst|.md|docs/conf.py)$"
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.0.272'
+    rev: 'v0.1.6'
     hooks:
       - id: ruff
-        args: ['--fix']
+        args: ['--fix', '--unsafe-fixes']
   -   repo: https://github.com/psf/black
       rev: 23.11.0
       hooks:
@@ -39,7 +39,7 @@ repos:
       - id: check-yaml
       - id: debug-statements
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.4
+    rev: v2.2.6
     hooks:
       - id: codespell
         additional_dependencies:

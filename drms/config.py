@@ -38,7 +38,7 @@ class ServerConfig:
         list of available entries).
     """
 
-    _valid_keys = [
+    _valid_keys = (
         "name",
         "cgi_baseurl",
         "cgi_show_series",
@@ -55,7 +55,7 @@ class ServerConfig:
         "encoding",
         "http_download_baseurl",
         "ftp_download_baseurl",
-    ]
+    )
 
     def __init__(self, config=None, **kwargs):
         self._d = d = config.copy() if config is not None else {}

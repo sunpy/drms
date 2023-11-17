@@ -307,10 +307,10 @@ class HttpJsonClient:
             values, the first n records of the record set are returned,
             for negative values the last abs(n) records. If set to None
             (default), no limit is applied.
-        requestor : str, None or bool
+        requester : str, None or bool
             Export user ID. Default is None, in which case the user
             name is determined from the email address. If set to False,
-            the requestor argument will be omitted in the export
+            the requester argument will be omitted in the export
             request.
 
         Returns
@@ -333,7 +333,7 @@ class HttpJsonClient:
         filenamefmt=None,
         n=None,
         process=None,
-        requestor=None,
+        requester=None,
     ):
         method = method.lower()
         method_list = ["url_quick", "url", "url-tar"]
@@ -417,10 +417,10 @@ class HttpJsonClient:
             processes = "|".join([f"{k},{v}" for k, v in process_strings.items()])
             d["process=n"] = f'{d["process=n"]}|{processes}'
 
-        if requestor is None:
-            d["requestor"] = notify.split("@")[0]
-        elif requestor is not False:
-            d["requestor"] = requestor
+        if requester is None:
+            d["requester"] = notify.split("@")[0]
+        elif requester is not False:
+            d["requester"] = requester
 
         query = "?" + urlencode(d)
         return self._server.url_jsoc_fetch + query

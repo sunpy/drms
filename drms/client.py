@@ -132,8 +132,8 @@ class ExportRequest:
 
     _status_code_ok = 0
     _status_code_notfound = 6
-    _status_codes_pending = [1, 2, _status_code_notfound]
-    _status_codes_ok_or_pending = [_status_code_ok, *_status_codes_pending]
+    _status_codes_pending = (1, 2, _status_code_notfound)
+    _status_codes_ok_or_pending = (_status_code_ok, *_status_codes_pending)
 
     def __init__(self, d, client):
         self._client = client
@@ -155,8 +155,7 @@ class ExportRequest:
     def _parse_data(d):
         keys = ["record", "filename"]
         res = None if d is None else [(di.get(keys[0]), di.get(keys[1])) for di in d]
-        res = pd.DataFrame(res, columns=keys)
-        return res
+        return pd.DataFrame(res, columns=keys)
 
     def _update_status(self, *, d=None):
         if d is None and self._requestid is not None:
@@ -738,7 +737,7 @@ class Client:
         return fname
 
     # Export color table names, from (internal) series "jsoc.Color_Tables"
-    _export_color_table_names = [
+    _export_color_table_names = (
         "HMI_mag.lut",
         "aia_131.lut",
         "aia_1600.lut",
@@ -754,10 +753,10 @@ class Client:
         "bb.sao",
         "grey.sao",
         "heat.sao",
-    ]
+    )
 
     # Export scaling types, from (internal) series "jsoc.Color_Tables"
-    _export_scaling_names = ["LOG", "MINMAX", "MINMAXGIVEN", "SQRT", "mag"]
+    _export_scaling_names = ("LOG", "MINMAX", "MINMAXGIVEN", "SQRT", "mag")
 
     @staticmethod
     def _validate_export_protocol_args(protocol_args):
@@ -863,7 +862,7 @@ class Client:
                 return pd.DataFrame(columns=keys)
             recs = []
             for it in d["seriesList"]:
-                name, info = tuple(it.items())[0]
+                name, info = next(iter(it.items()))
                 note = info.get("description", "")
                 recs.append((name, note))
             return pd.DataFrame(recs, columns=keys)
@@ -1088,7 +1087,7 @@ class Client:
         filenamefmt=None,
         n=None,
         email=None,
-        requestor=None,
+        requester=None,
         process=None,
     ):
         """
@@ -1147,10 +1146,10 @@ class Client:
             arguments, are validated by the `~drms.client.Client`. In the case of invalid
             or malformed processing arguments, JSOC may still return
             an unprocessed image without the export request failing.
-        requestor : str, None or bool
+        requester : str, None or bool
             Export user ID. Default is None, in which case the user
             name is determined from the email address. If set to False,
-            the requestor argument will be omitted in the export
+            the requester argument will be omitted in the export
             request.
 
         Returns
@@ -1181,7 +1180,7 @@ class Client:
             protocol_args=protocol_args,
             filenamefmt=filenamefmt,
             n=n,
-            requestor=requestor,
+            requester=requester,
             process=process,
         )
         return ExportRequest(d, client=self)

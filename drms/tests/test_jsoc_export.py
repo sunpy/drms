@@ -11,7 +11,7 @@ def test_export_asis_basic(jsoc_client_export, method):
         "hmi.v_avg120[2150]{mean,power}",
         protocol="as-is",
         method=method,
-        requestor=False,
+        requester=False,
     )
 
     assert isinstance(r, drms.ExportRequest)
@@ -39,7 +39,7 @@ def test_export_fits_basic(jsoc_client_export):
         "hmi.sharp_720s[4864][2014.11.30_00:00_TAI]{continuum, magnetogram}",
         protocol="fits",
         method="url",
-        requestor=False,
+        requester=False,
     )
 
     assert isinstance(r, drms.ExportRequest)
@@ -86,7 +86,7 @@ def test_export_im_patch(jsoc_client_export):
         method="url",
         protocol="fits",
         process=process,
-        requestor=False,
+        requester=False,
     )
 
     assert isinstance(req, drms.ExportRequest)
@@ -117,7 +117,7 @@ def test_export_rebin(jsoc_client_export):
         method="url",
         protocol="fits",
         process={"rebin": {"method": "boxcar", "scale": 0.25}},
-        requestor=False,
+        requester=False,
     )
 
     assert isinstance(req, drms.ExportRequest)
