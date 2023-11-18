@@ -1,4 +1,4 @@
-.. _changelog:
+.. _drms-changelog:
 
 **************
 Full Changelog

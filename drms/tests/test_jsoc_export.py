@@ -3,15 +3,15 @@ import pytest
 import drms
 
 
-@pytest.mark.jsoc
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.remote_data()
 @pytest.mark.parametrize("method", ["url_quick", "url"])
 def test_export_asis_basic(jsoc_client_export, method):
     r = jsoc_client_export.export(
         "hmi.v_avg120[2150]{mean,power}",
         protocol="as-is",
         method=method,
-        requestor=False,
+        requester=False,
     )
 
     assert isinstance(r, drms.ExportRequest)
@@ -32,14 +32,14 @@ def test_export_asis_basic(jsoc_client_export, method):
         assert url.endswith("mean.fits") or url.endswith("power.fits")
 
 
-@pytest.mark.jsoc
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.remote_data()
 def test_export_fits_basic(jsoc_client_export):
     r = jsoc_client_export.export(
         "hmi.sharp_720s[4864][2014.11.30_00:00_TAI]{continuum, magnetogram}",
         protocol="fits",
         method="url",
-        requestor=False,
+        requester=False,
     )
 
     assert isinstance(r, drms.ExportRequest)
@@ -60,8 +60,8 @@ def test_export_fits_basic(jsoc_client_export):
         assert url.endswith("continuum.fits") or url.endswith("magnetogram.fits")
 
 
-@pytest.mark.jsoc
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.remote_data()
 def test_export_im_patch(jsoc_client_export):
     # TODO: check that this has actually done the export/processing properly?
     # NOTE: processing exports seem to fail silently on the server side if
@@ -79,14 +79,14 @@ def test_export_im_patch(jsoc_client_export):
             "y": -246,
             "width": 345.6,
             "height": 345.6,
-        }
+        },
     }
     req = jsoc_client_export.export(
         "aia.lev1_euv_12s[2015-10-17T04:33:30.000/1m@12s][171]{image}",
         method="url",
         protocol="fits",
         process=process,
-        requestor=False,
+        requester=False,
     )
 
     assert isinstance(req, drms.ExportRequest)
@@ -105,8 +105,8 @@ def test_export_im_patch(jsoc_client_export):
         assert url.endswith("image.fits")
 
 
-@pytest.mark.jsoc
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.remote_data()
 def test_export_rebin(jsoc_client_export):
     # TODO: check that this has actually done the export/processing properly?
     # NOTE: processing exports seem to fail silently on the server side if
@@ -117,7 +117,7 @@ def test_export_rebin(jsoc_client_export):
         method="url",
         protocol="fits",
         process={"rebin": {"method": "boxcar", "scale": 0.25}},
-        requestor=False,
+        requester=False,
     )
 
     assert isinstance(req, drms.ExportRequest)
@@ -136,17 +136,18 @@ def test_export_rebin(jsoc_client_export):
         assert url.endswith("magnetogram.fits")
 
 
-@pytest.mark.jsoc
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.remote_data()
 def test_export_invalid_process(jsoc_client_export):
     with pytest.raises(ValueError, match="foobar is not one of the allowed processing options"):
         jsoc_client_export.export(
-            "aia.lev1_euv_12s[2015-10-17T04:33:30.000/1m@12s][171]{image}", process={"foobar": {}}
+            "aia.lev1_euv_12s[2015-10-17T04:33:30.000/1m@12s][171]{image}",
+            process={"foobar": {}},
         )
 
 
-@pytest.mark.jsoc
-@pytest.mark.remote_data
+@pytest.mark.jsoc()
+@pytest.mark.remote_data()
 def test_export_email(jsoc_client):
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="The email argument is required, when no default email address was set."):
         jsoc_client.export("hmi.v_45s[2016.04.01_TAI/1d@6h]{Dopplergram}")

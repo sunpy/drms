@@ -20,22 +20,24 @@ More information, including a detailed tutorial, is available in the `Documentat
 
 Getting Help
 ------------
+
 For more information or to ask questions about ``drms``, check out:
 
--  `drms Documentation <https://docs.sunpy.org/projects/drms/en/latest/>`__
-
-.. _drms Documentation: https://docs.sunpy.org/projects/drms/en/latest/
+- `drms Documentation <https://docs.sunpy.org/projects/drms/en/latest/>`__
+- `SunPy Chat <https://app.element.io/#/room/#sunpy:openastronomy.org>`__
 
 Contributing
 ------------
-If you would like to get involved, start by joining the `SunPy Chat`_ and read our `Newcomers' guide <https://docs.sunpy.org/en/latest/dev_guide/newcomers.html>`__.
+
+If you would like to get involved, read our `Newcomers' guide <https://docs.sunpy.org/en/latest/dev_guide/newcomers.html>`__.
+
 Help is always welcome so let us know what you like to work on, or check out the `issues page <https://github.com/sunpy/drms/issues>`__ for a list of known outstanding items.
 
 Citation
 --------
 If you use ``drms`` in your work, please cite our `paper <https://doi.org/10.21105/joss.01614>`__.
 
-.. code :: bibtex
+.. code-block:: bibtex
 
     @article{Glogowski2019,
       doi = {10.21105/joss.01614},
@@ -57,6 +59,5 @@ When you are interacting with the SunPy community you are asked to follow our `c
 
 Acknowledgements
 ----------------
-Kolja Glogowski has received funding from the European Research Council under the European Union's Seventh Framework Programme (FP/2007-2013) / ERC Grant Agreement no. 307117.
 
-.. _SunPy Chat: https://openastronomy.element.io/#/room/#sunpy:openastronomy.org
+Kolja Glogowski has received funding from the European Research Council under the European Union's Seventh Framework Programme (FP/2007-2013) / ERC Grant Agreement no. 307117.

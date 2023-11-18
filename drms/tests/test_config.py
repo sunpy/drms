@@ -20,7 +20,7 @@ def test_create_config_basic():
 
 
 def test_create_config_missing_name():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match='Server config entry "name" is missing'):
         ServerConfig()
 
 
@@ -105,7 +105,7 @@ def test_config_kis():
 
 
 @pytest.mark.parametrize(
-    "server_name, operation, expected",
+    ("server_name", "operation", "expected"),
     [
         ("jsoc", "series", True),
         ("jsoc", "info", True),
@@ -125,32 +125,32 @@ def test_supported(server_name, operation, expected):
 
 
 @pytest.mark.parametrize(
-    "server_name, operation",
+    ("server_name", "operation"),
     [("jsoc", "bar"), ("kis", "foo")],
 )
 def test_supported_invalid_operation(server_name, operation):
     cfg = _server_configs[server_name]
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Unknown operation:"):
         cfg.check_supported(operation)
 
 
 def test_create_config_invalid_key():
-    with pytest.raises(ValueError):
-        cfg = ServerConfig(foo="bar")
+    with pytest.raises(ValueError, match="Invalid server config key: foo"):
+        ServerConfig(foo="bar")
 
 
 def test_getset_attr():
     cfg = ServerConfig(name="TEST")
-    assert getattr(cfg, "name") == "TEST"
-    assert getattr(cfg, "__dict__") == {"_d": {"encoding": "latin1", "name": "TEST"}}
-    with pytest.raises(AttributeError):
-        getattr(cfg, "foo")
-    setattr(cfg, "name", "NewTest")
-    assert getattr(cfg, "name") == "NewTest"
-    with pytest.raises(ValueError):
-        setattr(cfg, "name", 123)
-    setattr(cfg, "__sizeof__", 127)
-    assert getattr(cfg, "__sizeof__") == 127
+    assert cfg.name == "TEST"
+    assert cfg.__dict__ == {"_d": {"encoding": "latin1", "name": "TEST"}}
+    with pytest.raises(AttributeError, match="'ServerConfig' object has no attribute 'foo'"):
+        _ = cfg.foo
+    cfg.name = "NewTest"
+    assert cfg.name == "NewTest"
+    with pytest.raises(ValueError, match="name config value must be a string"):
+        cfg.name = 123
+    cfg.__sizeof__ = 127
+    assert cfg.__sizeof__ == 127
 
 
 def test_to_dict():
@@ -167,4 +167,4 @@ def test_inbuilt_dir():
     assert isinstance(list_attr, list)
     assert set(dir(object)).issubset(set(list_attr))
     assert set(valid_keys).issubset(set(list_attr))
-    assert set(list(cfg.__dict__.keys())).issubset(set(list_attr))
+    assert set(cfg.__dict__.keys()).issubset(set(list_attr))

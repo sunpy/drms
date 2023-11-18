@@ -10,15 +10,15 @@ Note that the 'as-is' protocol should be used instead of 'fits', if
 record keywords in the FITS headers are not needed, as it greatly
 reduces the server load.
 """
-
 import os
+from pathlib import Path
 
 import drms
 
 ###############################################################################
-# Create DRMS client, uses the JSOC baseurl by default, set debug=True to see the DRMS query URLs.
+# First we will create a `drms.Client`, using the JSOC baseurl.
 
-client = drms.Client(verbose=True)
+client = drms.Client()
 
 # This example requires a registered export email address. You can register
 # JSOC exports at: http://jsoc.stanford.edu/ajax/register_email.html
@@ -29,12 +29,10 @@ email = os.environ["JSOC_EMAIL"]
 # FITS header. This greatly reduces the server load!
 export_protocol = "fits"
 
-# Download directory
-out_dir = os.path.join("downloads")
-
 # Create download directory if it does not exist yet.
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
+out_dir = Path("downloads")
+if not out_dir.exists():
+    Path(out_dir).mkdir(parents=True)
 
 ###############################################################################
 # Construct the DRMS query string: "Series[harpnum][timespan]{data segments}"
@@ -53,4 +51,4 @@ print(f"{int(len(result.urls))} file(s) available for download.\n")
 # Download selected files.
 result.download(out_dir)
 print("Download finished.")
-print(f'\nDownload directory:\n  "{os.path.abspath(out_dir)}"\n')
+print(f'\nDownload directory:\n  "{out_dir.absolute()}"\n')

@@ -11,15 +11,15 @@ table, color scaling or pixel binning. For a list of available color
 tables, see http://jsoc.stanford.edu/ajax/exportdata.html and select the
 JPEG protocol.
 """
-
 import os
+from pathlib import Path
 
 import drms
 
 ###############################################################################
-# Create DRMS client, uses the JSOC baseurl by default, set debug=True to see the DRMS query URLs.
+# First we will create a `drms.Client`, using the JSOC baseurl.
 
-client = drms.Client(verbose=True)
+client = drms.Client()
 
 # This example requires a registered export email address. You can register
 # JSOC exports at: http://jsoc.stanford.edu/ajax/register_email.html
@@ -35,12 +35,10 @@ jpg_args = {
     "size": 2,  # binning (1 -> 4k, 2 -> 2k, 4 -> 1k)
 }
 
-# Download directory
-out_dir = "downloads"
-
 # Create download directory if it does not exist yet.
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
+out_dir = Path("downloads")
+if not out_dir.exists():
+    Path(out_dir).mkdir(parents=True)
 
 ###############################################################################
 # Construct the DRMS query string: "Series[timespan][wavelength]{data segments}"
@@ -59,4 +57,4 @@ print(f"{int(len(result.urls))} file(s) available for download.\n")
 # Download selected files.
 result.download(out_dir)
 print("Download finished.")
-print(f"\nDownload directory:\n  {os.path.abspath(out_dir)}\n")
+print(f"\nDownload directory:\n  {out_dir.resolve()}\n")

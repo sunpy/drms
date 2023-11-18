@@ -38,7 +38,7 @@ class ServerConfig:
         list of available entries).
     """
 
-    _valid_keys = [
+    _valid_keys = (
         "name",
         "cgi_baseurl",
         "cgi_show_series",
@@ -55,7 +55,7 @@ class ServerConfig:
         "encoding",
         "http_download_baseurl",
         "ftp_download_baseurl",
-    ]
+    )
 
     def __init__(self, config=None, **kwargs):
         self._d = d = config.copy() if config is not None else {}
@@ -87,13 +87,12 @@ class ServerConfig:
         return f'<ServerConfig: {self._d.get("name")}>'
 
     def __dir__(self):
-        return dir(type(self)) + list(self.__dict__.keys()) + self._valid_keys
+        return dir(type(self)) + list(self.__dict__.keys()) + list(self._valid_keys)
 
     def __getattr__(self, name):
         if name in self._valid_keys:
             return self._d.get(name)
-        else:
-            return object.__getattribute__(self, name)
+        return object.__getattribute__(self, name)
 
     def __setattr__(self, name, value):
         if name in self._valid_keys:
@@ -115,16 +114,15 @@ class ServerConfig:
         """
         if op == "series":
             return (self.cgi_show_series is not None) or (self.cgi_show_series_wrapper is not None)
-        elif op == "info":
+        if op == "info":
             return self.cgi_jsoc_info is not None
-        elif op == "query":
+        if op == "query":
             return self.cgi_jsoc_info is not None
-        elif op == "email":
+        if op == "email":
             return self.cgi_check_address is not None
-        elif op == "export":
+        if op == "export":
             return (self.cgi_jsoc_info is not None) and (self.cgi_jsoc_fetch is not None)
-        else:
-            raise ValueError(f"Unknown operation: {op!r}")
+        raise ValueError(f"Unknown operation: {op!r}")
 
 
 def register_server(config):
@@ -154,7 +152,7 @@ register_server(
         show_series_wrapper_dbhost="hmidb2",
         http_download_baseurl="http://jsoc.stanford.edu/",
         ftp_download_baseurl="ftp://pail.stanford.edu/export/",
-    )
+    ),
 )
 
 # Register KIS DRMS server.
@@ -164,5 +162,5 @@ register_server(
         cgi_baseurl="http://drms.leibniz-kis.de/cgi-bin/",
         cgi_show_series="show_series",
         cgi_jsoc_info="jsoc_info",
-    )
+    ),
 )

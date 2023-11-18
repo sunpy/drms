@@ -5,15 +5,14 @@ import os
 
 import matplotlib.pyplot as plt
 import pandas
-from matplotlib import dates
-
 from astropy.io import fits
+from matplotlib import dates
 
 import drms
 
 pandas_version = tuple(map(int, pandas.__version__.split(".")[:2]))
 if pandas_version >= (0, 22):
-    # Since pandas v0.22, we need to explicitely register matplotlib
+    # Since pandas v0.22, we need to explicitly register matplotlib
     # converters to use pandas.Timestamp objects in plots.
     pandas.plotting.register_matplotlib_converters()
 
@@ -68,8 +67,8 @@ kwlist = [
     "CRVAL2",
 ]
 
-# Create DRMS client, use debug=True to see the query URLs.
-c = drms.Client(verbose=True)
+# Create DRMS client
+c = drms.Client()
 
 print("Querying metadata...")
 kw = c.query(f"{series}[{int(sharpnum)}]", key=kwlist, rec_index=True)

@@ -11,14 +11,14 @@ import matplotlib.pyplot as plt
 import drms
 
 ###############################################################################
-# Create DRMS client, uses the JSOC baseurl by default, set debug=True to see the DRMS query URLs.
+# First we will create a `drms.Client`, using the JSOC baseurl.
 
 client = drms.Client()
 
 ###############################################################################
 # Construct the DRMS query string: "Series[timespan]"
 
-qstr = f"hmi.ic_720s[2010.05.01_TAI-2016.04.01_TAI@6h]"
+qstr = "hmi.ic_720s[2010.05.01_TAI-2016.04.01_TAI@6h]"
 
 # Send request to the DRMS server
 print("Querying keyword data...\n -> {qstr}")

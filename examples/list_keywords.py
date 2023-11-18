@@ -9,15 +9,18 @@ This example shows how to display the keywords for a HMI series.
 import drms
 
 ###############################################################################
-# Make the basic query.
+# First we will create a `drms.Client`, using the JSOC baseurl.
 
-# Create DRMS JSON client, use debug=True to see the query URLs
 client = drms.Client()
 
+###############################################################################
 # Query series info
+
 series_info = client.info("hmi.v_45s")
 
+###############################################################################
 # Print keyword info
+
 print(f"Listing keywords for {series_info.name}:\n")
 for keyword in sorted(series_info.keywords.index):
     keyword_info = series_info.keywords.loc[keyword]

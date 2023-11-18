@@ -1,13 +1,15 @@
-.. _tutorial:
+.. _drms-tutorial:
 
 ********
 Tutorial
 ********
+
 This tutorial gives an introduction on how to use the ``drms`` Python library.
 More detailed information on the different classes and functions can be found in the :ref:`API Reference <reference>`.
 
 Basic usage
 ===========
+
 We start with looking at data series that are available from `JSOC <http://jsoc.stanford.edu/>`__ and perform some basic DRMS queries to obtain keyword data (metadata) and segment file (data) locations.
 This is essentially what you can do on the `JSOC Lookdata <http://jsoc.stanford.edu/ajax/lookdata.html>`__ website.
 
@@ -144,6 +146,7 @@ Export requests can also be useful, if you want to download more than only one o
 
 Data export requests
 --------------------
+
 Data export requests can be interactively built and submitted on the `JSOC Export Data <http://jsoc.stanford.edu/ajax/exportdata.html>`__ webpage, where you can also find more information about the different export options that are available.
 Note that a registered email address is required to for submitting export requests.
 You can register your email address on the `JSOC email registration <http://jsoc.stanford.edu/ajax/register_email.html>`__ webpage.
@@ -164,9 +167,9 @@ First, we start again with importing the ``drms`` library and creating a `~drms.
 .. code-block:: python
 
     >>> import drms
-    >>> client = drms.Client(email=email_address, verbose=True)  # doctest: +REMOTE_DATA
+    >>> client = drms.Client(email=email_address)  # doctest: +REMOTE_DATA
 
-In this case we also provide an email address (which needs to be already registered at JSOC) and turn on status messages by enabling the ``verbose`` flag.
+In this case we also provide an email address (which needs to be already registered at JSOC).
 
 We now create a download directory for our downloads, in case it does not exist yet:
 
@@ -184,6 +187,7 @@ In the following examples we confine ourselves to the methods ``url_quick`` and 
 
 url_quick / as-is
 ^^^^^^^^^^^^^^^^^
+
 The most direct and quickest way of downloading files is the combination ``url_quick`` / ``as-is``.
 This (in most cases) does not create an actual export request, where you would have to wait for it being finished, but rather compiles a list of files from your data export query, which can then be directly downloaded.
 This also means that this kind of export usually has no ``ExportID`` assigned to it.
@@ -219,18 +223,16 @@ The following, for example, only downloads the first file of the request:
 
 .. code-block:: python
 
-    >>> export_request.download(out_dir, 0)  # doctest: +REMOTE_DATA
-    Downloading file 1 of 1...
-        record: hmi.V_45s[2016.04.01_00:00:00_TAI][2]{Dopplergram}
-      filename: Dopplergram.fits
-      -> downloads/hmi.v_45s.20160401_000000_TAI.2.Dopplergram.fits
-    ...
+    >>> export_request.download(out_dir, index=0)  # doctest: +REMOTE_DATA
+                                                  record                                                url                                           download
+    0  hmi.V_45s[2016.04.01_00:00:00_TAI][2]{Dopplerg...  http://jsoc.stanford.edu/SUM58/D803708321/S000...  ...
 
 Being a direct ``as-is`` export, there are no keyword data written to any FITS headers.
 If you need keyword data added to the headers, you have to use the ``fits`` export protocol instead, which is described below.
 
 url / fits
 ^^^^^^^^^^
+
 Using the ``fits`` export protocol, allows you to request FITS files that include all keyword data in their headers.
 Note that this protocol *does not convert* other file formats into the FITS format.
 The only purpose of ``protocol='fits'`` is to add keyword data to headers of segment files, that are already stored using the FITS format.

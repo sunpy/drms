@@ -1,44 +1,21 @@
 import json as _json
+import logging
+from enum import Enum
 from urllib.parse import urlencode, quote_plus
 from urllib.request import HTTPError, urlopen
 
 from .config import ServerConfig, _server_configs
 from .utils import _split_arg
 
-__all__ = ["const", "HttpJsonRequest", "HttpJsonClient"]
+__all__ = ["JsocInfoConstants", "HttpJsonRequest", "HttpJsonClient"]
 
 
-class JsocInfoConstants:
+class JsocInfoConstants(Enum):
     """
     Constants for DRMS queries.
-
-    Attributes
-    ----------
-    all
-        = ``'**ALL**'``
-    none
-        = ``'**NONE**'``
-    recdir
-        = ``'*recdir*'``
-    dirmtime
-        = ``'*dirmtime*'``
-    logdir
-        = ``'*logdir*'``
-    recnum
-        = ``'*recnum*'``
-    sunum
-        = ``'*sunum*'``
-    size
-        = ``'*size*'``
-    online
-        = ``'*online*'``
-    retain
-        = ``'*retain*'``
-    archive
-        = ``'*archive*'``
     """
 
-    all = "**ALL**"
+    all = "**ALL**"  # NOQA: A003
     none = "**NONE**"
     recdir = "*recdir*"
     dirmtime = "*dirmtime*"
@@ -49,9 +26,6 @@ class JsocInfoConstants:
     online = "*online*"
     retain = "*retain*"
     archive = "*archive*"
-
-
-const = JsocInfoConstants()
 
 
 class HttpJsonRequest:
@@ -100,36 +74,24 @@ class HttpJsonClient:
     server : str or drms.config.ServerConfig
         Registered server ID or ServerConfig instance.
         Defaults to JSOC.
-    debug : bool
-        Enable or disable debug mode (default is disabled).
     """
 
-    def __init__(self, server="jsoc", debug=False):
+    def __init__(self, server="jsoc"):
         if isinstance(server, ServerConfig):
             self._server = server
         else:
             self._server = _server_configs[server.lower()]
-        self.debug = debug
 
     def __repr__(self):
         return f"<HttpJsonClient: {self._server.name}>"
 
     def _json_request(self, url):
-        if self.debug:
-            print(url)
+        logging.info(url)
         return HttpJsonRequest(url, self._server.encoding)
 
     @property
     def server(self):
         return self._server
-
-    @property
-    def debug(self):
-        return self._debug
-
-    @debug.setter
-    def debug(self, value):
-        self._debug = True if value else False
 
     def show_series(self, ds_filter=None):
         """
@@ -137,8 +99,9 @@ class HttpJsonClient:
 
         Parameters
         ----------
-        ds_filter : str
+        ds_filter : str, None, optional
             Name filter regexp.
+            Default is None, which returns all available series.
 
         Returns
         -------
@@ -150,7 +113,7 @@ class HttpJsonClient:
         req = self._json_request(self._server.url_show_series + query)
         return req.data
 
-    def show_series_wrapper(self, ds_filter=None, info=False):
+    def show_series_wrapper(self, ds_filter=None, *, info=False):
         """
         List available data series.
 
@@ -161,8 +124,9 @@ class HttpJsonClient:
 
         Parameters
         ----------
-        ds_filter : str
+        ds_filter : str, None, optional
             Name filter regexp.
+            Default is None, which returns all available series.
         info : bool
             If False (default), the result only contains series names.
             If set to True, the result includes a description for each
@@ -211,13 +175,13 @@ class HttpJsonClient:
         Returns
         -------
         result : dict
-            Dictionary containg 'count', 'status' and 'runtime'.
+            Dictionary containing 'count', 'status' and 'runtime'.
         """
         query = f'?{urlencode({"op": "rs_summary", "ds": ds})}'
         req = self._json_request(self._server.url_jsoc_info + query)
         return req.data
 
-    def rs_list(self, ds, key=None, seg=None, link=None, recinfo=False, n=None, uid=None):
+    def rs_list(self, ds, *, key=None, seg=None, link=None, recinfo=False, n=None, uid=None):
         """
         Get detailed information about a record set.
 
@@ -300,7 +264,7 @@ class HttpJsonClient:
             Registered email address.
         method : str
             Export method. Supported methods are: 'url_quick', 'url',
-            'url-tar', 'ftp' and 'ftp-tar'. Default is 'url_quick'.
+            and 'url-tar'. Default is 'url_quick'.
         protocol : str
             Export protocol. Supported protocols are: 'as-is', 'fits',
             'jpg', 'mpg' and 'mp4'. Default is 'as-is'.
@@ -320,10 +284,10 @@ class HttpJsonClient:
             values, the first n records of the record set are returned,
             for negative values the last abs(n) records. If set to None
             (default), no limit is applied.
-        requestor : str, None or bool
+        requester : str, None or bool
             Export user ID. Default is None, in which case the user
             name is determined from the email address. If set to False,
-            the requestor argument will be omitted in the export
+            the requester argument will be omitted in the export
             request.
 
         Returns
@@ -339,31 +303,34 @@ class HttpJsonClient:
         self,
         ds,
         notify,
+        *,
         method="url_quick",
         protocol="as-is",
         protocol_args=None,
         filenamefmt=None,
         n=None,
         process=None,
-        requestor=None,
+        requester=None,
     ):
         method = method.lower()
-        method_list = ["url_quick", "url", "url-tar", "ftp", "ftp-tar"]
+        method_list = ["url_quick", "url", "url-tar"]
         if method not in method_list:
             raise ValueError(
                 "Method {} is not supported, valid methods are: {}".format(
-                    method, ", ".join(str(s) for s in method_list)
-                )
+                    method,
+                    ", ".join(str(s) for s in method_list),
+                ),
             )
 
         protocol = protocol.lower()
         img_protocol_list = ["jpg", "mpg", "mp4"]
-        protocol_list = ["as-is", "fits"] + img_protocol_list
+        protocol_list = ["as-is", "fits", *img_protocol_list]
         if protocol not in protocol_list:
             raise ValueError(
                 "Protocol {} is not supported, valid protocols are: {}".format(
-                    protocol, ", ".join(str(s) for s in protocol_list)
-                )
+                    protocol,
+                    ", ".join(str(s) for s in protocol_list),
+                ),
             )
 
         # method "url_quick" is meant to be used with "as-is", change method
@@ -427,10 +394,10 @@ class HttpJsonClient:
             processes = "|".join([f"{k},{v}" for k, v in process_strings.items()])
             d["process=n"] = f'{d["process=n"]}|{processes}'
 
-        if requestor is None:
-            d["requestor"] = notify.split("@")[0]
-        elif requestor is not False:
-            d["requestor"] = requestor
+        if requester is None:
+            d["requester"] = notify.split("@")[0]
+        elif requester is not False:
+            d["requester"] = requester
 
         query = "?" + urlencode(d)
         return self._server.url_jsoc_fetch + query

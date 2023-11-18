@@ -53,7 +53,7 @@ def test_parse_keywords():
             ("is_integer", [False, False, False, False]),
             ("is_real", [False, True, True, False]),
             ("is_numeric", [False, True, True, False]),
-        ]
+        ],
     )
 
     exp = pd.DataFrame(data=exp)
@@ -72,7 +72,7 @@ def test_parse_links():
             ("target", ["hmi.Bharp_720s", "hmi.Mharp_720s"]),
             ("kind", ["DYNAMIC", "DYNAMIC"]),
             ("note", ["Bharp", "Mharp"]),
-        ]
+        ],
     )
     exp = pd.DataFrame(data=exp)
     exp.index = exp.pop("name")
@@ -114,7 +114,7 @@ def test_parse_segments():
             ("protocol", ["fits", "fits", "fits"]),
             ("dims", ["VARxVAR", "VARxVAR", "VARxVAR"]),
             ("note", ["magnetogram", "Mask for the patch", "Dopplergram"]),
-        ]
+        ],
     )
 
     exp = pd.DataFrame(data=exp)
@@ -137,4 +137,4 @@ def test_repr():
         "keywords": [],
     }
     assert repr(drms.SeriesInfo(info)) == "<SeriesInfo>"
-    assert repr(drms.SeriesInfo(info, "hmi")) == "<SeriesInfo: hmi>"
+    assert repr(drms.SeriesInfo(info, name="hmi")) == "<SeriesInfo: hmi>"

@@ -7,13 +7,12 @@ This example shows how to download HMI synoptic data from JSOC and make a plot.
 """
 
 import matplotlib.pyplot as plt
-
 from astropy.io import fits
 
 import drms
 
 ###############################################################################
-# Create DRMS client, uses the JSOC baseurl by default, set debug=True to see the DRMS query URLs.
+# First we will create a `drms.Client`, using the JSOC baseurl.
 
 client = drms.Client()
 
@@ -25,7 +24,7 @@ qstr = "hmi.synoptic_mr_720s[2150]"
 # Send request to the DRMS server
 print("Querying keyword data...\n -> {qstr}")
 segname = "synopMr"
-results, filenames = client.query(qstr, key=drms.const.all, seg=segname)
+results, filenames = client.query(qstr, key=drms.JsocInfoConstants.all.value, seg=segname)
 print(f" -> {len(results)} lines retrieved.")
 
 # Use only the first line of the query result

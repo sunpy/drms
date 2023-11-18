@@ -1,0 +1,1 @@
+Renamed keywords or arguments from ``requestor`` to ``requester``.

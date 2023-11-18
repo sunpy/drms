@@ -1,6 +1,9 @@
+.. _drms-introduction:
+
 ************
 Introduction
 ************
+
 The ``drms`` Python package can be used to access HMI, AIA and MDI data which are stored in a DRMS database system.
 
 DRMS stands for *Data Record Management System* and is a system that was developed by the `Joint Science Operation Center <http://jsoc.stanford.edu/>`__ (JSOC), headquartered at Stanford University, to handle the data produced by the AIA and HMI instruments aboard the `Solar Dynamics Observatory <https://sdo.gsfc.nasa.gov//>`__ spacecraft.
@@ -10,16 +13,9 @@ It can be used to query metadata, submit data export requests and download data 
 
 This module also works well for local `NetDRMS <http://jsoc.stanford.edu/netdrms/>`__ sites, as long as the site runs a web server providing the needed CGI programs ``show_series`` and ``jsoc_info`` (for the data export functionality, additional CGIs, like ``jsoc_fetch``, are needed).
 
-Requirements
-============
-The ``drms`` module supports Python 3.7 or newer.
-It requires the following Python packages:
-
--  numpy
--  pandas
-
 Installation
 ============
+
 If you are using `miniforge`_ (which is conda but using the conda-forge channel):
 
 .. code-block:: bash
@@ -48,4 +44,5 @@ Otherwise the ``drms`` Python package can be installed from `PyPI`_ using:
 
 Acknowledgements
 ================
+
 Kolja Glogowski has received funding from the European Research Council under the European Union's Seventh Framework Programme (FP/2007-2013) / ERC Grant Agreement no. 307117.

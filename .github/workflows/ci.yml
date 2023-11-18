@@ -24,10 +24,10 @@ jobs:
     with:
       submodules: false
       coverage: codecov
-      toxdeps: "'tox<4' tox-pypi-filter"
+      toxdeps: "tox-pypi-filter"
       posargs: -n auto
       envs: |
-        - linux: py310
+        - linux: py311
 
   test:
     needs: [core]
@@ -35,22 +35,21 @@ jobs:
     with:
       submodules: false
       coverage: codecov
-      toxdeps: "'tox<4' tox-pypi-filter"
+      toxdeps: "tox-pypi-filter"
       posargs: -n auto
       envs: |
         - windows: py39
-        - macos: py38
+        - macos: py310
         - linux: py39-oldestdeps
 
   docs:
     needs: [core]
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@main
     with:
-      default_python: '3.8'
       submodules: false
       pytest: false
-      toxdeps: "'tox<4' tox-pypi-filter"
-      cache-key: docs-${{ github.run_id }}
+      default_python: '3.9'
+      toxdeps: "tox-pypi-filter"
       libraries: |
         apt:
           - graphviz
@@ -62,13 +61,13 @@ jobs:
     needs: [docs]
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@main
     with:
-      default_python: '3.8'
       submodules: false
       coverage: codecov
-      toxdeps: "'tox<4' tox-pypi-filter"
+      toxdeps: "tox-pypi-filter"
       posargs: -n 1 --dist loadgroup
       envs: |
         - linux: py311-online
+        - linux: py311-sunpy
 
   publish:
     # Build wheels when pushing to any branch

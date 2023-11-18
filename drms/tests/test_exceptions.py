@@ -9,6 +9,6 @@ import drms
 )
 def test_exception_class(exception_class):
     with pytest.raises(RuntimeError):
-        raise exception_class()
+        raise exception_class
     with pytest.raises(drms.DrmsError):
-        raise exception_class()
+        raise exception_class

@@ -1,6 +1,8 @@
 import os
 import re
 import time
+import logging
+from pathlib import Path
 from collections import OrderedDict
 from urllib.error import URLError, HTTPError
 from urllib.parse import urljoin
@@ -48,7 +50,7 @@ class SeriesInfo:
         Tape group.
     """
 
-    def __init__(self, d, name=None):
+    def __init__(self, d, *, name=None):
         self._d = d
         self.name = name
         self.retention = self._d.get("retention")
@@ -117,8 +119,7 @@ class SeriesInfo:
     def __repr__(self):
         if self.name is None:
             return "<SeriesInfo>"
-        else:
-            return f"<SeriesInfo: {self.name}>"
+        return f"<SeriesInfo: {self.name}>"
 
 
 class ExportRequest:
@@ -131,15 +132,15 @@ class ExportRequest:
 
     _status_code_ok = 0
     _status_code_notfound = 6
-    _status_codes_pending = [1, 2, _status_code_notfound]
-    _status_codes_ok_or_pending = [_status_code_ok] + _status_codes_pending
+    _status_codes_pending = (1, 2, _status_code_notfound)
+    _status_codes_ok_or_pending = (_status_code_ok, *_status_codes_pending)
 
     def __init__(self, d, client):
         self._client = client
         self._requestid = None
         self._status = None
         self._download_urls_cache = None
-        self._update_status(d)
+        self._update_status(d=d)
 
     @classmethod
     def _create_from_id(cls, requestid, client):
@@ -154,12 +155,9 @@ class ExportRequest:
     def _parse_data(d):
         keys = ["record", "filename"]
         res = None if d is None else [(di.get(keys[0]), di.get(keys[1])) for di in d]
-        if not res:
-            res = None  # workaround for older pandas versions
-        res = pd.DataFrame(res, columns=keys)
-        return res
+        return pd.DataFrame(res, columns=keys)
 
-    def _update_status(self, d=None):
+    def _update_status(self, *, d=None):
         if d is None and self._requestid is not None:
             d = self._client._json.exp_status(self._requestid)
         self._d = d
@@ -174,7 +172,7 @@ class ExportRequest:
             # Use None if the requestid is empty (url_quick + as-is)
             self._requestid = None
 
-    def _raise_on_error(self, notfound_ok=True):
+    def _raise_on_error(self, *, notfound_ok=True):
         if self._status in self._status_codes_ok_or_pending:
             if self._status != self._status_code_notfound or notfound_ok:
                 return  # request has not failed (yet)
@@ -235,17 +233,17 @@ class ExportRequest:
     @staticmethod
     def _next_available_filename(fname):
         """
-        Find next available filename, append a number if neccessary.
+        Find next available filename, append a number if necessary.
         """
         i = 1
         new_fname = fname
-        while os.path.exists(new_fname):
+        while Path(new_fname).exists():
             new_fname = f"{fname}.{int(i)}"
             i += 1
         return new_fname
 
     @property
-    def id(self):
+    def id(self):  # NOQA: A003
         """
         (string) Request ID.
         """
@@ -273,7 +271,7 @@ class ExportRequest:
         return self._d.get("protocol")
 
     @property
-    def dir(self):
+    def dir(self):  # NOQA: A003
         """
         (string) Common directory of the requested files on the server.
         """
@@ -348,7 +346,7 @@ class ExportRequest:
             self._download_urls_cache = self._generate_download_urls()
         return self._download_urls_cache
 
-    def has_finished(self, skip_update=False):
+    def has_finished(self, *, skip_update=False):
         """
         Check if the export request has finished.
 
@@ -373,7 +371,7 @@ class ExportRequest:
             pending = self._status in self._status_codes_pending
         return not pending
 
-    def has_succeeded(self, skip_update=False):
+    def has_succeeded(self, *, skip_update=False):
         """
         Check if the export request has finished successfully.
 
@@ -390,11 +388,11 @@ class ExportRequest:
             True if the export request has finished successfully or
             False if the request failed or is still pending.
         """
-        if not self.has_finished(skip_update):
+        if not self.has_finished(skip_update=skip_update):
             return False
         return self._status == self._status_code_ok
 
-    def has_failed(self, skip_update=False):
+    def has_failed(self, *, skip_update=False):
         """
         Check if the export request has finished unsuccessfully.
 
@@ -411,11 +409,11 @@ class ExportRequest:
             True if the export request has finished unsuccessfully or
             False if the request has succeeded or is still pending.
         """
-        if not self.has_finished(skip_update):
+        if not self.has_finished(skip_update=skip_update):
             return False
         return self._status not in self._status_codes_ok_or_pending
 
-    def wait(self, timeout=None, sleep=5, retries_notfound=5, verbose=None):
+    def wait(self, *, timeout=None, sleep=5, retries_notfound=5):
         """
         Wait for the server to process the export request. This method
         continuously updates the request status until the server signals that
@@ -436,16 +434,12 @@ class ExportRequest:
             request is registered on the server, so a value too low
             might cause an exception to be raised, even if the request
             is valid and will eventually show up on the server.
-        verbose : bool or None
-            Set to True if status messages should be printed to stdout.
-            If set to None (default), the :attr:`Client.verbose` flag
-            of the associated client instance is used instead.
 
         Returns
         -------
         result : bool
             True if the request succeeded or False if a timeout
-            occured. In case of an error an exception is raised.
+            occurred. In case of an error an exception is raised.
         """
         if timeout is not None:
             t_start = time.time()
@@ -453,8 +447,6 @@ class ExportRequest:
         if sleep is not None:
             sleep = float(sleep)
         retries_notfound = int(retries_notfound)
-        if verbose is None:
-            verbose = self._client.verbose
 
         # We are done, if the request has already finished.
         if self.has_finished(skip_update=True):
@@ -462,9 +454,8 @@ class ExportRequest:
             return True
 
         while True:
-            if verbose:
-                idstr = str(None) if self._requestid is None else (f"{self._requestid}")
-                print(f"Export request pending. [id={idstr}, status={self._status}]")
+            idstr = str(None) if self._requestid is None else (f"{self._requestid}")
+            logging.info(f"Export request pending. [id={idstr}, status={self._status}]")
 
             # Use the user-provided sleep value or the server's wait value.
             # In case neither is available, wait for 5 seconds.
@@ -480,22 +471,20 @@ class ExportRequest:
                 if t_start + timeout + wait_secs - time.time() < 0:
                     return False
 
-            if verbose:
-                print(f"Waiting for {int(round(wait_secs))} seconds...")
+            logging.info(f"Waiting for {int(round(wait_secs))} seconds...")
             time.sleep(wait_secs)
 
             if self.has_finished():
                 self._raise_on_error()
                 return True
-            elif self._status == self._status_code_notfound:
+            if self._status == self._status_code_notfound:
                 # Raise exception, if no retries are left.
                 if retries_notfound <= 0:
                     self._raise_on_error(notfound_ok=False)
-                if verbose:
-                    print(f"Request not found on server, {retries_notfound} retries left.")
+                logging.info(f"Request not found on server, {retries_notfound} retries left.")
                 retries_notfound -= 1
 
-    def download(self, directory, index=None, fname_from_rec=None, verbose=None):
+    def download(self, directory, *, index=None, fname_from_rec=None):
         """
         Download data files.
 
@@ -509,8 +498,8 @@ class ExportRequest:
         Note: Downloading data segments that are directories, e.g. data
         segments from series like "hmi.rdVflows_fd15_frame", is
         currently not supported. In order to download data from series
-        like this, you need to use the export methods 'url-tar' or
-        'ftp-tar' when submitting the data export request.
+        like this, you need to use the export method 'url-tar'
+        when submitting the data export request.
 
         Parameters
         ----------
@@ -520,21 +509,17 @@ class ExportRequest:
             Index (or indices) of the file(s) to be downloaded. If set
             to None (the default), all files of the export request are
             downloaded. Note that this parameter is ignored for export
-            methods 'url-tar' and 'ftp-tar', where only a single tar
-            file is available for download.
+            method 'url-tar', where only a single tar file is available
+            for download.
         fname_from_rec : bool or None
             If True, local filenames are generated from record names.
             If set to False, the original filenames are used. If set to
             None (default), local filenames are generated only for
             export method 'url_quick'. Exceptions: For exports with
-            methods 'url-tar' and 'ftp-tar', no filename will be
+            method 'url-tar', no filename will be
             generated. This also applies to movie files from exports
             with protocols 'mpg' or 'mp4', where the original filename
             is used locally.
-        verbose : bool or None
-            Set to True if status messages should be printed to stdout.
-            If set to None (default), the :attr:`Client.verbose` flag
-            of the associated client instance is used instead.
 
         Returns
         -------
@@ -543,8 +528,8 @@ class ExportRequest:
             local location of each downloaded file (DataFrame columns:
             'record', 'url' and 'download').
         """
-        out_dir = os.path.abspath(directory)
-        if not os.path.isdir(out_dir):
+        out_dir = Path(directory).absolute()
+        if not out_dir.is_dir():
             raise OSError(f"Download directory {out_dir} does not exist")
 
         if np.isscalar(index):
@@ -552,11 +537,8 @@ class ExportRequest:
         elif index is not None:
             index = list(index)
 
-        if verbose is None:
-            verbose = self._client.verbose
-
         # Wait until the export request has finished.
-        self.wait(verbose=verbose)
+        self.wait()
 
         if fname_from_rec is None:
             # For 'url_quick', generate local filenames from record strings.
@@ -580,24 +562,21 @@ class ExportRequest:
             else:
                 filename = di.filename
 
-            fpath = os.path.join(out_dir, filename)
+            fpath = Path(out_dir) / filename
             fpath_new = self._next_available_filename(fpath)
             fpath_tmp = self._next_available_filename(f"{fpath_new}.part")
-            if verbose:
-                print(f"Downloading file {int(i + 1)} of {int(ndata)}...")
-                print(f"    record: {di.record}")
-                print(f"  filename: {di.filename}")
+            logging.info(f"Downloading file {int(i + 1)} of {int(ndata)}...")
+            logging.info(f"    record: {di.record}")
+            logging.info(f"  filename: {di.filename}")
             try:
                 urlretrieve(di.url, fpath_tmp)
             except (HTTPError, URLError):
                 fpath_new = None
-                if verbose:
-                    print("  -> Error: Could not download file")
+                logging.info("  -> Error: Could not download file")
             else:
                 fpath_new = self._next_available_filename(fpath)
-                os.rename(fpath_tmp, fpath_new)
-                if verbose:
-                    print(f"  -> {os.path.relpath(fpath_new)}")
+                Path(fpath_tmp).rename(fpath_new)
+                logging.info(f"  -> {os.path.relpath(fpath_new)}")
             downloads.append(fpath_new)
 
         res = data[["record", "url"]].copy()
@@ -616,22 +595,17 @@ class Client:
         Defaults to JSOC.
     email : str or None
         Default email address used data export requests.
-    verbose : bool
-        Print export status messages to stdout (disabled by default).
-    debug : bool
-        Print debug output (disabled by default).
     """
 
-    def __init__(self, server="jsoc", email=None, verbose=False, debug=False):
-        self._json = HttpJsonClient(server=server, debug=debug)
+    def __init__(self, server="jsoc", *, email=None):
+        self._json = HttpJsonClient(server)
         self._info_cache = {}
-        self.verbose = verbose  # use property for convertion to bool
         self.email = email  # use property for email validation
 
     def __repr__(self):
         return f"<Client: {self._server.name}>"
 
-    def _convert_numeric_keywords(self, ds, kdf, skip_conversion=None):
+    def _convert_numeric_keywords(self, ds, kdf, *, skip_conversion=None):
         si = self.info(ds)
         int_keys = list(si.keywords[si.keywords.is_integer].index)
         num_keys = list(si.keywords[si.keywords.is_numeric].index)
@@ -656,7 +630,7 @@ class Client:
                 kdf[k] = _pd_to_numeric_coerce(kdf[k])
 
     @staticmethod
-    def _raise_query_error(d, status=None):
+    def _raise_query_error(d, *, status=None):
         """
         Raises a DrmsQueryError, using the json error message from d.
         """
@@ -674,8 +648,9 @@ class Client:
         """
         try:
             si = self.info(sname)
-        except Exception:
+        except Exception as e:  # NOQA: BLE001
             # Cannot generate filename format for unknown series.
+            logging.warning(f"Cannot generate filename format for unknown series '{sname}' with {e}")
             return None
 
         pkfmt_list = []
@@ -687,8 +662,7 @@ class Client:
 
         if pkfmt_list:
             return "{}.{}.{{segment}}".format(si.name, ".".join(pkfmt_list))
-        else:
-            return str(si.name) + ".{recnum:%lld}.{segment}"
+        return str(si.name) + ".{recnum:%lld}.{segment}"
 
     # Some regular expressions used to parse export request queries.
     _re_export_recset = re.compile(r"^\s*([\w\.]+)\s*(\[.*\])?\s*(?:\{([\w\s\.,]*)\})?\s*$")
@@ -712,7 +686,7 @@ class Client:
             segs = Client._re_export_recset_slist.split(segs)
         return sname, pkeys, segs
 
-    def _filename_from_export_record(self, rs, old_fname=None):
+    def _filename_from_export_record(self, rs, *, old_fname=None):
         """
         Generate a filename from an export request record.
         """
@@ -724,8 +698,9 @@ class Client:
         # make them suitable for filenames.
         try:
             si = self.info(sname)
-        except Exception:
+        except Exception as e:  # NOQA: BLE001
             # Cannot generate filename for unknown series.
+            logging.warning(f"Cannot generate filename format for unknown series '{sname}' with {e}")
             return None
 
         if pkeys is not None:
@@ -762,7 +737,7 @@ class Client:
         return fname
 
     # Export color table names, from (internal) series "jsoc.Color_Tables"
-    _export_color_table_names = [
+    _export_color_table_names = (
         "HMI_mag.lut",
         "aia_131.lut",
         "aia_1600.lut",
@@ -778,10 +753,10 @@ class Client:
         "bb.sao",
         "grey.sao",
         "heat.sao",
-    ]
+    )
 
     # Export scaling types, from (internal) series "jsoc.Color_Tables"
-    _export_scaling_names = ["LOG", "MINMAX", "MINMAXGIVEN", "SQRT", "mag"]
+    _export_scaling_names = ("LOG", "MINMAX", "MINMAXGIVEN", "SQRT", "mag")
 
     @staticmethod
     def _validate_export_protocol_args(protocol_args):
@@ -800,12 +775,12 @@ class Client:
             ll = [s.lower() for s in Client._export_color_table_names]
             try:
                 i = ll.index(ct.lower())
-            except ValueError:
+            except ValueError as e:
                 msg = f"{ct} is not a valid color table, "
                 msg += "available color tables: {}".format(
-                    ", ".join([str(s) for s in Client._export_color_table_names])
+                    ", ".join([str(s) for s in Client._export_color_table_names]),
                 )
-                raise ValueError(msg)
+                raise ValueError(msg) from e
             protocol_args[ct_key] = Client._export_color_table_names[i]
 
         scaling = protocol_args.get("scaling")
@@ -813,10 +788,10 @@ class Client:
             ll = [s.lower() for s in Client._export_scaling_names]
             try:
                 i = ll.index(scaling.lower())
-            except ValueError:
+            except ValueError as e:
                 msg = f"{scaling} is not a valid scaling type,"
                 msg += "available scaling types: {}".format(", ".join([str(s) for s in Client._export_scaling_names]))
-                raise ValueError(msg)
+                raise ValueError(msg) from e
             protocol_args["scaling"] = Client._export_scaling_names[i]
 
     @property
@@ -825,17 +800,6 @@ class Client:
         (ServerConfig) Remote server configuration.
         """
         return self._json.server
-
-    @property
-    def debug(self):
-        """
-        (bool) Enable/disable debug output.
-        """
-        return self._json.debug
-
-    @debug.setter
-    def debug(self, value):
-        self._json.debug = value
 
     @property
     def email(self):
@@ -850,24 +814,13 @@ class Client:
             raise ValueError("Email address is invalid or not registered")
         self._email = value
 
-    @property
-    def verbose(self):
-        """
-        (bool) Enable/disable export status output.
-        """
-        return self._verbose
-
-    @verbose.setter
-    def verbose(self, value):
-        self._verbose = bool(value)
-
-    def series(self, regex=None, full=False):
+    def series(self, regex=None, *, full=False):
         """
         List available data series.
 
         Parameters
         ----------
-        regex : str or None
+        regex : str or None, optional
             Regular expression, used to select a subset of the
             available series. If set to None, a list of all available
             series is returned.
@@ -888,7 +841,7 @@ class Client:
             raise DrmsOperationNotSupported("Server does not support series list access")
         if self._server.url_show_series_wrapper is None:
             # No wrapper CGI available, use the regular version.
-            d = self._json.show_series(regex)
+            d = self._json.show_series(ds_filter=regex)
             status = d.get("status")
             if status != 0:
                 self._raise_query_error(d)
@@ -898,25 +851,22 @@ class Client:
                     return pd.DataFrame(columns=keys)
                 recs = [(it["name"], _split_arg(it["primekeys"]), it["note"]) for it in d["names"]]
                 return pd.DataFrame(recs, columns=keys)
-            else:
-                if not d["names"]:
-                    return []
-                return [it["name"] for it in d["names"]]
-        else:
-            # Use show_series_wrapper instead of the regular version.
-            d = self._json.show_series_wrapper(regex, info=full)
-            if full:
-                keys = ("name", "note")
-                if not d["seriesList"]:
-                    return pd.DataFrame(columns=keys)
-                recs = []
-                for it in d["seriesList"]:
-                    name, info = tuple(it.items())[0]
-                    note = info.get("description", "")
-                    recs.append((name, note))
-                return pd.DataFrame(recs, columns=keys)
-            else:
-                return d["seriesList"]
+            if not d["names"]:
+                return []
+            return [it["name"] for it in d["names"]]
+        # Use show_series_wrapper instead of the regular version.
+        d = self._json.show_series_wrapper(ds_filter=regex, info=full)
+        if full:
+            keys = ("name", "note")
+            if not d["seriesList"]:
+                return pd.DataFrame(columns=keys)
+            recs = []
+            for it in d["seriesList"]:
+                name, info = next(iter(it.items()))
+                note = info.get("description", "")
+                recs.append((name, note))
+            return pd.DataFrame(recs, columns=keys)
+        return d["seriesList"]
 
     def info(self, ds):
         """
@@ -988,6 +938,7 @@ class Client:
     def query(
         self,
         ds,
+        *,
         key=None,
         seg=None,
         link=None,
@@ -1055,7 +1006,7 @@ class Client:
             key = [k for k in key if k not in pk]
             key = pk + key
 
-        lres = self._json.rs_list(ds, key, seg, link, recinfo=rec_index, n=n)
+        lres = self._json.rs_list(ds, key=key, seg=seg, link=link, recinfo=rec_index, n=n)
         status = lres.get("status")
         if status != 0:
             self._raise_query_error(lres)
@@ -1069,7 +1020,7 @@ class Client:
             else:
                 res_key = pd.DataFrame()
             if convert_numeric:
-                self._convert_numeric_keywords(ds, res_key, skip_conversion)
+                self._convert_numeric_keywords(ds, res_key, skip_conversion=skip_conversion)
             res.append(res_key)
 
         if seg is not None:
@@ -1097,10 +1048,9 @@ class Client:
 
         if len(res) == 0:
             return None
-        elif len(res) == 1:
+        if len(res) == 1:
             return res[0]
-        else:
-            return tuple(res)
+        return tuple(res)
 
     def check_email(self, email):
         """
@@ -1130,13 +1080,14 @@ class Client:
     def export(
         self,
         ds,
+        *,
         method="url_quick",
         protocol="as-is",
         protocol_args=None,
         filenamefmt=None,
         n=None,
         email=None,
-        requestor=None,
+        requester=None,
         process=None,
     ):
         """
@@ -1161,8 +1112,8 @@ class Client:
         ds : str
             Data export record set query.
         method : str
-            Export method. Supported methods are: 'url_quick', 'url',
-            'url-tar', 'ftp' and 'ftp-tar'. Default is 'url_quick'.
+            Export method. Supported methods are: 'url_quick', 'url'
+            and 'url-tar'. Default is 'url_quick'.
         protocol : str
             Export protocol. Supported protocols are: 'as-is', 'fits',
             'jpg', 'mpg' and 'mp4'. Default is 'as-is'.
@@ -1195,10 +1146,10 @@ class Client:
             arguments, are validated by the `~drms.client.Client`. In the case of invalid
             or malformed processing arguments, JSOC may still return
             an unprocessed image without the export request failing.
-        requestor : str, None or bool
+        requester : str, None or bool
             Export user ID. Default is None, in which case the user
             name is determined from the email address. If set to False,
-            the requestor argument will be omitted in the export
+            the requester argument will be omitted in the export
             request.
 
         Returns
@@ -1209,7 +1160,7 @@ class Client:
             raise DrmsOperationNotSupported("Server does not support export requests")
         if email is None:
             if self._email is None:
-                raise ValueError("The email argument is required, when no default email address was set")
+                raise ValueError("The email argument is required, when no default email address was set.")
             email = self._email
 
         if filenamefmt is None:
@@ -1229,7 +1180,7 @@ class Client:
             protocol_args=protocol_args,
             filenamefmt=filenamefmt,
             n=n,
-            requestor=requestor,
+            requester=requester,
             process=process,
         )
         return ExportRequest(d, client=self)
