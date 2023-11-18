@@ -1,3 +1,29 @@
+0.7.0 (2023-11-17)
+==================
+
+Backwards Incompatible Changes
+------------------------------
+
+- Dropped Python 3.8 support. (`#90 <https://github.com/sunpy/drms/pull/90>`__)
+- Updated all of the sphinx anchors to be more consistent.
+  This means that any use of the old anchors (intersphinx links to sunpy doc pages) will need to be updated. (`#90 <https://github.com/sunpy/drms/pull/90>`__)
+- Removed ``verbose`` keyword argument from `drms.Client`.
+  Now all prints are done via the logging module. (`#90 <https://github.com/sunpy/drms/pull/90>`__)
+- ``drms.const`` was renamed to `drms.JsocInfoConstants`
+  It is also now a `Enum`. (`#90 <https://github.com/sunpy/drms/pull/90>`__)
+- Renamed keywords or arguments from ``requestor`` to ``requester``. (`#90 <https://github.com/sunpy/drms/pull/90>`__)
+- Removed ``debug`` keyword argument from `drms.HttpJsonClient`
+  Now all prints are done via the logging module. (`#90 <https://github.com/sunpy/drms/pull/90>`__)
+- Removed all FTP options. (`#90 <https://github.com/sunpy/drms/pull/90>`__)
+- All keywords have to be passed by reference, no more positional keywords arguments are allowed. (`#90 <https://github.com/sunpy/drms/pull/90>`__)
+
+
+Trivial/Internal Changes
+------------------------
+
+- Added "ruff" to the pre-commit and fixed the errors. (`#90 <https://github.com/sunpy/drms/pull/90>`__)
+
+
 0.6.4 (2023-06-09)
 ==================
 

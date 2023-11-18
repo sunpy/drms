@@ -1,2 +1,0 @@
-Removed ``debug`` keyword argument from `drms.HttpJsonClient`
-Now all prints are done via the logging module.

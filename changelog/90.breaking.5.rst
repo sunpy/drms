@@ -1,2 +1,0 @@
-``drms.const`` was renamed to `drms.JsocInfoConstants`
-It is also now a `Enum`.

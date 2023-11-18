@@ -1,2 +1,0 @@
-Removed ``verbose`` keyword argument from `drms.Client`.
-Now all prints are done via the logging module.
