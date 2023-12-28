@@ -568,16 +568,16 @@ class ExportRequest:
             fpath_tmp = self._next_available_filename(f"{fpath_new}.part")
             logger.info(f"Downloading file {int(i + 1)} of {int(ndata)}...")
             logger.info(f"    record: {di.record}")
-            logger.info(f"  filename: {di.filename}")
+            logger.info(f"    filename: {di.filename}")
             try:
                 urlretrieve(di.url, fpath_tmp)
             except (HTTPError, URLError):
                 fpath_new = None
-                logger.info("  -> Error: Could not download file")
+                logger.info("    -> Error: Could not download file")
             else:
                 fpath_new = self._next_available_filename(fpath)
                 Path(fpath_tmp).rename(fpath_new)
-                logger.info(f"  -> {os.path.relpath(fpath_new)}")
+                logger.info(f"    -> {os.path.relpath(fpath_new)}")
             downloads.append(fpath_new)
 
         res = data[["record", "url"]].copy()

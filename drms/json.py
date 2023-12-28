@@ -87,7 +87,7 @@ class HttpJsonClient:
         return f"<HttpJsonClient: {self._server.name}>"
 
     def _json_request(self, url):
-        logger.info(url)
+        logger.debug(f"URL for request: {url}")
         return HttpJsonRequest(url, self._server.encoding)
 
     @property

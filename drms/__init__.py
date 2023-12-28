@@ -13,6 +13,7 @@ import logging
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s: %(message)s")
 
 from .client import Client, ExportRequest, SeriesInfo  # NOQA: E402
 from .config import ServerConfig, register_server  # NOQA: E402
