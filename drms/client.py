@@ -276,7 +276,7 @@ class ExportRequest:
         """
         (string) Common directory of the requested files on the server.
         """
-        if self.has_finished(skip_update=False):
+        if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
             self.wait()
@@ -291,7 +291,7 @@ class ExportRequest:
         Returns a pandas.DataFrame containing the records and filenames
         of the export request (DataFrame columns: 'record', 'filename').
         """
-        if self.has_finished(skip_update=False):
+        if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
             self.wait()
@@ -302,7 +302,7 @@ class ExportRequest:
         """
         (string) Filename, if a TAR file was requested.
         """
-        if self.has_finished(skip_update=False):
+        if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
             self.wait()
@@ -314,7 +314,7 @@ class ExportRequest:
         """
         (string) Filename of textfile containing record keywords.
         """
-        if self.has_finished(skip_update=False):
+        if self.has_finished(skip_update=True):
             self._raise_on_error()
         else:
             self.wait()
@@ -450,7 +450,7 @@ class ExportRequest:
         retries_notfound = int(retries_notfound)
 
         # We are done, if the request has already finished.
-        if self.has_finished(skip_update=False):
+        if self.has_finished(skip_update=True):
             self._raise_on_error()
             return True
 
