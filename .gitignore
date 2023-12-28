@@ -213,6 +213,7 @@ examples/**/*.asdf
 examples/**/*.csv
 examples/jsoc.stanford.edu/
 jsoc.stanford.edu/
+docs/sg_execution_times.rst
 
 ### Pycharm(?)
 .idea

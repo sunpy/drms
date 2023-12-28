@@ -1,7 +1,6 @@
 import os
 import re
 import time
-import logging
 from pathlib import Path
 from collections import OrderedDict
 from urllib.error import URLError, HTTPError
@@ -10,6 +9,8 @@ from urllib.request import urlretrieve
 
 import numpy as np
 import pandas as pd
+
+from drms import logger
 
 from .exceptions import DrmsExportError, DrmsOperationNotSupported, DrmsQueryError
 from .json import HttpJsonClient
@@ -455,7 +456,7 @@ class ExportRequest:
 
         while True:
             idstr = str(None) if self._requestid is None else (f"{self._requestid}")
-            logging.info(f"Export request pending. [id={idstr}, status={self._status}]")
+            logger.info(f"Export request pending. [id={idstr}, status={self._status}]")
 
             # Use the user-provided sleep value or the server's wait value.
             # In case neither is available, wait for 5 seconds.
@@ -471,7 +472,7 @@ class ExportRequest:
                 if t_start + timeout + wait_secs - time.time() < 0:
                     return False
 
-            logging.info(f"Waiting for {int(round(wait_secs))} seconds...")
+            logger.info(f"Waiting for {int(round(wait_secs))} seconds...")
             time.sleep(wait_secs)
 
             if self.has_finished():
@@ -481,7 +482,7 @@ class ExportRequest:
                 # Raise exception, if no retries are left.
                 if retries_notfound <= 0:
                     self._raise_on_error(notfound_ok=False)
-                logging.info(f"Request not found on server, {retries_notfound} retries left.")
+                logger.info(f"Request not found on server, {retries_notfound} retries left.")
                 retries_notfound -= 1
 
     def download(self, directory, *, index=None, fname_from_rec=None):
@@ -565,18 +566,18 @@ class ExportRequest:
             fpath = Path(out_dir) / filename
             fpath_new = self._next_available_filename(fpath)
             fpath_tmp = self._next_available_filename(f"{fpath_new}.part")
-            logging.info(f"Downloading file {int(i + 1)} of {int(ndata)}...")
-            logging.info(f"    record: {di.record}")
-            logging.info(f"  filename: {di.filename}")
+            logger.info(f"Downloading file {int(i + 1)} of {int(ndata)}...")
+            logger.info(f"    record: {di.record}")
+            logger.info(f"  filename: {di.filename}")
             try:
                 urlretrieve(di.url, fpath_tmp)
             except (HTTPError, URLError):
                 fpath_new = None
-                logging.info("  -> Error: Could not download file")
+                logger.info("  -> Error: Could not download file")
             else:
                 fpath_new = self._next_available_filename(fpath)
                 Path(fpath_tmp).rename(fpath_new)
-                logging.info(f"  -> {os.path.relpath(fpath_new)}")
+                logger.info(f"  -> {os.path.relpath(fpath_new)}")
             downloads.append(fpath_new)
 
         res = data[["record", "url"]].copy()
@@ -650,7 +651,7 @@ class Client:
             si = self.info(sname)
         except Exception as e:  # NOQA: BLE001
             # Cannot generate filename format for unknown series.
-            logging.warning(f"Cannot generate filename format for unknown series '{sname}' with {e}")
+            logger.warning(f"Cannot generate filename format for unknown series '{sname}' with {e}")
             return None
 
         pkfmt_list = []
@@ -700,7 +701,7 @@ class Client:
             si = self.info(sname)
         except Exception as e:  # NOQA: BLE001
             # Cannot generate filename for unknown series.
-            logging.warning(f"Cannot generate filename format for unknown series '{sname}' with {e}")
+            logger.warning(f"Cannot generate filename format for unknown series '{sname}' with {e}")
             return None
 
         if pkeys is not None:
