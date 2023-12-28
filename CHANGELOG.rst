@@ -1,3 +1,12 @@
+0.7.1 (2023-12-28)
+==================
+
+Bug Fixes
+---------
+
+- Incorrect setup of the logger is now fixed. (`#113 <https://github.com/sunpy/drms/pull/113>`__)
+- Fixed missing environment variable in the docs. (`#113 <https://github.com/sunpy/drms/pull/113>`__)
+
 0.7.0 (2023-11-17)
 ==================
 
