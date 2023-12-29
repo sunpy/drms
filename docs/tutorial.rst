@@ -281,11 +281,11 @@ Here, we are only interested in magnetograms and continuum intensity maps:
 
 which are stored as FITS files with varying dimensions.
 
-If we now want to submit an export request for a magnetogram and an intensity map of HARP number 4864, recorded at midnight on November 30, 2014, we can use the following export query string:
+If we now want to submit an export request for a magnetogram and an intensity map of HARP number 10490, recorded at  eight am on December 7th, 2023, we can use the following export query string:
 
 .. code-block:: python
 
-    >>> query_string = 'hmi.sharp_720s[4864][2014.11.30_00:00_TAI]{continuum, magnetogram}'  # doctest: +REMOTE_DATA
+    >>> query_string = 'hmi.sharp_720s[10490][2023.12.07_08:00:00_TAI]{continuum}'  # doctest: +REMOTE_DATA
 
 In order to obtain FITS files that include keyword data in their headers, we then need to use ``protocol='fits'`` when submitting the request using :meth:`drms.client.Client.export`:
 
@@ -300,9 +300,7 @@ We now need to wait for the server to prepare the requested files:
 .. code-block:: python
 
     >>> export_request.wait()  # doctest: +REMOTE_DATA
-    Export request pending. [id=..., status=2]
-    Waiting for 5 seconds...
-    ...
+    True
 
     >>> export_request.status  # doctest: +REMOTE_DATA
     0
@@ -325,10 +323,8 @@ Downloading the data works exactly like in the previous example, by using :meth:
 .. code-block:: python
 
     >>> export_request.download(out_dir)  # doctest: +REMOTE_DATA
-    Downloading file 1 of 2...
-    ...
-    Downloading file 2 of 2...
-    ...
+                                                  record                                                url                          download
+    0  warning=No FITS files were exported. The reque...  http://jsoc.stanford.edu/...  /...
 
 If you want to access an existing export request that you have submitted earlier, or if you submitted an export request using the `JSOC Export Data <http://jsoc.stanford.edu/ajax/exportdata.html>`__ webpage.
 You can use :meth:`drms.client.Client.export_from_id` with the corresponding ``ExportID`` to create an `drms.client.ExportRequest` instance for this particular request.

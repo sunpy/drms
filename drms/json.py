@@ -1,8 +1,9 @@
 import json as _json
-import logging
 from enum import Enum
 from urllib.parse import urlencode, quote_plus
 from urllib.request import HTTPError, urlopen
+
+from drms import logger
 
 from .config import ServerConfig, _server_configs
 from .utils import _split_arg
@@ -86,7 +87,7 @@ class HttpJsonClient:
         return f"<HttpJsonClient: {self._server.name}>"
 
     def _json_request(self, url):
-        logging.info(url)
+        logger.debug(f"URL for request: {url}")
         return HttpJsonRequest(url, self._server.encoding)
 
     @property

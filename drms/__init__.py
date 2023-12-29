@@ -9,14 +9,22 @@ More information, including a detailed tutorial, is available in the Documentati
 * Homepage: https://github.com/sunpy/drms
 * Documentation: https://docs.sunpy.org/projects/drms/en/stable/
 """
+import logging
 from pathlib import Path
 
-from .client import Client, ExportRequest, SeriesInfo
-from .config import ServerConfig, register_server
-from .exceptions import DrmsError, DrmsExportError, DrmsOperationNotSupported, DrmsQueryError
-from .json import HttpJsonClient, HttpJsonRequest, JsocInfoConstants
-from .utils import to_datetime
-from .version import version as __version__
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+from .client import Client, ExportRequest, SeriesInfo  # NOQA: E402
+from .config import ServerConfig, register_server  # NOQA: E402
+from .exceptions import DrmsError, DrmsExportError, DrmsOperationNotSupported, DrmsQueryError  # NOQA: E402
+from .json import HttpJsonClient, HttpJsonRequest, JsocInfoConstants  # NOQA: E402
+from .utils import to_datetime  # NOQA: E402
+from .version import version as __version__  # NOQA: E402
 
 
 def _get_bibtex():
@@ -53,4 +61,5 @@ __all__ = [
     "SeriesInfo",
     "ServerConfig",
     "to_datetime",
+    "logger",
 ]
