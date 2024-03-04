@@ -8,5 +8,5 @@ try:
     version = get_version(root=Path("..") / "..", relative_to=__file__)
 except ImportError as e:
     raise ImportError("setuptools_scm not installed") from e
-except Exception as e:  # NOQA: BLE001
+except Exception as e:
     raise ValueError(f"setuptools_scm broken with {e}") from e

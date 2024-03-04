@@ -11,12 +11,12 @@ repos:
         args: ['--in-place', '--remove-all-unused-imports', '--remove-unused-variable']
         exclude: ".*(.fits|.fts|.fit|.txt|tca.*|extern.*|.rst|.md|docs/conf.py)$"
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 'v0.3.5'
+    rev: 'v0.4.9'
     hooks:
       - id: ruff
         args: ['--fix', '--unsafe-fixes']
   -   repo: https://github.com/psf/black
-      rev: 24.3.0
+      rev: 24.4.2
       hooks:
       - id: black
         exclude: ".*(.fits|.fts|.fit|.txt|.csv)$"
@@ -26,7 +26,7 @@ repos:
       - id: isort
         exclude: ".*(.fits|.fts|.fit|.txt|.csv)$"
   -   repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.5.0
+      rev: v4.6.0
       hooks:
       - id: check-ast
       - id: check-case-conflict
@@ -39,7 +39,7 @@ repos:
       - id: check-yaml
       - id: debug-statements
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.6
+    rev: v2.3.0
     hooks:
       - id: codespell
         additional_dependencies:

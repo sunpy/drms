@@ -64,6 +64,7 @@ exclude=[
     "tools/**",
     "venv",
 ]
+[tool.ruff.lint]
 select = [
        "E",
        "F",
