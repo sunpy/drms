@@ -5,6 +5,7 @@ Print all HMI series and prime keys with notes
 
 This example shows how to find and display the HMI series names, prime keys and corresponding notes.
 """
+
 import textwrap
 
 import drms

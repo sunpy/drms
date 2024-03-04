@@ -16,7 +16,10 @@ class JsocInfoConstants(Enum):
     Constants for DRMS queries.
     """
 
-    all = "**ALL**"  # NOQA: A003
+    def __getattribute__(self, __name: str) -> str:
+        return super().__getattribute__(__name).value
+
+    all = "**ALL**"
     none = "**NONE**"
     recdir = "*recdir*"
     dirmtime = "*dirmtime*"

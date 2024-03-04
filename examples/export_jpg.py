@@ -11,6 +11,7 @@ table, color scaling or pixel binning. For a list of available color
 tables, see http://jsoc.stanford.edu/ajax/exportdata.html and select the
 JPEG protocol.
 """
+
 import os
 from pathlib import Path
 

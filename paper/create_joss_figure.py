@@ -1,6 +1,7 @@
 """
 This example creates the figure shown in the JOSS paper.
 """
+
 import os
 
 import matplotlib.pyplot as plt
