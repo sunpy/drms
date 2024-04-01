@@ -1,6 +1,7 @@
 """
 Configuration file for the Sphinx documentation builder.
 """
+
 import os
 import datetime
 from pathlib import Path
