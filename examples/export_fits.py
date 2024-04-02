@@ -10,6 +10,7 @@ Note that the 'as-is' protocol should be used instead of 'fits', if
 record keywords in the FITS headers are not needed, as it greatly
 reduces the server load.
 """
+
 import os
 from pathlib import Path
 

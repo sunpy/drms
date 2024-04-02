@@ -9,6 +9,7 @@ More information, including a detailed tutorial, is available in the Documentati
 * Homepage: https://github.com/sunpy/drms
 * Documentation: https://docs.sunpy.org/projects/drms/en/stable/
 """
+
 import logging
 from pathlib import Path
 

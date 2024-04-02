@@ -244,7 +244,7 @@ class ExportRequest:
         return new_fname
 
     @property
-    def id(self):  # NOQA: A003
+    def id(self):
         """
         (string) Request ID.
         """
@@ -272,7 +272,7 @@ class ExportRequest:
         return self._d.get("protocol")
 
     @property
-    def dir(self):  # NOQA: A003
+    def dir(self):
         """
         (string) Common directory of the requested files on the server.
         """

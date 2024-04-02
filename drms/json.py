@@ -16,7 +16,7 @@ class JsocInfoConstants(Enum):
     Constants for DRMS queries.
     """
 
-    all = "**ALL**"  # NOQA: A003
+    all = "**ALL**"
     none = "**NONE**"
     recdir = "*recdir*"
     dirmtime = "*dirmtime*"
