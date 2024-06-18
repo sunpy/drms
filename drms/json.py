@@ -11,7 +11,8 @@ from .utils import _split_arg
 __all__ = ["JsocInfoConstants", "HttpJsonRequest", "HttpJsonClient"]
 
 
-class JsocInfoConstants(Enum):
+# TODO: When we support 3.11, we can use StrEnum instead of Enum
+class JsocInfoConstants(str, Enum):
     """
     Constants for DRMS queries.
     """

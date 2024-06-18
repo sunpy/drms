@@ -6,8 +6,7 @@ import os
 import datetime
 from pathlib import Path
 
-from sphinx_gallery.sorting import ExampleTitleSortKey
-from sunpy_sphinx_theme.conf import *  # NOQA: F403
+from sunpy_sphinx_theme import PNG_ICON
 
 from drms import __version__
 
@@ -107,9 +106,9 @@ sphinx_gallery_conf = {
     "backreferences_dir": Path("generated") / "modules",
     "filename_pattern": "^((?!skip_).)*$",
     "examples_dirs": Path("..") / "examples",
-    "within_subsection_order": ExampleTitleSortKey,
+    "within_subsection_order": "ExampleTitleSortKey",
     "gallery_dirs": Path("generated") / "gallery",
-    "default_thumb_file": Path(html_static_path[0]) / "img" / "sunpy_icon_128x128.png",  # NOQA: F405
+    "default_thumb_file": PNG_ICON,
     "abort_on_example_error": False,
     "plot_gallery": "True",
     "remove_config_comments": True,
