@@ -22,7 +22,7 @@ client = drms.Client()
 qstr = "hmi.meanpf_720s[2010.05.01_TAI-2016.04.01_TAI@12h]"
 
 # Send request to the DRMS server
-print("Querying keyword data...\n -> {qstr}")
+print(f"Querying keyword data...\n -> {qstr}")
 result = client.query(qstr, key=["T_REC", "CAPN2", "CAPS2"])
 print(f" -> {len(result)} lines retrieved.")
 
