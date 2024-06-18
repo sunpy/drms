@@ -1017,7 +1017,7 @@ class Client:
             if "keywords" in lres:
                 names = [it["name"] for it in lres["keywords"]]
                 values = [it["values"] for it in lres["keywords"]]
-                res_key = pd.DataFrame.from_dict(OrderedDict(zip(names, values)))
+                res_key = pd.DataFrame.from_dict(OrderedDict(zip(names, values, strict=False)))
             else:
                 res_key = pd.DataFrame()
             if convert_numeric:
@@ -1028,7 +1028,7 @@ class Client:
             if "segments" in lres:
                 names = [it["name"] for it in lres["segments"]]
                 values = [it["values"] for it in lres["segments"]]
-                res_seg = pd.DataFrame.from_dict(OrderedDict(zip(names, values)))
+                res_seg = pd.DataFrame.from_dict(OrderedDict(zip(names, values, strict=False)))
             else:
                 res_seg = pd.DataFrame()
             res.append(res_seg)
@@ -1037,7 +1037,7 @@ class Client:
             if "links" in lres:
                 names = [it["name"] for it in lres["links"]]
                 values = [it["values"] for it in lres["links"]]
-                res_link = pd.DataFrame.from_dict(OrderedDict(zip(names, values)))
+                res_link = pd.DataFrame.from_dict(OrderedDict(zip(names, values, strict=False)))
             else:
                 res_link = pd.DataFrame()
             res.append(res_link)
