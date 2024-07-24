@@ -1,1 +1,0 @@
-The return from `drms.JsocInfoConstants` is now a string, there is no need to do ``.value`` on it.

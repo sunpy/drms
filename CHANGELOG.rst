@@ -1,3 +1,13 @@
+0.8.0 (2024-07-23)
+==================
+
+Backwards Incompatible Changes
+------------------------------
+
+- Increased minimum version of Python to 3.10.0 (`#116 <https://github.com/sunpy/drms/pull/116>`__)
+- The return from `drms.JsocInfoConstants` is now a string, there is no need to do ``.value`` on it. (`#116 <https://github.com/sunpy/drms/pull/116>`__)
+
+
 0.7.1 (2023-12-28)
 ==================
 
