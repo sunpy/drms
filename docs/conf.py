@@ -98,6 +98,7 @@ intersphinx_mapping = {
 }
 
 # -- Options for HTML output -------------------------------------------------
+html_theme = "sunpy"
 # JSOC email os env
 # see https://github.com/sunpy/sunpy/wiki/Home:-JSOC
 os.environ["JSOC_EMAIL"] = "jsoc@sunpy.org"
