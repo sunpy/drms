@@ -28,7 +28,6 @@ exclude = [
   "tools/**",
   "venv",
 ]
-]
 
 [lint]
 select = [
