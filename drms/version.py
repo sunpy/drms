@@ -1,5 +1,5 @@
 # NOTE: First try _dev.scm_version if it exists and setuptools_scm is installed
-# This file is not included in muse wheels/tarballs, so otherwise it will
+# This file is not included in wheels/tarballs, so otherwise it will
 # fall back on the generated _version module.
 try:
     try:

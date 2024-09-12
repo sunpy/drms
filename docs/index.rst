@@ -11,6 +11,7 @@ Python library for accessing HMI, AIA and MDI data from the Joint Science Operat
 
 .. toctree::
    :maxdepth: 2
+   :caption: Contents:
 
    intro
    tutorial
@@ -18,3 +19,10 @@ Python library for accessing HMI, AIA and MDI data from the Joint Science Operat
    generated/gallery/index
    citation
    whatsnew/index
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
