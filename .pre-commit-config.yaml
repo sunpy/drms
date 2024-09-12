@@ -11,7 +11,7 @@ repos:
         args: ['--in-place', '--remove-all-unused-imports', '--remove-unused-variable']
         exclude: ".*(.fits|.fts|.fit|.txt|tca.*|extern.*|.rst|.md|docs/conf.py)$"
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 'v0.5.0'
+    rev: "v0.6.4"
     hooks:
       - id: ruff
         args: ['--fix', '--unsafe-fixes']
@@ -38,10 +38,17 @@ repos:
         exclude: ".*(.fits|.fts|.fit|.txt|.csv)$"
       - id: check-yaml
       - id: debug-statements
+      - id: check-added-large-files
+        args: ["--enforce-all", "--maxkb=1054"]
+      - id: end-of-file-fixer
+        exclude: ".*(.fits|.fts|.fit|.header|.txt|.csv|tca.*|.json)$|^CITATION.rst$"
+      - id: mixed-line-ending
+        exclude: ".*(.fits|.fts|.fit|.header|.txt|.csv|tca.*)$"
   - repo: https://github.com/codespell-project/codespell
     rev: v2.3.0
     hooks:
       - id: codespell
+	
         additional_dependencies:
           - tomli
 ci:

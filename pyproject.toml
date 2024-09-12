@@ -1,11 +1,53 @@
 [build-system]
 requires = [
-  "setuptools",
-  "setuptools_scm[toml]",
+  "setuptools>=62.1",
+  "setuptools_scm[toml]>=6.2",
   "wheel",
   "oldest-supported-numpy",
 ]
-build-backend = 'setuptools.build_meta'
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "drms"
+description = "Access HMI, AIA and MDI data from the Standford JSOC DRMS"
+requires-python = ">=3.10"
+readme = { file = "README.rst", content-type = "text/x-rst" }
+license = { file = "licenses/LICENSE.rst" }
+authors = [
+  { name = "The SunPy Community", email = "sunpy@googlegroups.com" },
+]
+dependencies = [
+  "numpy",
+  "pandas",
+  "packaging"
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+tests = [
+  "pytest",
+  "pytest-astropy",
+  "pytest-doctestplus",
+  "pytest-cov",
+  "pytest-xdist",
+]
+docs = [
+  "astropy",
+  "matplotlib",
+  "sphinx",
+  "sphinx-automodapi",
+  "sphinx-changelog",
+  "sphinx-copybutton",
+  "sphinx-gallery",
+  "sphinx-hoverxref",
+  "sphinxext-opengraph",
+  "sunpy-sphinx-theme",
+  # Remove next line when fixed in towncrier; see https://github.com/twisted/towncrier/issues/528
+  "importlib-resources,
+  "sphinx-automodapi",
+]
+[project.urls]
+repository = "https://sunpy.org"
 
 [tool.black]
 line-length = 120
@@ -27,90 +69,16 @@ exclude = '''
 )
 '''
 
-[tool.isort]
-profile = "black"
-line_length = 120
-length_sort = "False"
-length_sort_sections = "stdlib"
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
 
-[tool.ruff]
-target-version = "py310"
-line-length = 120
-exclude=[
-    "__pycache__",
-    "__pypackages__",
-    "_build",
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git-rewrite",
-    ".git",
-    ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".pytype",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "paper/create_joss_figure.py",
-    "tools/**",
-    "venv",
-]
+[tool.setuptools.packages.find]
+include = ["drms*"]
+exclude = ["drms._dev*"]
 
-[tool.ruff.lint]
-# Allow unused variables when underscore-prefixed.
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-select = [
-       "E",
-       "F",
-       "W",
-       "UP",
-       "PT",
-       "RET",
-       "TID",
-       "PLE",
-       "NPY",
-       "RUF",
-       "PGH",
-       "PTH",
-       "BLE",
-       "FBT",
-       "B",
-       "A",
-       "COM",
-       "C4",
-       "T20",
-       "RSE",
-       "ERA",
-]
-extend-ignore = [
-    "E501",  # Line too long
-]
-
-[tool.ruff.lint.per-file-ignores]
-"examples/*.py" = [
-  "T201",
-  # We need print in our examples
-]
-"examples/plot_hmi_modes.py" = [
-  "E741", # Ambiguous variable name
-]
-
-[tool.ruff.lint.pydocstyle]
-convention = "numpy"
-
-[tool.ruff.lint.flake8-quotes]
-docstring-quotes = "double"
-
-[tool.codespell]
-skip = "*.asdf,*.fits,*.fts,*.header,*.json,*.xsh,*cache*,*egg*,*extern*,.git,.idea,.tox,_build,*truncated,*.svg,.asv_env,.history"
-ignore-words-list = "sav,requestor"
+[tool.setuptools_scm]
+write_to = "drms/_version.py"
 
 [ tool.gilesbot ]
   [ tool.gilesbot.pull_requests ]

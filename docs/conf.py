@@ -1,24 +1,32 @@
-"""
-Configuration file for the Sphinx documentation builder.
-"""
+# Configuration file for the Sphinx documentation builder.
+#
+# This file does only contain a selection of the most common options. For a
+# full list see the documentation:
+# http://www.sphinx-doc.org/en/master/config
 
 import os
 import datetime
 from pathlib import Path
 
-from sunpy_sphinx_theme import PNG_ICON
+from sunpy_sphinx_theme import *
 
-from drms import __version__
 
 # -- Project information -----------------------------------------------------
-project = "drms"
-author = "The SunPy Project"
-copyright = f"{datetime.datetime.now().year}, {author}"  # NOQA: A001
+
 # The full version, including alpha/beta/rc tags
+from drms import __version__
+
 release = __version__
-is_development = ".dev" in __version__
+
+project = "drms"
+author = "The SunPy Community"
+copyright = f"{datetime.datetime.now().year}, {author}"  # noqa: A001
 
 # -- General configuration ---------------------------------------------------
+
+# Add any Sphinx extension module names here, as strings. They can be
+# extensions coming with Sphinx (named "sphinx.ext.*") or your custom
+# ones.
 extensions = [
     "hoverxref.extension",
     "sphinx_copybutton",
@@ -36,11 +44,25 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
 ]
+
+# Add any paths that contain templates here, relative to this directory.
+# templates_path = ["_templates"]
+
+# List of patterns, relative to source directory, that match files and
+# directories to ignore when looking for source files.
+# This pattern also affects html_static_path and html_extra_path.
 automodapi_toctreedirnm = "generated/api"
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+
+# The suffix(es) of source filenames.
+# You can specify multiple suffix as a list of string:
 source_suffix = ".rst"
+
+# The master toctree document.
 master_doc = "index"
-default_role = "obj"
+
+# Treat everything in single ` as a Python reference.
+default_role = 'py:obj'
 
 # -- Options for hoverxref -----------------------------------------------------
 if os.environ.get("READTHEDOCS"):

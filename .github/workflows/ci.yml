@@ -1,3 +1,4 @@
+
 name: CI
 
 on:
@@ -12,6 +13,7 @@ on:
       - '!*pre*'
       - '!*post*'
   pull_request:
+  # Allow manual runs through the web UI
   workflow_dispatch:
   schedule:
     #        ┌───────── minute (0 - 59)
@@ -35,9 +37,23 @@ jobs:
       posargs: -n auto
       envs: |
         - linux: py312
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  sdist_verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -U --user build
+      - run: python -m build . --sdist
+      - run: python -m pip install -U --user twine
+      - run: python -m twine check dist/*
 
   test:
-    needs: [core]
+    needs: [core, sdist_verify]
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@main
     with:
       submodules: false
@@ -48,14 +64,16 @@ jobs:
         - windows: py10
         - macos: py311
         - linux: py310-oldestdeps
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   docs:
     needs: [core]
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@main
     with:
+      default_python: '3.12'
       submodules: false
       pytest: false
-      default_python: '3.12'
       toxdeps: "tox-pypi-filter"
       libraries: |
         apt:
@@ -63,33 +81,38 @@ jobs:
       envs: |
         - linux: build_docs
 
-  online:
-    if: "!startsWith(github.event.ref, 'refs/tags/v')"
-    needs: [docs]
+  cron:
+    if: |
+      github.event_name == 'workflow_dispatch' || (
+        github.event_name == 'pull_request' &&
+        contains(github.event.pull_request.labels.*.name, 'Run cron CI')
+      )
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@main
     with:
+      default_python: '3.12'
       submodules: false
       coverage: codecov
       toxdeps: "tox-pypi-filter"
-      posargs: -n 1 --dist loadgroup
       envs: |
-        - linux: py312-online
+	- linux: py312-online
         - linux: py312-sunpy
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   publish:
-    # Build wheels when pushing to any branch
-    # publish_pure_python.yml will only publish if tagged ^v.*
+    # Build wheels on PRs only when labelled. Releases will only be published if tagged ^v.*
+    # see https://github-actions-workflows.openastronomy.org/en/latest/publish.html#upload-to-pypi
     if: |
+      github.event_name != 'pull_request' ||
       (
-        github.event_name != 'pull_request'
-      ) || (
         github.event_name == 'pull_request' &&
         contains(github.event.pull_request.labels.*.name, 'Run publish')
       )
-    needs: [test]
+    needs: [test, docs]
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish_pure_python.yml@main
     with:
-      test_extras: 'dev'
+      python-version: '3.12'
+      test_extras: 'tests'
       test_command: 'pytest -p no:warnings --doctest-rst --pyargs drms'
       submodules: false
     secrets:
