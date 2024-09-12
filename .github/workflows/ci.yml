@@ -94,7 +94,7 @@ jobs:
       coverage: codecov
       toxdeps: "tox-pypi-filter"
       envs: |
-	- linux: py312-online
+        - linux: py312-online
         - linux: py312-sunpy
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
