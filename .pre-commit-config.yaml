@@ -48,9 +48,6 @@ repos:
     rev: v2.3.0
     hooks:
       - id: codespell
-	
-        additional_dependencies:
-          - tomli
 ci:
   autofix_prs: false
   autoupdate_schedule: "quarterly"
