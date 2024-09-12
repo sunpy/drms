@@ -3,7 +3,6 @@ requires = [
   "setuptools>=62.1",
   "setuptools_scm[toml]>=6.2",
   "wheel",
-  "oldest-supported-numpy",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -17,11 +16,11 @@ authors = [
   { name = "The SunPy Community", email = "sunpy@googlegroups.com" },
 ]
 dependencies = [
-  "numpy",
-  "pandas",
+  "numpy>=1.23.5",
+  "pandas>=1.5.1",
   "packaging"
 ]
-dynamic = ["version"]
+dynamic = [ "version" ]
 
 [project.optional-dependencies]
 tests = [
@@ -43,8 +42,6 @@ docs = [
   "sphinx-hoverxref",
   "sphinxext-opengraph",
   "sunpy-sphinx-theme",
-  # Remove next line when fixed in towncrier; see https://github.com/twisted/towncrier/issues/528
-  "importlib-resources",
   "sphinx-automodapi",
 ]
 [project.urls]
