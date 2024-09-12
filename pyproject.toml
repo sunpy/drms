@@ -43,7 +43,7 @@ docs = [
   "sphinxext-opengraph",
   "sunpy-sphinx-theme",
   # Remove next line when fixed in towncrier; see https://github.com/twisted/towncrier/issues/528
-  "importlib-resources,
+  "importlib-resources",
   "sphinx-automodapi",
 ]
 [project.urls]
