@@ -18,7 +18,7 @@ authors = [
 dependencies = [
   "numpy>=1.23.5",
   "pandas>=1.5.1",
-  "packaging"
+  "packaging>=23.0"
 ]
 dynamic = [ "version" ]
 
