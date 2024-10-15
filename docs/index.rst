@@ -20,9 +20,3 @@ Python library for accessing HMI, AIA and MDI data from the Joint Science Operat
    citation
    whatsnew/index
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
