@@ -7,6 +7,7 @@ This example shows how to download HMI synoptic data from JSOC and make a plot.
 """
 
 import matplotlib.pyplot as plt
+
 from astropy.io import fits
 
 import drms

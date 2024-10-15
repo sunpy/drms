@@ -19,4 +19,3 @@ Python library for accessing HMI, AIA and MDI data from the Joint Science Operat
    generated/gallery/index
    citation
    whatsnew/index
-

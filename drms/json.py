@@ -4,7 +4,6 @@ from urllib.parse import urlencode, quote_plus
 from urllib.request import HTTPError, urlopen
 
 from drms import logger
-
 from .config import ServerConfig, _server_configs
 from .utils import _split_arg
 

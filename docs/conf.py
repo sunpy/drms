@@ -46,7 +46,7 @@ extensions = [
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-# templates_path = ["_templates"]  # NOQA ERA001
+# templates_path = ["_templates"]  # NOQA: ERA001
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -62,7 +62,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # Treat everything in single ` as a Python reference.
-default_role = 'py:obj'
+default_role = "py:obj"
 
 # -- Options for hoverxref -----------------------------------------------------
 if os.environ.get("READTHEDOCS"):
