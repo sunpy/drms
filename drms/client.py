@@ -11,7 +11,6 @@ import numpy as np
 import pandas as pd
 
 from drms import logger
-
 from .exceptions import DrmsExportError, DrmsOperationNotSupported, DrmsQueryError
 from .json import HttpJsonClient
 from .utils import _extract_series_name, _pd_to_numeric_coerce, _split_arg
