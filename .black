@@ -1,0 +1,17 @@
+target-version = ['py310']
+exclude = '''
+(
+  /(
+    \.eggs
+    | \.git
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | build
+    | dist
+    | docs
+    | .history
+  )/
+)
+'''
