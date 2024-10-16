@@ -97,7 +97,10 @@ def test_query_invalid_series(jsoc_client):
 @pytest.mark.remote_data()
 @pytest.mark.parametrize(
     "query",
-    ["hmi.v_45s[2014.01.01_00:00:35_TAI-2014.01.01_01:00:35_TAI]", "hmi.M_720s[2011.04.14_00:30:00_TAI/6h@2h]"],
+    [
+        "hmi.v_45s[2014.01.01_00:00:35_TAI-2014.01.01_01:00:35_TAI]",
+        "hmi.M_720s[2011.04.14_00:30:00_TAI/6h@2h]",
+    ],
 )
 def test_query_hexadecimal_strings(query):
     # Exercise the part of client.py that deals with hexadecimal strings

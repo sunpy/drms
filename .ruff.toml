@@ -1,5 +1,5 @@
 target-version = "py310"
-line-length = 110
+line-length = 120
 exclude = [
   "drms/version.py",
   ".git,",
@@ -47,7 +47,6 @@ select = [
        "FBT",
        "B",
        "A",
-       "COM",
        "C4",
        "T20",
        "RSE",

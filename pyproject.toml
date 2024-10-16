@@ -47,26 +47,6 @@ docs = [
 [project.urls]
 repository = "https://sunpy.org"
 
-[tool.black]
-line-length = 120
-target-version = ['py310']
-exclude = '''
-(
-  /(
-    \.eggs
-    | \.git
-    | \.mypy_cache
-    | \.tox
-    | \.venv
-    | _build
-    | build
-    | dist
-    | docs
-    | .history
-  )/
-)
-'''
-
 [tool.setuptools]
 zip-safe = false
 include-package-data = true
