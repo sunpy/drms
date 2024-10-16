@@ -2,9 +2,7 @@
 drms
 ====
 
-
-Access HMI, AIA and MDI data from the Standford JSOC DRMS
----------------------------------------------------------
+Access HMI, AIA and MDI data from the Standford JSOC DRMS.
 
 `Docs <https://docs.sunpy.org/projects/drms/>`__ |
 `Tutorial <https://docs.sunpy.org/projects/drms/en/latest/tutorial.html>`__ |
