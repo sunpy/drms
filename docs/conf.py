@@ -10,7 +10,6 @@ from pathlib import Path
 
 from sunpy_sphinx_theme import PNG_ICON
 
-
 from packaging.version import Version
 
 # -- Project information -----------------------------------------------------
@@ -69,23 +68,38 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # You can specify multiple suffix as a list of string:
 source_suffix = ".rst"
 
-<<<<<<<
 # The master toctree document.
 master_doc = "index"
-=======
-# Treat everything in single ` as a Python reference.
-default_role = "py:obj"
->>>>>>>
 
 # Treat everything in single ` as a Python reference.
 default_role = "py:obj"
 
-<<<<<<<
-# -- Options for hoverxref -----------------------------------------------------
-if os.environ.get("READTHEDOCS"):
-=======
+# -- Options for intersphinx extension ---------------------------------------
+
+intersphinx_mapping = {
+    "python": (
+        "https://docs.python.org/3/",
+        (None, "http://www.astropy.org/astropy-data/intersphinx/python3.inv"),
+    ),
+    "numpy": (
+        "https://numpy.org/doc/stable/",
+        (None, "http://www.astropy.org/astropy-data/intersphinx/numpy.inv"),
+    ),
+    "scipy": (
+        "https://docs.scipy.org/doc/scipy/reference/",
+        (None, "http://www.astropy.org/astropy-data/intersphinx/scipy.inv"),
+    ),
+    "matplotlib": ("https://matplotlib.org/stable", None),
+    "astropy": ("https://docs.astropy.org/en/stable/", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
+    "sunpy": ("https://docs.sunpy.org/en/stable/", None),
+}
+
+# -- Options for HTML output -------------------------------------------------
+
+# The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = "alabaster"
+html_theme = "sunpy"
 
 # Render inheritance diagrams in SVG
 graphviz_output_format = "svg"
@@ -102,13 +116,33 @@ graphviz_dot_args = [
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
->>>>>>>
+# html_static_path = ["_static"]
+
+# By default, when rendering docstrings for classes, sphinx.ext.autodoc will
+# make docs with the class-level docstring and the class-method docstrings,
+# but not the __init__ docstring, which often contains the parameters to
+# class constructors across the scientific Python ecosystem. The option below
+# will append the __init__ docstring to the class-level docstring when rendering
+# the docs. For more options, see:
+# https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autoclass_content
+autoclass_content = "both"
+
+# -- Other options ----------------------------------------------------------
+
+# JSOC email os env
+# see https://github.com/sunpy/sunpy/wiki/Home:-JSOC
+os.environ["JSOC_EMAIL"] = "jsoc@sunpy.org"
+
+# -- Options for hoverxref -----------------------------------------------------
+
+if os.environ.get("READTHEDOCS"):
     hoverxref_api_host = "https://readthedocs.org"
     if os.environ.get("PROXIED_API_ENDPOINT"):
         # Use the proxied API endpoint
         # - A RTD thing to avoid a CSRF block when docs are using a
         #   custom domain
         hoverxref_api_host = "/_"
+        
 hoverxref_tooltip_maxwidth = 600  # RTD main window is 696px
 hoverxref_auto_ref = True
 hoverxref_mathjax = True
@@ -132,36 +166,13 @@ hoverxref_role_types = {
 }
 
 # -- Options for sphinx-copybutton ---------------------------------------------
+
 # Python Repl + continuation, Bash, ipython and qtconsole + continuation, jupyter-console + continuation
 copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
 copybutton_prompt_is_regexp = True
 
-# -- Options for intersphinx extension ---------------------------------------
-intersphinx_mapping = {
-    "python": (
-        "https://docs.python.org/3/",
-        (None, "http://www.astropy.org/astropy-data/intersphinx/python3.inv"),
-    ),
-    "numpy": (
-        "https://numpy.org/doc/stable/",
-        (None, "http://www.astropy.org/astropy-data/intersphinx/numpy.inv"),
-    ),
-    "scipy": (
-        "https://docs.scipy.org/doc/scipy/reference/",
-        (None, "http://www.astropy.org/astropy-data/intersphinx/scipy.inv"),
-    ),
-    "matplotlib": ("https://matplotlib.org/stable", None),
-    "astropy": ("https://docs.astropy.org/en/stable/", None),
-    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
-    "sunpy": ("https://docs.sunpy.org/en/stable/", None),
-}
+# -- Sphinx Gallery ------------------------------------------------------------
 
-# -- Options for HTML output -------------------------------------------------
-html_theme = "sunpy"
-# JSOC email os env
-# see https://github.com/sunpy/sunpy/wiki/Home:-JSOC
-os.environ["JSOC_EMAIL"] = "jsoc@sunpy.org"
-graphviz_output_format = "svg"
 sphinx_gallery_conf = {
     "backreferences_dir": Path("generated") / "modules",
     "filename_pattern": "^((?!skip_).)*$",
