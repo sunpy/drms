@@ -11,12 +11,23 @@ from pathlib import Path
 from sunpy_sphinx_theme import PNG_ICON
 
 
+from packaging.version import Version
+
 # -- Project information -----------------------------------------------------
 
 # The full version, including alpha/beta/rc tags
 from drms import __version__
 
-release = __version__
+_version = Version(__version__)
+version = release = str(_version)
+# Avoid "post" appearing in version string in rendered docs
+if _version.is_postrelease:
+    version = release = _version.base_version
+# Avoid long githashes in rendered Sphinx docs
+elif _version.is_devrelease:
+    version = release = f"{_version.base_version}.dev{_version.dev}"
+is_development = _version.is_devrelease
+is_release = not(_version.is_prerelease or _version.is_devrelease)
 
 project = "drms"
 author = "The SunPy Community"
@@ -58,14 +69,40 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # You can specify multiple suffix as a list of string:
 source_suffix = ".rst"
 
+<<<<<<<
 # The master toctree document.
 master_doc = "index"
+=======
+# Treat everything in single ` as a Python reference.
+default_role = "py:obj"
+>>>>>>>
 
 # Treat everything in single ` as a Python reference.
 default_role = "py:obj"
 
+<<<<<<<
 # -- Options for hoverxref -----------------------------------------------------
 if os.environ.get("READTHEDOCS"):
+=======
+# a list of builtin themes.
+html_theme = "alabaster"
+
+# Render inheritance diagrams in SVG
+graphviz_output_format = "svg"
+
+graphviz_dot_args = [
+    "-Nfontsize=10",
+    "-Nfontname=Helvetica Neue, Helvetica, Arial, sans-serif",
+    "-Efontsize=10",
+    "-Efontname=Helvetica Neue, Helvetica, Arial, sans-serif",
+    "-Gfontsize=10",
+    "-Gfontname=Helvetica Neue, Helvetica, Arial, sans-serif",
+]
+
+# Add any paths that contain custom static files (such as style sheets) here,
+# relative to this directory. They are copied after the builtin static files,
+# so a file named "default.css" will overwrite the builtin "default.css".
+>>>>>>>
     hoverxref_api_host = "https://readthedocs.org"
     if os.environ.get("PROXIED_API_ENDPOINT"):
         # Use the proxied API endpoint
