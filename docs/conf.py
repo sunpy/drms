@@ -26,7 +26,7 @@ if _version.is_postrelease:
 elif _version.is_devrelease:
     version = release = f"{_version.base_version}.dev{_version.dev}"
 is_development = _version.is_devrelease
-is_release = not(_version.is_prerelease or _version.is_devrelease)
+is_release = not (_version.is_prerelease or _version.is_devrelease)
 
 project = "drms"
 author = "The SunPy Community"
@@ -142,7 +142,7 @@ if os.environ.get("READTHEDOCS"):
         # - A RTD thing to avoid a CSRF block when docs are using a
         #   custom domain
         hoverxref_api_host = "/_"
-        
+
 hoverxref_tooltip_maxwidth = 600  # RTD main window is 696px
 hoverxref_auto_ref = True
 hoverxref_mathjax = True
