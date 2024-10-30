@@ -43,6 +43,7 @@ docs = [
   "sphinxext-opengraph",
   "sunpy-sphinx-theme",
   "sphinx-automodapi",
+  "sunpy-sphinx-theme",
   "packaging",
 ]
 [project.urls]
