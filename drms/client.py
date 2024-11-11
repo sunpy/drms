@@ -189,7 +189,7 @@ class ExportRequest:
         # data_dir contains a directory, the filename column should contain
         # only the basename and we need to join it with the directory.
         if data_dir is None:
-            res.rename(columns={"filename": "fpath"}, inplace=True)
+            res = res.rename(columns={"filename": "fpath"})
             split_fpath = res.fpath.str.split("/")
             res["filename"] = [sfp[-1] for sfp in split_fpath]
         else:
