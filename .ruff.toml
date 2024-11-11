@@ -3,8 +3,8 @@ line-length = 120
 exclude = [
   ".git,",
   "__pycache__",
-  "drms/version.py"
   "build",
+  "drms/version.py",
 ]
 
 [lint]
@@ -14,6 +14,22 @@ select = [
   "W",
   "UP",
   "PT",
+  "BLE",
+  "A",
+  "C4",
+  "INP",
+  "PIE",
+  "T20",
+  "RET",
+  "TID",
+  "PTH",
+  "PD",
+  "PLC",
+  "PLE",
+  "FLY",
+  "NPY",
+  "PERF",
+  "RUF",
 ]
 extend-ignore = [
   # pycodestyle (E, W)
