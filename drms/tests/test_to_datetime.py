@@ -92,7 +92,7 @@ data_invalid_out = pd.Series([data[1] for data in data_invalid])
 
 @pytest.mark.parametrize(("time_string", "expected"), data_invalid)
 def test_corner_case(time_string, expected):
-    assert pd.isnull(drms.to_datetime(time_string)) == expected
+    assert pd.isna(drms.to_datetime(time_string)) == expected
     assert isinstance(drms.to_datetime([]), pd.Series)
     assert drms.to_datetime([]).empty
 
@@ -107,4 +107,4 @@ def test_corner_case(time_string, expected):
     ],
 )
 def test_corner_case_series(time_series, expected):
-    assert pd.isnull(drms.to_datetime(time_series)).equals(expected)
+    assert pd.isna(drms.to_datetime(time_series)).equals(expected)
