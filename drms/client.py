@@ -67,12 +67,7 @@ class SeriesInfo:
     @staticmethod
     def _parse_keywords(d):
         keys = ["name", "type", "recscope", "defval", "units", "note", "linkinfo"]
-        res = []
-        for di in d:
-            resi = []
-            for k in keys:
-                resi.append(di.get(k))
-            res.append(tuple(resi))
+        res = [tuple(di.get(k) for k in keys) for di in d]
         if not res:
             res = None  # workaround for older pandas versions
         res = pd.DataFrame(res, columns=keys)
@@ -89,12 +84,7 @@ class SeriesInfo:
     @staticmethod
     def _parse_links(d):
         keys = ["name", "target", "kind", "note"]
-        res = []
-        for di in d:
-            resi = []
-            for k in keys:
-                resi.append(di.get(k))
-            res.append(tuple(resi))
+        res = [tuple(di.get(k) for k in keys) for di in d]
         if not res:
             res = None  # workaround for older pandas versions
         res = pd.DataFrame(res, columns=keys)
@@ -104,12 +94,7 @@ class SeriesInfo:
     @staticmethod
     def _parse_segments(d):
         keys = ["name", "type", "units", "protocol", "dims", "note"]
-        res = []
-        for di in d:
-            resi = []
-            for k in keys:
-                resi.append(di.get(k))
-            res.append(tuple(resi))
+        res = [tuple(di.get(k) for k in keys) for di in d]
         if not res:
             res = None  # workaround for older pandas versions
         res = pd.DataFrame(res, columns=keys)
@@ -204,7 +189,7 @@ class ExportRequest:
         # data_dir contains a directory, the filename column should contain
         # only the basename and we need to join it with the directory.
         if data_dir is None:
-            res.rename(columns={"filename": "fpath"}, inplace=True)
+            res = res.rename(columns={"filename": "fpath"})
             split_fpath = res.fpath.str.split("/")
             res["filename"] = [sfp[-1] for sfp in split_fpath]
         else:

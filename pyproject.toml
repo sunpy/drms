@@ -32,18 +32,17 @@ tests = [
   "astropy",
 ]
 docs = [
-  "astropy",
-  "matplotlib",
   "sphinx",
   "sphinx-automodapi",
+  "sunpy-sphinx-theme",
+  "packaging",
+  "astropy",
+  "matplotlib",
   "sphinx-changelog",
   "sphinx-copybutton",
   "sphinx-gallery",
   "sphinx-hoverxref",
   "sphinxext-opengraph",
-  "sunpy-sphinx-theme",
-  "sphinx-automodapi",
-  "packaging",
 ]
 [project.urls]
 repository = "https://sunpy.org"

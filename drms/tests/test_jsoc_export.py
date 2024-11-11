@@ -23,13 +23,13 @@ def test_export_asis_basic(jsoc_client_export, method):
     for record in r.urls.record:
         record = record.lower()
         assert record.startswith("hmi.v_avg120[2150]")
-        assert record.endswith("{mean}") or record.endswith("{power}")
+        assert record.endswith(("{mean}", "{power}"))
 
     for filename in r.urls.filename:
-        assert filename.endswith("mean.fits") or filename.endswith("power.fits")
+        assert filename.endswith(("mean.fits", "power.fits"))
 
     for url in r.urls.url:
-        assert url.endswith("mean.fits") or url.endswith("power.fits")
+        assert url.endswith(("mean.fits", "power.fits"))
 
 
 @pytest.mark.jsoc()
@@ -54,10 +54,10 @@ def test_export_fits_basic(jsoc_client_export):
         assert record.endswith("2014.11.30_00:00:00_tai]")
 
     for filename in r.urls.filename:
-        assert filename.endswith("continuum.fits") or filename.endswith("magnetogram.fits")
+        assert filename.endswith(("continuum.fits", "magnetogram.fits"))
 
     for url in r.urls.url:
-        assert url.endswith("continuum.fits") or url.endswith("magnetogram.fits")
+        assert url.endswith(("continuum.fits", "magnetogram.fits"))
 
 
 @pytest.mark.jsoc()
