@@ -46,9 +46,6 @@ def _get_bibtex():
 __citation__ = __bibtex__ = _get_bibtex()
 
 __all__ = [
-    "__bibtex__",
-    "__citation__",
-    "__version__",
     "Client",
     "DrmsError",
     "DrmsExportError",
@@ -58,9 +55,12 @@ __all__ = [
     "HttpJsonClient",
     "HttpJsonRequest",
     "JsocInfoConstants",
-    "register_server",
     "SeriesInfo",
     "ServerConfig",
-    "to_datetime",
+    "__bibtex__",
+    "__citation__",
+    "__version__",
     "logger",
+    "register_server",
+    "to_datetime",
 ]

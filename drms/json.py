@@ -7,7 +7,7 @@ from drms import logger
 from .config import ServerConfig, _server_configs
 from .utils import _split_arg
 
-__all__ = ["JsocInfoConstants", "HttpJsonRequest", "HttpJsonClient"]
+__all__ = ["HttpJsonClient", "HttpJsonRequest", "JsocInfoConstants"]
 
 
 # TODO: When we support 3.11, we can use StrEnum instead of Enum
