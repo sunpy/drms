@@ -15,7 +15,7 @@ from .exceptions import DrmsExportError, DrmsOperationNotSupported, DrmsQueryErr
 from .json import HttpJsonClient
 from .utils import _extract_series_name, _pd_to_numeric_coerce, _split_arg
 
-__all__ = ["SeriesInfo", "ExportRequest", "Client"]
+__all__ = ["Client", "ExportRequest", "SeriesInfo"]
 
 
 class SeriesInfo:
