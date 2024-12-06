@@ -34,6 +34,7 @@ tests = [
 docs = [
   "sphinx",
   "sphinx-automodapi",
+  "sphinx-changelog",
   "sunpy-sphinx-theme",
   "packaging",
   "astropy",
@@ -44,8 +45,14 @@ docs = [
   "sphinx-hoverxref",
   "sphinxext-opengraph",
 ]
+
 [project.urls]
-repository = "https://sunpy.org"
+Homepage = "https://sunpy.org"
+"Source Code" = "https://github.com/sunpy/drms"
+Download = "https://pypi.org/project/sunpy"
+Documentation = "https://docs.sunpy.org/projects/drms"
+Changelog = "https://docs.sunpy.org/projects/drms/en/stable/whatsnew/changelog.html"
+"Issue Tracker" = "https://github.com/sunpy/drms/issues"
 
 [tool.setuptools]
 zip-safe = false
@@ -113,7 +120,72 @@ write_to = "drms/_version.py"
       name = "Documentation Fixes"
       showcontent = true
 
+<<<<<<<
     [[tool.towncrier.type]]
       directory = "trivial"
       name = "Trivial/Internal Changes"
       showcontent = true
+=======
+[tool.setuptools_scm]
+write_to = "drms/_version.py"
+
+[tool.gilesbot]
+  [tool.gilesbot.pull_requests]
+  enabled = true
+
+  [tool.gilesbot.towncrier_changelog]
+  enabled = true
+  verify_pr_number = true
+  changelog_skip_label = "No Changelog Entry Needed"
+  help_url = "https://github.com/sunpy/drms/blob/main/changelog/README.rst"
+
+  changelog_missing_long = "There isn't a changelog file in this pull request. Please add a changelog file to the `changelog/` directory following the instructions in the changelog [README](https://github.com/sunpy/drms/blob/main/changelog/README.rst)."
+
+  type_incorrect_long = "The changelog file you added is not one of the allowed types. Please use one of the types described in the changelog [README](https://github.com/sunpy/drms/blob/main/changelog/README.rst)"
+
+  number_incorrect_long = "The number in the changelog file you added does not match the number of this pull request. Please rename the file."
+
+# TODO: This should be in towncrier.toml but Giles currently only works looks in
+# pyproject.toml we should move this back when it's fixed.
+[tool.towncrier]
+  package = "drms"
+  filename = "CHANGELOG.rst"
+  directory = "changelog/"
+  issue_format = "`#{issue} https:github.com/sunpy/drms/changelog/pull/{issue}>`__"
+  title_format = "{version} ({project_date})"
+
+  [[tool.towncrier.type]]
+  directory = "breaking"
+  name = "Breaking Changes"
+  showcontent = true
+
+  [[tool.towncrier.type]]
+  directory = "deprecation"
+  name = "Deprecations"
+  showcontent = true
+
+  [[tool.towncrier.type]]
+  directory = "removal"
+  name = "Removals"
+  showcontent = true
+
+  [[tool.towncrier.type]]
+  directory = "feature"
+  name = "New Features"
+  showcontent = true
+
+  [[tool.towncrier.type]]
+  directory = "bugfix"
+  name = "Bug Fixes"
+  showcontent = true
+
+  [[tool.towncrier.type]]
+  directory = "doc"
+  name = "Documentation"
+  showcontent = true
+
+  [[tool.towncrier.type]]
+  directory = "trivial"
+  name = "Internal Changes"
+  showcontent = true
+>>>>>>>
