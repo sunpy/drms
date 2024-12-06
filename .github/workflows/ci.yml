@@ -1,7 +1,4 @@
-<<<<<<<
-=======
 # Main CI Workflow
->>>>>>>
 name: CI
 
 on:
@@ -85,14 +82,7 @@ jobs:
         - linux: build_docs
 
   online:
-<<<<<<<
-    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@main
-=======
-        github.event_name == 'pull_request' &&
-        contains(github.event.pull_request.labels.*.name, 'Run cron CI')
-      )
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@v1
->>>>>>>
     with:
       default_python: '3.12'
       submodules: false
