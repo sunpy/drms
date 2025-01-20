@@ -84,7 +84,7 @@ class ServerConfig:
                     d[url_key] = urljoin(cgi_baseurl, cgi_value)
 
     def __repr__(self):
-        return f'<ServerConfig: {self._d.get("name")}>'
+        return f"<ServerConfig: {self._d.get('name')}>"
 
     def __dir__(self):
         return dir(type(self)) + list(self.__dict__.keys()) + list(self._valid_keys)
