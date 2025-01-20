@@ -160,7 +160,7 @@ class HttpJsonClient:
         result : dict
             Dictionary containing information about the data series.
         """
-        query = f'?{urlencode({"op": "series_struct", "ds": ds})}'
+        query = f"?{urlencode({'op': 'series_struct', 'ds': ds})}"
         req = self._json_request(self._server.url_jsoc_info + query)
         return req.data
 
@@ -178,7 +178,7 @@ class HttpJsonClient:
         result : dict
             Dictionary containing 'count', 'status' and 'runtime'.
         """
-        query = f'?{urlencode({"op": "rs_summary", "ds": ds})}'
+        query = f"?{urlencode({'op': 'rs_summary', 'ds': ds})}"
         req = self._json_request(self._server.url_jsoc_info + query)
         return req.data
 
@@ -355,9 +355,9 @@ class HttpJsonClient:
                         raise ValueError(f"Unknown protocol argument: {k}")
             protocol += ",CT={ct},scaling={scaling},size={size}".format(**extra_keys)
             if "min" in extra_keys:
-                protocol += f',min={extra_keys["min"]:g}'
+                protocol += f",min={extra_keys['min']:g}"
             if "max" in extra_keys:
-                protocol += f',max={extra_keys["max"]:g}'
+                protocol += f",max={extra_keys['max']:g}"
         else:
             if protocol_args is not None:
                 raise ValueError(f"protocol_args not supported for protocol {protocol}")
@@ -393,7 +393,7 @@ class HttpJsonClient:
                     raise ValueError(f"{p} is not one of the allowed processing options: {allowed_processes}")
                 process_strings[p] = ",".join([f"{k}={v}" for k, v in opts.items()])
             processes = "|".join([f"{k},{v}" for k, v in process_strings.items()])
-            d["process=n"] = f'{d["process=n"]}|{processes}'
+            d["process=n"] = f"{d['process=n']}|{processes}"
 
         if requester is None:
             d["requester"] = notify.split("@")[0]
@@ -417,6 +417,6 @@ class HttpJsonClient:
         result : dict
             Dictionary containing the export request status.
         """
-        query = f'?{urlencode({"op": "exp_status", "requestid": requestid})}'
+        query = f"?{urlencode({'op': 'exp_status', 'requestid': requestid})}"
         req = self._json_request(self._server.url_jsoc_fetch + query)
         return req.data
