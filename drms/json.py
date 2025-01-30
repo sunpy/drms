@@ -1,5 +1,6 @@
 import sys
 import json as _json
+import socket
 from enum import Enum
 from urllib.parse import urlencode, quote_plus
 from urllib.request import Request, HTTPError, urlopen
@@ -38,12 +39,13 @@ class HttpJsonRequest:
     Use `HttpJsonClient` to create an instance.
     """
 
-    def __init__(self, url, encoding):
+    def __init__(self, url, encoding, timeout=60):
+        timeout = socket.getdefaulttimeout() or timeout
         self._encoding = encoding
         try:
             req = Request(url)
             req.add_header("User-Agent", f"drms/{drms.__version__}, python/{sys.version[:5]}")
-            self._http = urlopen(req)
+            self._http = urlopen(req, timeout=timeout)
         except HTTPError as e:
             e.msg = f"Failed to open URL: {e.url} with {e.code} - {e.msg}"
             raise e

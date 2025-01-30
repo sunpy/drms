@@ -23,7 +23,7 @@ class lazily_cached:
         return self.result
 
 
-def site_reachable(url, timeout=15):
+def site_reachable(url, timeout=60):
     """
     Checks if the given URL is accessible.
     """

@@ -2,6 +2,7 @@ import os
 import re
 import time
 import shutil
+import socket
 from pathlib import Path
 from collections import OrderedDict
 from urllib.error import URLError, HTTPError
@@ -409,7 +410,7 @@ class ExportRequest:
         ----------
         timeout : int or None
             Maximum number of seconds until this method times out. If
-            set to None (the default), the status will be updated
+            set to `None` (the default), the status will be updated
             indefinitely until the request succeeded or failed.
         sleep : int or None
             Time in seconds between status updates (defaults to 5
@@ -470,7 +471,7 @@ class ExportRequest:
                 logger.info(f"Request not found on server, {retries_notfound} retries left.")
                 retries_notfound -= 1
 
-    def download(self, directory, *, index=None, fname_from_rec=None):
+    def download(self, directory, *, index=None, fname_from_rec=None, timeout=60):
         """
         Download data files.
 
@@ -506,6 +507,10 @@ class ExportRequest:
             generated. This also applies to movie files from exports
             with protocols 'mpg' or 'mp4', where the original filename
             is used locally.
+        timeout: float, optional
+            Sets the timeout to "urlopen", this defaults to 60 seconds.
+            This can be overridden if you set the socket timeout using
+            `socket.setdefaulttimeout`.
 
         Returns
         -------
@@ -555,7 +560,8 @@ class ExportRequest:
             logger.info(f"    record: {di.record}")
             logger.info(f"    filename: {di.filename}")
             try:
-                with urlopen(di.url) as response, open(fpath_tmp, "wb") as out_file:
+                timeout = socket.getdefaulttimeout() or timeout
+                with urlopen(di.url, timeout=timeout) as response, open(fpath_tmp, "wb") as out_file:
                     shutil.copyfileobj(response, out_file)
             except (HTTPError, URLError):
                 fpath_new = None
