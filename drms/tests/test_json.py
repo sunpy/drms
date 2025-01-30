@@ -16,9 +16,6 @@ def test_jsocinfoconstants():
 
 def test_request_headers():
     with patch("drms.json.urlopen") as mock:
-        mock_response = mock.return_value
-        mock_response.read.return_value = b'{"key": "value"}'
-        mock_response.__enter__.return_value = mock_response
         HttpJsonRequest("http://example.com", "latin1")
 
     actual_request = mock.call_args[0][0]
