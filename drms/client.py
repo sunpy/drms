@@ -1,11 +1,12 @@
 import os
 import re
 import time
+import shutil
 from pathlib import Path
 from collections import OrderedDict
 from urllib.error import URLError, HTTPError
 from urllib.parse import urljoin
-from urllib.request import urlretrieve
+from urllib.request import urlopen
 
 import numpy as np
 import pandas as pd
@@ -554,7 +555,8 @@ class ExportRequest:
             logger.info(f"    record: {di.record}")
             logger.info(f"    filename: {di.filename}")
             try:
-                urlretrieve(di.url, fpath_tmp)
+                with urlopen(di.url) as response, open(fpath_tmp, "wb") as out_file:
+                    shutil.copyfileobj(response, out_file)
             except (HTTPError, URLError):
                 fpath_new = None
                 logger.info("    -> Error: Could not download file")

@@ -1,8 +1,10 @@
+import sys
 import json as _json
 from enum import Enum
 from urllib.parse import urlencode, quote_plus
-from urllib.request import HTTPError, urlopen
+from urllib.request import Request, HTTPError, urlopen
 
+import drms
 from drms import logger
 from .config import ServerConfig, _server_configs
 from .utils import _split_arg
@@ -39,7 +41,9 @@ class HttpJsonRequest:
     def __init__(self, url, encoding):
         self._encoding = encoding
         try:
-            self._http = urlopen(url)
+            req = Request(url)
+            req.add_header("User-Agent", f"drms/{drms.__version__}, python/{sys.version[:5]}")
+            self._http = urlopen(req)
         except HTTPError as e:
             e.msg = f"Failed to open URL: {e.url} with {e.code} - {e.msg}"
             raise e
