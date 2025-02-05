@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 
 from drms import logger
+from drms.utils import create_request_with_header
 from .exceptions import DrmsExportError, DrmsOperationNotSupported, DrmsQueryError
 from .json import HttpJsonClient
 from .utils import _extract_series_name, _pd_to_numeric_coerce, _split_arg
@@ -559,7 +560,10 @@ class ExportRequest:
             logger.info(f"    filename: {di.filename}")
             try:
                 timeout = socket.getdefaulttimeout() or timeout
-                with urlopen(di.url, timeout=timeout) as response, open(fpath_tmp, "wb") as out_file:
+                with (
+                    urlopen(create_request_with_header(di.url), timeout=timeout) as response,
+                    open(fpath_tmp, "wb") as out_file,
+                ):
                     shutil.copyfileobj(response, out_file)
             except (HTTPError, URLError):
                 fpath_new = None
