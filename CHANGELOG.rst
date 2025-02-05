@@ -1,3 +1,12 @@
+0.9.0 (2025-02-05)
+==================
+
+New Features
+------------
+
+- Added timeout keyword to :meth:`drms.client.ExportRequest.download` which also will use the socket value, if it is set. (`#137 <https://github.com/sunpy/drms/pull/137>`__)
+
+
 0.8.0 (2024-07-23)
 ==================
 
