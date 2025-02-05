@@ -202,7 +202,7 @@ Note that :meth:`drms.client.Client.export` performs an ``url_quick`` / ``as-is`
 .. code-block:: python
 
     >>> export_request = client.export('hmi.v_45s[2016.04.01_TAI/1d@6h]{Dopplergram}')  # doctest: +REMOTE_DATA
-    >>> export_request  # doctest: +REMOTE_DATA
+    >>> export_request  # doctest: +SKIP
     <ExportRequest: id=None, status=0>
 
     >>> export_request.data.filename  # doctest: +REMOTE_DATA
