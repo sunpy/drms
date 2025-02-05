@@ -8,7 +8,7 @@ import drms
 @pytest.mark.parametrize("method", ["url_quick", "url"])
 def test_export_asis_basic(jsoc_client_export, method):
     r = jsoc_client_export.export(
-        "hmi.v_avg120[2150]{mean,power}",
+        "hmi.v_sht_2drls[2024.09.19_00:00:00_TAI]{split,rot,err}",
         protocol="as-is",
         method=method,
         requester=False,
@@ -18,18 +18,18 @@ def test_export_asis_basic(jsoc_client_export, method):
     assert r.wait(timeout=60)
     assert r.has_succeeded()
     assert r.protocol == "as-is"
-    assert len(r.urls) == 12  # 6 files per segment
+    assert len(r.urls) == 9  # 3 files per segment
 
     for record in r.urls.record:
         record = record.lower()
-        assert record.startswith("hmi.v_avg120[2150]")
-        assert record.endswith(("{mean}", "{power}"))
+        assert record.startswith("hmi.v_sht_2drls[2024.09.19_00:00:00_tai]")
+        assert record.endswith(("{split}", "{rot}", "{err}"))
 
     for filename in r.urls.filename:
-        assert filename.endswith(("mean.fits", "power.fits"))
+        assert filename.endswith(("err.2d", "rot.2d", "splittings.out"))
 
     for url in r.urls.url:
-        assert url.endswith(("mean.fits", "power.fits"))
+        assert url.endswith(("err.2d", "rot.2d", "splittings.out"))
 
 
 @pytest.mark.jsoc()
@@ -69,7 +69,7 @@ def test_export_im_patch(jsoc_client_export):
     # that this has not happened.
     process = {
         "im_patch": {
-            "t_ref": "2015-10-17T04:33:30.000",
+            "t_ref": "2025-01-01T04:33:30.000",
             "t": 0,
             "r": 0,
             "c": 0,
@@ -82,7 +82,7 @@ def test_export_im_patch(jsoc_client_export):
         },
     }
     req = jsoc_client_export.export(
-        "aia.lev1_euv_12s[2015-10-17T04:33:30.000/1m@12s][171]{image}",
+        "aia.lev1_euv_12s[2025-01-01T04:33:30.000/1m@12s][171]{image}",
         method="url",
         protocol="fits",
         process=process,

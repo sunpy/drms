@@ -8,7 +8,7 @@ import pytest
     [
         ("hmi.v_45s", ["T_REC", "CAMERA"], ["Dopplergram"]),
         ("hmi.m_720s", ["T_REC", "CAMERA"], ["magnetogram"]),
-        ("hmi.v_avg120", ["CarrRot", "CMLon"], ["mean", "power", "valid", "Log"]),
+        ("hmi.v_sht_2drls", ["LMIN", "NACOEFF"], ["split", "rot", "err"]),
     ],
 )
 def test_series_info_basic(jsoc_client, series, pkeys, segments):
@@ -28,7 +28,7 @@ def test_series_info_basic(jsoc_client, series, pkeys, segments):
     [
         ("hmi.v_45s", ["T_REC", "CAMERA"]),
         ("hmi.m_720s", ["T_REC", "CAMERA"]),
-        ("hmi.v_avg120", ["CarrRot", "CMLon"]),
+        ("hmi.v_sht_2drls", ["LMIN", "NACOEFF"]),
         ("aia.lev1", ["T_REC", "FSN"]),
         ("aia.lev1_euv_12s", ["T_REC", "WAVELNTH"]),
         ("aia.response", ["T_START", "WAVE_STR"]),

@@ -68,7 +68,6 @@ def test_config_jsoc():
     assert isinstance(cfg.cgi_show_series_wrapper, str)
     assert isinstance(cfg.show_series_wrapper_dbhost, str)
     assert cfg.http_download_baseurl.startswith("http://")
-    assert cfg.ftp_download_baseurl.startswith("ftp://")
 
     baseurl = cfg.cgi_baseurl
     assert baseurl.startswith("http://")
@@ -93,7 +92,6 @@ def test_config_kis():
     assert cfg.cgi_show_series_wrapper is None
     assert cfg.show_series_wrapper_dbhost is None
     assert cfg.http_download_baseurl is None
-    assert cfg.ftp_download_baseurl is None
 
     baseurl = cfg.cgi_baseurl
     assert baseurl.startswith("http://")

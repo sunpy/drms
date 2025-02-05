@@ -199,8 +199,6 @@ class ExportRequest:
 
         if self.method.startswith("url"):
             baseurl = self._client._server.http_download_baseurl
-        elif self.method.startswith("ftp"):
-            baseurl = self._client._server.ftp_download_baseurl
         else:
             raise RuntimeError(f"Download is not supported for export method {self.method}")
 

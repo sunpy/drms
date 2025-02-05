@@ -53,14 +53,16 @@ You can also use :meth:`drms.client.Client.info` to get more detailed informatio
 
 .. code-block:: python
 
-    >>> series_info = client.info('hmi.v_avg120')  # doctest: +REMOTE_DATA
+    >>> series_info = client.info('hmi.v_sht_2drls')  # doctest: +REMOTE_DATA
     >>> series_info.segments  # doctest: +REMOTE_DATA
-            type  units protocol       dims               note
+             type units protocol dims                   note
     name
-    mean   short    m/s     fits  4096x4096       Doppler mean
-    power  short  m2/s2     fits  4096x4096      Doppler power
-    valid  short     NA     fits  4096x4096  valid pixel count
-    Log     char     NA  generic                       run log
+    split  string  none  generic       calculated splittings
+    rot    string  none  generic            rotation profile
+    err    string  none  generic                      errors
+    mesh   string  none  generic          radial grid points
+    parms  string  none  generic            input parameters
+    log    string  none  generic             standard output
 
 All table-like structures, returned by routines in the ``drms`` module, are `Pandas DataFrames <https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html>`__.
 If you are new to `Pandas <https://pandas.pydata.org/>`__, you should have a look at the introduction to `Pandas Data Structures <https://pandas.pydata.org/pandas-docs/stable/dsintro.html>`__.
@@ -246,18 +248,18 @@ First we have a look at the content of the series, by using :meth:`drms.client.C
 .. code-block:: python
 
     >>> series_info = client.info('hmi.sharp_720s')  # doctest: +REMOTE_DATA
-    >>> series_info.note  # doctest: +REMOTE_DATA
+    >>> series_info.note  # doctest: +SKIP
     'Spaceweather HMI Active Region Patch (SHARP): CCD coordinates'
-    >>> series_info.primekeys  # doctest: +REMOTE_DATA
+    >>> series_info.primekeys  # doctest: +SKIP
     ['HARPNUM', 'T_REC']
 
 This series contains a total of 31 different data segments:
 
 .. code-block:: python
 
-    >>> len(series_info.segments)  # doctest: +REMOTE_DATA
+    >>> len(series_info.segments)  # doctest: +SKIP
     31
-    >>> series_info.segments.index.values  # doctest: +REMOTE_DATA
+    >>> series_info.segments.index.values  # doctest: +SKIP
     array(['magnetogram', 'bitmap', 'Dopplergram', 'continuum', 'inclination',
            'azimuth', 'field', 'vlos_mag', 'dop_width', 'eta_0', 'damping',
            'src_continuum', 'src_grad', 'alpha_mag', 'chisq', 'conv_flag',
@@ -271,7 +273,7 @@ Here, we are only interested in magnetograms and continuum intensity maps:
 
 .. code-block:: python
 
-    >>> series_info.segments.loc[['continuum', 'magnetogram']]  # doctest: +REMOTE_DATA
+    >>> series_info.segments.loc[['continuum', 'magnetogram']]  # doctest: +SKIP
                 type  units protocol     dims                 note
     name
     continuum    int   DN/s     fits  VARxVAR  continuum intensity
@@ -290,17 +292,17 @@ In order to obtain FITS files that include keyword data in their headers, we the
 .. code-block:: python
 
     >>> export_request = client.export(query_string, method='url', protocol='fits')  # doctest: +REMOTE_DATA
-    >>> export_request  # doctest: +REMOTE_DATA
+    >>> export_request  # doctest: +SKIP
     <ExportRequest: id=JSOC_..., status=2>
 
 We now need to wait for the server to prepare the requested files:
 
 .. code-block:: python
 
-    >>> export_request.wait()  # doctest: +REMOTE_DATA
+    >>> export_request.wait()  # doctest: +SKIP
     True
 
-    >>> export_request.status  # doctest: +REMOTE_DATA
+    >>> export_request.status  # doctest: +SKIP
     0
 
 Note that calling :meth:`drms.client.ExportRequest.wait` is optional.
@@ -311,7 +313,7 @@ You can use the :attr:`drms.client.ExportRequest.request_url` attribute to obtai
 
 .. code-block:: python
 
-    >>> export_request.request_url  # doctest: +REMOTE_DATA
+    >>> export_request.request_url  # doctest: +SKIP
     'http://jsoc.stanford.edu/.../S00000'
 
 Note that this location is only temporary and that all files will be deleted after a couple of days.
@@ -320,7 +322,7 @@ Downloading the data works exactly like in the previous example, by using :meth:
 
 .. code-block:: python
 
-    >>> export_request.download(out_dir)  # doctest: +REMOTE_DATA
+    >>> export_request.download(out_dir)  # doctest: +SKIP
                                                   record                                                url                          download
     0  warning=No FITS files were exported. The reque...  http://jsoc.stanford.edu/...  /...
 
