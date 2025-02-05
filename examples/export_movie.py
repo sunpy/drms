@@ -35,7 +35,7 @@ if not out_dir.exists():
 ###############################################################################
 # Construct the DRMS query string: "Series[timespan]{segment}"
 
-qstr = "hmi.m_720s[2014.11.28_00:00:00_TAI/5d@1h]{magnetogram}"
+qstr = "hmi.M_720s[2025.01.29_23:12:00_TAI/5d@1h]{magnetogram}"
 print(f"Data export query:\n  {qstr}\n")
 
 ###############################################################################

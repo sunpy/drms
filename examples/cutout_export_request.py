@@ -31,7 +31,7 @@ if not out_dir.exists():
 ###############################################################################
 # Construct the DRMS query string: ``"Series[timespan][wavelength]{data segments}"``
 
-qstr = "aia.lev1_euv_12s[2015-10-17T04:33:30.000/1m@12s][171]{image}"
+qstr = "aia.lev1_euv_12s[2025-01-01T04:33:30.000/1m@12s][171]{image}"
 print(f"Data export query:\n  {qstr}\n")
 
 ###############################################################################
@@ -44,7 +44,7 @@ print(f"Data export query:\n  {qstr}\n")
 # For additional details about ``im_patch``, see the `documentation <http://jsoc.stanford.edu/doxygen_html/group__im__patch.html>`_.
 process = {
     "im_patch": {
-        "t_ref": "2015-10-17T04:33:30.000",
+        "t_ref": "2025-01-01T04:33:30.000",
         "t": 0,
         "r": 0,
         "c": 0,

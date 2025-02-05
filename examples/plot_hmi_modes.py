@@ -19,7 +19,7 @@ client = drms.Client()
 ###############################################################################
 # Construct the DRMS query string: "Series[timespan][wavelength]"
 
-qstr = "hmi.v_sht_modes[2014.06.20_00:00:00_TAI]"
+qstr = "hmi.v_sht_modes[2024.09.19_00:00:00_TAI]"
 
 # TODO: Add text here.
 segname = "m6"  # 'm6', 'm18' or 'm36'

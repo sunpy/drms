@@ -38,7 +38,7 @@ if not out_dir.exists():
 ###############################################################################
 # Construct the DRMS query string: "Series[harpnum][timespan]{data segments}"
 
-qstr = "hmi.sharp_720s[4864][2014.11.30_00:00:00_TAI/1d@8h]{continuum, magnetogram, field}"
+qstr = "hmi.sharp_720s[12519][2024.12.30_22:24:00_TAI/1d@8h]{continuum, magnetogram, field}"
 print(f"Data export query:\n  {qstr}\n")
 
 # Submit export request using the 'fits' protocol

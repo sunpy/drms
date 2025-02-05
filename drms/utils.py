@@ -1,12 +1,22 @@
 import re
+import sys
+from urllib.request import Request
 
 import numpy as np
 import pandas as pd
 from packaging.version import Version
 
-__all__ = ["to_datetime"]
+import drms
+
+__all__ = ["create_request_with_header", "to_datetime"]
 
 PD_VERSION = Version(pd.__version__)
+
+
+def create_request_with_header(url):
+    request = Request(url)
+    request.add_header("User-Agent", f"drms/{drms.__version__}, python/{sys.version[:5]}")
+    return request
 
 
 def _pd_to_datetime_coerce(arg):

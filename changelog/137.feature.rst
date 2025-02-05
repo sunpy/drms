@@ -1,0 +1,1 @@
+Added timeout keyword to :meth:`drms.client.ExportRequest.download` which also will use the socket value, if it is set.

@@ -32,7 +32,7 @@ def test_series_list_schemata(kis_client, schema):
     [
         ("hmi.v_45s", ["T_REC", "CAMERA"], ["Dopplergram"]),
         ("hmi.m_720s", ["T_REC", "CAMERA"], ["magnetogram"]),
-        ("hmi.v_avg120", ["CarrRot", "CMLon"], ["mean", "power", "valid", "Log"]),
+        ("hmi.v_sht_2drls", ["LMIN", "NACOEFF"], ["split", "rot", "err"]),
     ],
 )
 def test_series_info_basic(kis_client, series, pkeys, segments):

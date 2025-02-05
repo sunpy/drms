@@ -79,6 +79,9 @@ extend-ignore = [
 "examples/plot_hmi_modes.py" = [
   "E741", # Ambiguous variable name
 ]
+"drms/json.py" = [
+  "A005", # Module `json` shadows a Python standard-library module
+]
 
 [lint.pydocstyle]
 convention = "numpy"

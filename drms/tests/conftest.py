@@ -4,6 +4,8 @@ from urllib.request import urlopen
 
 import pytest
 
+from drms.utils import create_request_with_header
+
 # Test URLs, used to check if a online site is reachable
 jsoc_testurl = "http://jsoc.stanford.edu/"
 kis_testurl = "http://drms.leibniz-kis.de/"
@@ -23,12 +25,12 @@ class lazily_cached:
         return self.result
 
 
-def site_reachable(url, timeout=15):
+def site_reachable(url, timeout=60):
     """
     Checks if the given URL is accessible.
     """
     try:
-        urlopen(url, timeout=timeout)
+        urlopen(create_request_with_header(url), timeout=timeout)
     except (URLError, HTTPError):
         return False
     return True
