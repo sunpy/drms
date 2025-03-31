@@ -28,7 +28,7 @@ result = client.export_from_id(request_id)
 
 # Print request URL and number of available files.
 print(f"\nRequest URL: {result.request_url}")
-print(f"{int(len(result.urls))} file(s) available for download.\n")
+print(f"{len(result.urls)} file(s) available for download.\n")
 
 # Create download directory if it does not exist yet.
 out_dir = Path("downloads") / request_id

@@ -53,7 +53,7 @@ result = client.export(qstr, protocol="jpg", protocol_args=jpg_args, email=email
 
 # Print request URL.
 print(f"\nRequest URL: {result.request_url}")
-print(f"{int(len(result.urls))} file(s) available for download.\n")
+print(f"{len(result.urls)} file(s) available for download.\n")
 
 # Download selected files.
 result.download(out_dir)

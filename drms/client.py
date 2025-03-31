@@ -457,7 +457,7 @@ class ExportRequest:
                 if t_start + timeout + wait_secs - time.time() < 0:
                     return False
 
-            logger.info(f"Waiting for {int(round(wait_secs))} seconds...")
+            logger.info(f"Waiting for {round(wait_secs)} seconds...")
             time.sleep(wait_secs)
 
             if self.has_finished():

@@ -225,7 +225,7 @@ class HttpJsonClient:
         if recinfo:
             d["R"] = "1"
         if n is not None:
-            d["n"] = f"{int(int(n))}"
+            d["n"] = f"{int(n)}"
         if uid is not None:
             d["userhandle"] = uid
         query = f"?{urlencode(d)}"

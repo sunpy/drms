@@ -40,7 +40,7 @@ print(f"Data export query:\n  {qstr}\n")
 # Submit export request, defaults to method='url_quick' and protocol='as-is'
 print("Submitting export request...")
 result = client.export(qstr, email=email)
-print(f"{int(len(result.urls))} file(s) available for download.\n")
+print(f"{len(result.urls)} file(s) available for download.\n")
 
 # Download selected files.
 result.download(out_dir)
