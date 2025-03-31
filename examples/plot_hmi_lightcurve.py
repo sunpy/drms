@@ -23,7 +23,7 @@ qstr = "hmi.ic_720s[2010.05.01_TAI-2016.04.01_TAI@6h]"
 # Send request to the DRMS server
 print(f"Querying keyword data...\n -> {qstr}")
 result = client.query(qstr, key=["T_REC", "DATAMEAN", "DATARMS"])
-print(f" -> {int(len(result))} lines retrieved.")
+print(f" -> {len(result)} lines retrieved.")
 
 ###############################################################################
 # Now to plot the image.
