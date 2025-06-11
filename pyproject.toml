@@ -29,7 +29,6 @@ tests = [
   "pytest-doctestplus",
   "pytest-cov",
   "pytest-xdist",
-  "astropy",
 ]
 docs = [
   "sphinx",
