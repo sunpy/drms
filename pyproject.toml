@@ -24,6 +24,7 @@ dynamic = [ "version" ]
 
 [project.optional-dependencies]
 tests = [
+  "astropy",  # Doctests
   "pytest",
   "pytest-astropy",
   "pytest-doctestplus",
