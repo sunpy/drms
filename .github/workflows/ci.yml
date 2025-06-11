@@ -61,13 +61,8 @@ jobs:
       toxdeps: "tox-pypi-filter"
       posargs: -n auto
       envs: |
-<<<<<<<
-        - windows: py10
-        - macos: py311
-=======
         - windows: py311
         - macos: py312
->>>>>>>
         - linux: py310-oldestdeps
         - linux: py313-devdeps
     secrets:
