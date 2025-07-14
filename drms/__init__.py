@@ -29,7 +29,7 @@ from .version import version as __version__
 
 
 def _get_bibtex():
-    import textwrap
+    import textwrap  # noqa: PLC0415
 
     # Set the bibtex entry to the article referenced in CITATION.rst
     citation_file = Path(__file__).parent / "CITATION.rst"

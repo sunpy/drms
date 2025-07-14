@@ -4,6 +4,7 @@ from urllib.request import urlopen
 
 import pytest
 
+import drms
 from drms.utils import create_request_with_header
 
 # Test URLs, used to check if a online site is reachable
@@ -69,8 +70,6 @@ def jsoc_client():
     """
     Client fixture for JSOC online tests, does not use email.
     """
-    import drms
-
     return drms.Client("jsoc")
 
 
@@ -79,8 +78,6 @@ def jsoc_client_export(email):
     """
     Client fixture for JSOC online tests, uses email if specified.
     """
-    import drms
-
     return drms.Client("jsoc", email=email)
 
 
@@ -89,6 +86,4 @@ def kis_client():
     """
     Client fixture for KIS online tests.
     """
-    import drms
-
     return drms.Client("kis")

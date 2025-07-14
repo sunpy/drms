@@ -3,7 +3,7 @@ import argparse
 
 
 def main():
-    import drms
+    import drms  # noqa: PLC0415
 
     args = parse_args(sys.argv[1:])
     client = drms.Client(server=args.server, email=args.email)
@@ -11,7 +11,7 @@ def main():
 
 
 def parse_args(args):
-    import drms
+    import drms  # noqa: PLC0415
 
     parser = argparse.ArgumentParser(description="drms, access HMI, AIA and MDI data with python")
     parser.add_argument(
