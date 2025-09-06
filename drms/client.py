@@ -239,6 +239,20 @@ class ExportRequest:
     def status(self):
         """
         (int) Export request status.
+
+        Available status codes:
+
+        - 0 = OK immediate data available or queue managed data is complete.
+        - 1 = Request received and action is pending, i.e. in processing.
+        - 2 = Queued for processing.
+        - 3 = Request too large for automatic requests.
+        - 4 = Request not formed correctly, bad series, etc.
+        - 5 = Request old, results requested after data timed out.
+        - 1 = The backend process was terminated (typically when the user cancels the export request).
+
+        Reference
+        ---------
+        http://jsoc.stanford.edu/jsocwiki/AjaxJsocConnect#line-27-2
         """
         return self._status
 
