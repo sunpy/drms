@@ -1,0 +1,1 @@
+Added export status codes to docstring of `drms.ExportResult.status`.
