@@ -17,7 +17,7 @@ authors = [
 ]
 dependencies = [
   "numpy>=1.26.0",
-  "pandas>=2.0.0",
+  "pandas>=2.2.0",
 ]
 dynamic = [ "version" ]
 
