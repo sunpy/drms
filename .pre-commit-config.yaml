@@ -2,13 +2,17 @@ exclude: ".*(.fits|.fts|.fit|.header|.txt|tca.*|extern.*|drms/extern)$|^CITATION
 
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.13.2"
+    rev: "v0.14.3"
     hooks:
       - id: ruff
         args: ['--fix', '--unsafe-fixes']
       - id: ruff-format
   - repo: https://github.com/PyCQA/isort
+<<<<<<<
     rev: 6.1.0
+=======
+    rev: 7.0.0
+>>>>>>>
     hooks:
       - id: isort
   - repo: https://github.com/PyCQA/isort
