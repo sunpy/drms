@@ -41,7 +41,8 @@ maximum_signature_line_length = 80
 # extensions coming with Sphinx (named "sphinx.ext.*") or your custom
 # ones.
 extensions = [
-    "hoverxref.extension",
+    # TODO: Re-enable this, it was failing the doc build
+    # "hoverxref.extension",
     "sphinx_copybutton",
     "sphinx_gallery.gen_gallery",
     "sphinx.ext.autodoc",
