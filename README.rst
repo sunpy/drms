@@ -104,12 +104,5 @@ When you are interacting with the SunPy community you are asked to follow our `c
 Acknowledgements
 ----------------
 
-<<<<<<<
 Kolja Glogowski has received funding from the European Research Council under the European Union's Seventh Framework Programme (FP/2007-2013) / ERC Grant Agreement no. 307117.
-=======
-Note: This disclaimer was originally written by
-`Adrienne Lowe <https://github.com/adriennefriend>`__ for a
-`PyCon talk <https://www.youtube.com/watch?v=6Uj746j9Heo>`__, and was adapted by
-drms based on its use in the README file for the
-`MetPy project <https://github.com/Unidata/MetPy>`__.
->>>>>>>
+
