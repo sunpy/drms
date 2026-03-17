@@ -105,4 +105,3 @@ Acknowledgements
 ----------------
 
 Kolja Glogowski has received funding from the European Research Council under the European Union's Seventh Framework Programme (FP/2007-2013) / ERC Grant Agreement no. 307117.
-
