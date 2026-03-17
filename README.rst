@@ -32,15 +32,16 @@ Usage of Generative AI
 ----------------------
 
 We expect authentic engagement in our community.
-Be wary of posting output from Large Language Models or similar generative AI as comments on GitHub or any other platform, as such comments tend to be formulaic and low quality content.
+**Do not post the output from Large Language Models or similar generative AI as code, issues or comments on GitHub or any other platform.**
 If you use generative AI tools as an aid in developing code or documentation changes, ensure that you fully understand the proposed changes and can explain why they are the correct approach and an improvement to the current state.
+For more information see our documentation on fair and appropriate `AI usage <https://docs.sunpy.org/en/latest/dev_guide/contents/ai_usage.html>`__.
 
 License
 -------
 
 This project is Copyright (c) The SunPy Community and licensed under
 the terms of the BSD 2-Clause license. This package is based upon
-the `Openastronomy packaging guide <https://github.com/OpenAstronomy/packaging-guide>`_
+the `Openastronomy packaging guide <https://github.com/OpenAstronomy/packaging-guide>`__
 which is licensed under the BSD 3-clause licence. See the licenses folder for
 more information.
 
@@ -103,4 +104,12 @@ When you are interacting with the SunPy community you are asked to follow our `c
 Acknowledgements
 ----------------
 
+<<<<<<<
 Kolja Glogowski has received funding from the European Research Council under the European Union's Seventh Framework Programme (FP/2007-2013) / ERC Grant Agreement no. 307117.
+=======
+Note: This disclaimer was originally written by
+`Adrienne Lowe <https://github.com/adriennefriend>`__ for a
+`PyCon talk <https://www.youtube.com/watch?v=6Uj746j9Heo>`__, and was adapted by
+drms based on its use in the README file for the
+`MetPy project <https://github.com/Unidata/MetPy>`__.
+>>>>>>>
