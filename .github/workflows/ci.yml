@@ -88,7 +88,7 @@ jobs:
         - linux: build_docs
 
   online:
-    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@v1
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@v2  # zizmor: ignore[unpinned-uses]
     with:
       default_python: '3.12'
       submodules: false
@@ -141,5 +141,3 @@ jobs:
 
       - name: Run upload
         uses: pypa/gh-action-pypi-publish@v1.13.0  # zizmor: ignore[unpinned-uses]
-
-
