@@ -3,7 +3,7 @@ repos:
     rev: v1.23.1
     hooks:
       - id: zizmor
-    # This should be before any formatting hooks like isort
+   # This should be before any formatting hooks like isort
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: "v0.15.4"
     hooks:
