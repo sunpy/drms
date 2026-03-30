@@ -1,5 +1,10 @@
 ``drms``
 ========
+<<<<<<<
+=======
+
+Access HMI, AIA and MDI data from the Standford JSOC DRMS
+>>>>>>>
 
 Access HMI, AIA and MDI data from the Standford JSOC DRMS.
 
