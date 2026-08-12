@@ -36,14 +36,9 @@ jobs:
       id-token: write
     with:
       submodules: false
-<<<<<<<
-      coverage: codecov
-      toxdeps: "tox-pypi-filter"
-      posargs: -n auto
-=======
       coverage: codecov-oidc
       toxdeps: tox-pypi-filter
->>>>>>>
+      posargs: -n auto
       envs: |
         - linux: py313
 
@@ -68,13 +63,8 @@ jobs:
       id-token: write
     with:
       submodules: false
-<<<<<<<
-      coverage: codecov
-      toxdeps: "tox-pypi-filter"
-=======
       coverage: codecov-oidc
       toxdeps: tox-pypi-filter
->>>>>>>
       posargs: -n auto
       envs: |
         - linux: py314
