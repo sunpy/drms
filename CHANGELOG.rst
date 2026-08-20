@@ -127,7 +127,7 @@ Backwards Incompatible Changes
 Deprecations and Removals
 -------------------------
 
-- ``Client.get()`` has been removed, use :meth:`drms.client.Client.query()` instead.
+- ``Client.get()`` has been removed, use :meth:`drms.client.Client.query` instead.
 
 Support for Processing Keywords
 --------------------------------
