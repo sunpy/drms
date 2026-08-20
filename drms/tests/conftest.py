@@ -1,5 +1,5 @@
 import os
-from urllib.error import URLError, HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 import pytest

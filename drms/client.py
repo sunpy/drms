@@ -1,11 +1,11 @@
 import os
 import re
-import time
 import shutil
 import socket
-from pathlib import Path
+import time
 from collections import OrderedDict
-from urllib.error import URLError, HTTPError
+from pathlib import Path
+from urllib.error import HTTPError, URLError
 from urllib.parse import urljoin
 from urllib.request import urlopen
 
