@@ -1,6 +1,6 @@
 import json as _json
 import socket
-from enum import Enum
+from enum import StrEnum
 from urllib.parse import quote_plus, urlencode
 from urllib.request import HTTPError, urlopen
 
@@ -11,8 +11,7 @@ from .utils import _split_arg, create_request_with_header
 __all__ = ["HttpJsonClient", "HttpJsonRequest", "JsocInfoConstants"]
 
 
-# TODO: When we support 3.11, we can use StrEnum instead of Enum
-class JsocInfoConstants(str, Enum):
+class JsocInfoConstants(StrEnum):
     """
     Constants for DRMS queries.
     """
