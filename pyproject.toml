@@ -29,6 +29,7 @@ tests = [
   "pytest-doctestplus",
   "pytest-cov",
   "pytest-xdist",
+  "pytest-run-parallel",
 ]
 docs = [
   "sphinx",
