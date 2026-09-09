@@ -10,19 +10,8 @@ except Exception:  # NOQA: BLE001
     import warnings
 
     warnings.warn(
-<<<<<<<
-        f'could not determine {__name__.split(".")[0]} package version; this indicates a broken installation',
-=======
         f"could not determine {__name__.split('.')[0]} package version; this indicates a broken installation",
         stacklevel=2,
-    )
-    del warnings
->>>>>>>
-<<<<<<<
-        stacklevel=3,
-=======
-        stacklevel=2,
->>>>>>>
     )
     del warnings
     version = "0.0.0"
