@@ -355,4 +355,3 @@ To export an AIA 171 Å image scaled to Level 1.5 using the 3-hour master pointi
 
 If no specific options are needed, you can pass ``None`` or an empty dictionary as the options, or specify a sequence of process names (for example, ``process=['aia_scale_aialev1']``).
 For more detailed examples of processing exports, see the example gallery.
-
