@@ -328,3 +328,31 @@ Downloading the data works exactly like in the previous example, by using :meth:
 
 If you want to access an existing export request that you have submitted earlier, or if you submitted an export request using the `JSOC Export Data <http://jsoc.stanford.edu/ajax/exportdata.html>`__ webpage.
 You can use :meth:`drms.client.Client.export_from_id` with the corresponding ``ExportID`` to create an `drms.client.ExportRequest` instance for this particular request.
+
+Export processing (cutouts and AIA Level 1.5 scaling)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When submitting an export request using :meth:`drms.client.Client.export`, you can also request server-side processing by passing the ``process`` argument.
+Supported processing commands include ``'im_patch'`` (cutout service), ``'rebin'``, ``'resize'``, and the ``'aia_scale_*'`` routines.
+
+For example, JSOC provides ``aia_scale`` routines that scale SDO/AIA Level 1 images to Level 1.5 (standardizing the plate scale to 0.6 arcsec per pixel across all channels, removing spacecraft roll, and applying master pointing calibrations).
+Depending on the data series, three variants are available:
+
+* ``'aia_scale_aialev1'`` for AIA Level 1 series (such as ``aia.lev1_euv_12s`` and ``aia.lev1_uv_24s``)
+* ``'aia_scale_orig'`` for the ``aia.lev1`` series
+* ``'aia_scale_other'`` for other series such as HMI line-of-sight magnetograms
+
+To export an AIA 171 Å image scaled to Level 1.5 using the 3-hour master pointing table:
+
+.. code-block:: python
+
+    >>> qstr = 'aia.lev1_euv_12s[2025-01-01T04:33:30.000][171]{image}'
+    >>> process = {'aia_scale_aialev1': {'mpt': 'aia.master_pointing3h'}}
+    >>> export_request = client.export(qstr, method='url', protocol='fits', process=process)  # doctest: +SKIP
+    >>> export_request.wait()  # doctest: +SKIP
+    True
+    >>> export_request.download(out_dir)  # doctest: +SKIP
+
+If no specific options are needed, you can pass ``None`` or an empty dictionary as the options, or specify a sequence of process names (for example, ``process=['aia_scale_aialev1']``).
+For more detailed examples of processing exports, see the example gallery.
+

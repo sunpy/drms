@@ -1150,11 +1150,15 @@ class Client:
             current default email address is used, which in this case
             has to be set before calling export() by using the
             :attr:`Client.email` attribute.
-        process : `dict`, None
-            Dictionary of processing commands. Each entry is also a `dict`
-            containing all of the applicable options for that processing
-            command. Note that only the name of the process, and not the
-            arguments, are validated by the `~drms.client.Client`. In the case of invalid
+        process : `dict`, sequence, `str`, None
+            Dictionary or sequence of processing commands. Can be a dictionary
+            where each key is a processing command name and the value is a
+            dictionary containing applicable options for that processing command
+            (or None/empty dict if no options are needed), a sequence of
+            processing command names or (name, options) pairs, or a single
+            processing command name.
+            Note that only the name of the process, and not the arguments,
+            are validated by the `~drms.client.Client`. In the case of invalid
             or malformed processing arguments, JSOC may still return
             an unprocessed image without the export request failing.
         requester : str, None or bool
