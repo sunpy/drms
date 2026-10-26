@@ -255,6 +255,8 @@ class ExportRequest:
         ---------
         http://jsoc.stanford.edu/jsocwiki/AjaxJsocConnect#line-27-2
         """
+        if self._status in self._status_codes_pending:
+            self._update_status()
         return self._status
 
     @property
