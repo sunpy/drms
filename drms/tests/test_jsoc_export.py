@@ -138,6 +138,33 @@ def test_export_rebin(jsoc_client_export):
 
 @pytest.mark.jsoc()
 @pytest.mark.remote_data()
+def test_export_aia_scale(jsoc_client_export):
+    req = jsoc_client_export.export(
+        "aia.lev1_euv_12s[2025-01-01T04:33:30.000][171]{image}",
+        method="url",
+        protocol="fits",
+        process={"aia_scale_aialev1": {"mpt": "aia.master_pointing3h"}},
+        requester=False,
+    )
+
+    assert isinstance(req, drms.ExportRequest)
+    assert req.wait(timeout=60)
+    assert req.has_succeeded()
+    assert req.protocol == "fits"
+
+    for record in req.urls.record:
+        record = record.lower()
+        assert record.startswith("aia.lev1_euv_12s_mod")
+
+    for filename in req.urls.filename:
+        assert filename.endswith("image.fits")
+
+    for url in req.urls.url:
+        assert url.endswith("image.fits")
+
+
+@pytest.mark.jsoc()
+@pytest.mark.remote_data()
 def test_export_invalid_process(jsoc_client_export):
     with pytest.raises(ValueError, match="foobar is not one of the allowed processing options"):
         jsoc_client_export.export(
