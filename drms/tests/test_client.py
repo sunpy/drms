@@ -1,9 +1,9 @@
-import drms
-from drms.config import ServerConfig
-
 from unittest.mock import MagicMock
+
 import pytest
 
+import drms
+from drms.config import ServerConfig
 
 
 def test_client_init_defaults():
