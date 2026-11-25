@@ -99,17 +99,8 @@ jobs:
       coverage: codecov-oidc
       posargs: -n 1 --dist loadgroup
       envs: |
-<<<<<<<
-=======
-
-
-  build_dists:
-    # Build wheels on PRs only when labelled. Releases will only be published if tagged ^v.*
->>>>>>>
-        - linux: py312-online
-        - linux: py312-sunpy
-    secrets:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        - linux: py313-online
+        - linux: py313-sunpy
 
   build_dists:
     # Build wheels on PRs only when labelled. Releases will only be published if tagged ^v.*
