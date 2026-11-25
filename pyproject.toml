@@ -38,7 +38,6 @@ tests = [
   "pytest-run-parallel>=0.3.0",
 ]
 docs = [
-  "sphinx-hoverxref",
   "sphinx>=8.2.0",
   "sphinx-automodapi>=0.19.0",
   "sunpy-sphinx-theme>=2.1.0",

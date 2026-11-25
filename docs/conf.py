@@ -41,8 +41,6 @@ maximum_signature_line_length = 80
 # extensions coming with Sphinx (named "sphinx.ext.*") or your custom
 # ones.
 extensions = [
-    # TODO: Re-enable this, it was failing the doc build
-    # "hoverxref.extension",
     "sphinx_copybutton",
     "sphinx_gallery.gen_gallery",
     "sphinx.ext.autodoc",
@@ -135,38 +133,6 @@ autoclass_content = "both"
 # JSOC email os env
 # see https://github.com/sunpy/sunpy/wiki/Home:-JSOC
 os.environ["JSOC_EMAIL"] = "jsoc@sunpy.org"
-
-# -- Options for hoverxref -----------------------------------------------------
-
-if os.environ.get("READTHEDOCS"):
-    hoverxref_api_host = "https://readthedocs.org"
-    if os.environ.get("PROXIED_API_ENDPOINT"):
-        # Use the proxied API endpoint
-        # - A RTD thing to avoid a CSRF block when docs are using a
-        #   custom domain
-        hoverxref_api_host = "/_"
-
-hoverxref_tooltip_maxwidth = 600  # RTD main window is 696px
-hoverxref_auto_ref = True
-hoverxref_mathjax = True
-hoverxref_domains = ["py"]
-hoverxref_role_types = {
-    # roles with py domain
-    "attr": "tooltip",
-    "class": "tooltip",
-    "const": "tooltip",
-    "data": "tooltip",
-    "exc": "tooltip",
-    "func": "tooltip",
-    "meth": "tooltip",
-    "mod": "tooltip",
-    "obj": "tooltip",
-    # roles with std domain
-    "confval": "tooltip",
-    "hoverxref": "tooltip",
-    "ref": "tooltip",
-    "term": "tooltip",
-}
 
 # -- Options for sphinx-copybutton ---------------------------------------------
 
