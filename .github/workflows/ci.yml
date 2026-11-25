@@ -77,6 +77,9 @@ jobs:
   docs:
     needs: [core]
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@1285b95e32c783cfa40eb2ffbd6ca4cd023fb884  # v3.2.2
+    concurrency:
+      group: drms
+      queue: max
     with:
       default_python: '3.13'
       submodules: false
@@ -93,6 +96,9 @@ jobs:
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@1285b95e32c783cfa40eb2ffbd6ca4cd023fb884  # v3.2.2
     permissions:
       id-token: write
+    concurrency:
+      group: drms
+      queue: max
     with:
       submodules: false
       toxdeps: tox-pypi-filter
