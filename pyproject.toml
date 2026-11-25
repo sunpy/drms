@@ -11,6 +11,13 @@ description = "Access HMI, AIA and MDI data from the Standford JSOC DRMS"
 requires-python = ">=3.12"
 readme = { file = "README.rst", content-type = "text/x-rst" }
 license-files = ["licenses/LICENSE.rst"]
+classifiers = [
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: Implementation :: CPython",
+]
 authors = [
   { name = "The SunPy Community", email = "sunpy@googlegroups.com" },
 ]
@@ -21,27 +28,29 @@ dependencies = [
 dynamic = [ "version" ]
 
 [project.optional-dependencies]
+tests-only = [
+  "astropy>=7.1.0",  # doctests
+]
 tests = [
-  "astropy",  # Doctests
-  "pytest",
-  "pytest-astropy",
-  "pytest-doctestplus",
-  "pytest-cov",
-  "pytest-xdist",
-  "pytest-run-parallel",
+  "drms[tests-only]",
+  "pytest>=8.4.0",
+  "pytest-astropy>=0.12.0",
+  "pytest-doctestplus>=1.4.0",
+  "pytest-cov>=6.1.0",
+  "pytest-xdist>=3.7.0",
+  "pytest-run-parallel>=0.3.0",
 ]
 docs = [
-  "sphinx",
-  "sphinx-automodapi",
-  "sunpy-sphinx-theme",
-  "packaging",
-  "astropy",
-  "matplotlib",
-  "sphinx-changelog",
-  "sphinx-copybutton",
-  "sphinx-gallery",
-  "sphinx-hoverxref",
-  "sphinxext-opengraph",
+  "sphinx>=8.2.0",
+  "sphinx-automodapi>=0.19.0",
+  "sunpy-sphinx-theme>=2.1.0",
+  "packaging>=25.0",
+  "astropy>=7.1.0",
+  "matplotlib>=3.10.0",
+  "sphinx-changelog>=1.6.0",
+  "sphinx-copybutton>=0.5.2",
+  "sphinx-gallery>=0.19.0",
+  "sphinxext-opengraph>=0.10.0",
 ]
 
 [project.urls]

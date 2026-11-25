@@ -70,13 +70,16 @@ jobs:
       envs: |
         - linux: py314
         - windows: py312
-        - macos: py312
+        - macos: py313
         - linux: py312-oldestdeps
         - linux: py314-devdeps
 
   docs:
     needs: [core]
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@1285b95e32c783cfa40eb2ffbd6ca4cd023fb884  # v3.2.2
+    concurrency:
+      group: drms
+      queue: max
     with:
       default_python: '3.13'
       submodules: false
@@ -93,16 +96,17 @@ jobs:
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@1285b95e32c783cfa40eb2ffbd6ca4cd023fb884  # v3.2.2
     permissions:
       id-token: write
+    concurrency:
+      group: drms
+      queue: max
     with:
       submodules: false
       toxdeps: tox-pypi-filter
       coverage: codecov-oidc
       posargs: -n 1 --dist loadgroup
       envs: |
-        - linux: py312-online
-        - linux: py312-sunpy
-    secrets:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        - linux: py313-online
+        - linux: py313-sunpy
 
   build_dists:
     # Build wheels on PRs only when labelled. Releases will only be published if tagged ^v.*
