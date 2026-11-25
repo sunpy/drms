@@ -28,8 +28,11 @@ dependencies = [
 dynamic = [ "version" ]
 
 [project.optional-dependencies]
+tests-only = [
+  "astropy>=7.1.0",  # doctests
+]
 tests = [
-  "astropy>=7.1.0",  # Doctests
+  "drms[tests-only]",
   "pytest>=8.4.0",
   "pytest-astropy>=0.12.0",
   "pytest-doctestplus>=1.4.0",
