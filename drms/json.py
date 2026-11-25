@@ -277,10 +277,12 @@ class HttpJsonClient:
         filenamefmt : str, None
             Custom filename format string for exported files. This is
             ignored for 'url_quick'/'as-is' data exports.
-        process : `dict`, None
-            Dictionary of processing commands. Each entry is also a `dict`
-            containing all of the applicable options for that processing
-            command.
+        process : `dict`, sequence, `str`, None
+            Processing commands. Can be a dictionary where each key is a
+            processing command name and the value is a dictionary of options
+            (or None/empty dict if no options are needed), a sequence of
+            processing command names or (name, options) pairs, or a single
+            processing command name.
         n : int or None
             Limits the number of records requested. For positive
             values, the first n records of the record set are returned,
@@ -388,13 +390,49 @@ class HttpJsonClient:
                 "Maproj",
                 "HmiB2ptr",
             ]
-            process_strings = {}
-            for p, opts in process.items():
+            if isinstance(process, str):
+                proc_items = [(process, None)]
+            elif isinstance(process, dict):
+                proc_items = list(process.items())
+            elif isinstance(process, (list, tuple, set)):
+                proc_items = []
+                for item in process:
+                    if isinstance(item, str):
+                        proc_items.append((item, None))
+                    elif isinstance(item, (tuple, list)) and len(item) == 2:
+                        proc_items.append((item[0], item[1]))
+                    elif isinstance(item, dict):
+                        proc_items.extend(item.items())
+                    else:
+                        raise TypeError(
+                            f"Items in process sequence must be a string, (name, options) pair, or dict, got {type(item).__name__}"
+                        )
+            else:
+                raise TypeError(f"process must be a dict, sequence, string, or None, got {type(process).__name__}")
+
+            process_strings = []
+            for p, opts in proc_items:
+                if not isinstance(p, str):
+                    raise TypeError(f"Processing command name must be a string, got {type(p).__name__}")
                 if p not in allowed_processes:
                     raise ValueError(f"{p} is not one of the allowed processing options: {allowed_processes}")
-                process_strings[p] = ",".join([f"{k}={v}" for k, v in opts.items()])
-            processes = "|".join([f"{k},{v}" for k, v in process_strings.items()])
-            d["process=n"] = f"{d['process=n']}|{processes}"
+                if opts is not None:
+                    if not isinstance(opts, dict):
+                        raise TypeError(
+                            f"Processing options for '{p}' must be a dict or None, got {type(opts).__name__}"
+                        )
+                    clean_opts = {k: v for k, v in opts.items() if k is not None and k != ""}
+                    if clean_opts:
+                        opts_str = ",".join([f"{k}={v}" for k, v in clean_opts.items()])
+                        process_strings.append(f"{p},{opts_str}")
+                    else:
+                        process_strings.append(p)
+                else:
+                    process_strings.append(p)
+
+            if process_strings:
+                processes = "|".join(process_strings)
+                d["process=n"] = f"{d['process=n']}|{processes}"
 
         if requester is None:
             d["requester"] = notify.split("@")[0]

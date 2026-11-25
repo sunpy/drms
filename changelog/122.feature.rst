@@ -1,0 +1,2 @@
+Added support and documentation for the ``aia_scale`` export processing options (``aia_scale_aialev1``, ``aia_scale_orig``, and ``aia_scale_other``) to export AIA Level 1.5 data from JSOC.
+Also enhanced :meth:`drms.client.Client.export` to accept a sequence of processing commands or ``None``/empty dictionaries for processing options without arguments.
