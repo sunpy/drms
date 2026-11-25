@@ -47,6 +47,8 @@ def test_export_request_status_update():
     mock_client.reset_mock()
     assert req.status == 0
     mock_client._json.exp_status.assert_not_called()
+
+
 def test_export_request_status_no_requestid():
     mock_client = MagicMock()
     req = drms.ExportRequest({"status": 2}, client=mock_client)
